@@ -172,5 +172,32 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+
+        //Método validar cargo
+        [HttpGet]
+        [Route("api/Cargo/validarCargo/{idCargo}/{cargo}")]
+        public int validarCargo(int idCargo, string cargo)
+        {
+            int rpta = 0;
+            try
+            {
+                using(BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if(idCargo==0)
+                    {
+                        rpta = bd.Cargos.Where(p => p.Cargo.ToLower() == cargo.ToLower() && p.Dhabilitado == 1).Count();
+                    } else
+                    {
+                        rpta = bd.Cargos.Where(p => p.Cargo.ToLower() == cargo.ToLower() && p.IdCargo != idCargo && p.Dhabilitado == 1).Count();
+                    }
+                }
+
+            } catch(Exception ex)
+            {
+                return rpta = 0;
+            }
+
+            return rpta;
+        }
     }
 }
