@@ -18,8 +18,10 @@ namespace ASGARDAPI.Clases
         public int idcargo { get; set; }
         public int btieneusuario { get; set; }
         public int dhabilitado { get; set; }
+        public string cargo { get; set; }
+        public string nombrearea { get; set; }
 
 
 
-    }
+        }
 }

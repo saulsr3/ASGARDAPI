@@ -15,6 +15,89 @@ namespace ASGARDAPI.Controllers
             return View();
         }
 
+        [HttpGet]
+        [Route("api/Empleado/listarEmpleado")]
+        public IEnumerable<EmpleadoAF> listarEmpleado()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<EmpleadoAF> listaEmpleado = (from empleado in bd.Empleado
+                                                         join area in bd.AreaDeNegocio
+                                                         on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                         join cargos in bd.Cargos
+                                                         on empleado.IdCargo equals cargos.IdCargo
+                                                         where empleado.Dhabilitado == 1
+                                                         select new EmpleadoAF
+                                                                   {
+                                                                       dui= empleado.Dui,
+                                                                       nombres=empleado.Nombres,
+                                                                       apellidos=empleado.Apellidos,
+                                                                       direccion=empleado.Direccion,
+                                                                       telefono=empleado.Telefono,
+                                                                       telefonopersonal=empleado.TelefonoPersonal,
+                                                                       nombrearea = area.Nombre,
+                                                                       cargo= cargos.Cargo
+                               
+                                                                   }).ToList();
+                return listaEmpleado;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Empleado/RecuperarEmpleado/{dui}")]
+        public EmpleadoAF RecuperarEmpleado(string dui)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                EmpleadoAF oEmpleadoAF = new EmpleadoAF();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == dui).First();
+                oEmpleadoAF.dui = oEmpleado.Dui;
+                oEmpleadoAF.nombres = oEmpleado.Nombres;
+                oEmpleadoAF.apellidos = oEmpleado.Apellidos;
+                oEmpleadoAF.direccion = oEmpleado.Direccion;
+                oEmpleadoAF.telefono = oEmpleado.Telefono;
+                oEmpleadoAF.telefonopersonal = oEmpleado.TelefonoPersonal;
+                oEmpleadoAF.idareadenegocio = (int)oEmpleado.IdAreaDeNegocio;
+                oEmpleadoAF.idcargo = (int)oEmpleado.IdCargo;
+
+
+
+                return oEmpleadoAF;
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route("api/Empleado/modificarEmpleado")]
+        public int modificarEmpleado([FromBody]EmpleadoAF oEmpleadoAF)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == oEmpleadoAF.dui).First();
+                    oEmpleado.Dui = oEmpleadoAF.dui;
+                    oEmpleado.Nombres = oEmpleadoAF.nombres;
+                    oEmpleado.Apellidos = oEmpleadoAF.apellidos;
+                    oEmpleado.Direccion = oEmpleadoAF.direccion;
+                    oEmpleado.Telefono = oEmpleadoAF.telefono;
+                    oEmpleado.TelefonoPersonal = oEmpleadoAF.telefonopersonal;
+                    oEmpleado.IdAreaDeNegocio = oEmpleadoAF.idareadenegocio;
+                    oEmpleado.IdCargo = oEmpleadoAF.idcargo;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
         [HttpPost]
         [Route("api/Empleado/guardarEmpleado")]
         public int guardarEmpleado([FromBody]EmpleadoAF oEmpleadoAF)
@@ -52,6 +135,97 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
+        [Route("api/Empleado/buscarEmpleado/{buscador?}")]
+        public IEnumerable<EmpleadoAF> buscarEmpleado(string buscador = "")
+        {
+            List<EmpleadoAF> listaEmpleado;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaEmpleado = (from empleado in bd.Empleado
+                                     join area in bd.AreaDeNegocio
+                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     join cargos in bd.Cargos
+                                     on empleado.IdCargo equals cargos.IdCargo
+                                     where empleado.Dhabilitado == 1
+                                     select new EmpleadoAF
+                                     {
+                                         dui = empleado.Dui,
+                                         nombres = empleado.Nombres,
+                                         apellidos = empleado.Apellidos,
+                                         direccion = empleado.Direccion,
+                                         telefono = empleado.Telefono,
+                                         telefonopersonal = empleado.TelefonoPersonal,
+                                         nombrearea = area.Nombre,
+                                         cargo = cargos.Cargo
+
+                                     }).ToList();
+                    return listaEmpleado;
+                }
+                else
+                {
+                    listaEmpleado = (from empleado in bd.Empleado
+                                     join area in bd.AreaDeNegocio
+                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     join cargos in bd.Cargos
+                                     on empleado.IdCargo equals cargos.IdCargo
+                                     where empleado.Dhabilitado == 1
+
+                                     &&((empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Apellidos).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Direccion).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Telefono).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.TelefonoPersonal).ToLower().Contains(buscador.ToLower()) ||
+                                     (area.Nombre).ToLower().Contains(buscador.ToLower()) ||
+                                     (cargos.Cargo).ToLower().Contains(buscador.ToLower()))
+
+                                      select new EmpleadoAF
+                                          {
+                                          dui = empleado.Dui,
+                                          nombres = empleado.Nombres,
+                                          apellidos = empleado.Apellidos,
+                                          direccion = empleado.Direccion,
+                                          telefono = empleado.Telefono,
+                                          telefonopersonal = empleado.TelefonoPersonal,
+                                          nombrearea = area.Nombre,
+                                          cargo = cargos.Cargo
+                                      }).ToList();
+                    return listaEmpleado;
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Empleado/eliminarEmpleado/{dui}")]
+        public int eliminarEmpleado(string dui)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == dui).First();
+                    oEmpleado.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
+
+        [HttpGet]
         [Route("api/Empleado/listarCargoCombo")]
         public IEnumerable<CargoAF> listarCargoCombo()
         {
@@ -68,6 +242,27 @@ namespace ASGARDAPI.Controllers
 
 
                 return listarCargos;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Empleado/listarAreaCombo")]
+        public IEnumerable<AreasDeNegocioAFdato> listarAreaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<AreasDeNegocioAFdato> listarAreas = (from area in bd.AreaDeNegocio
+                                                     where area.Dhabilitado == 1
+                                                     select new AreasDeNegocioAFdato
+                                                     {
+                                                         idareadenegocio= area.IdAreaNegocio,
+                                                         nombre= area.Nombre
+
+                                                     }).ToList();
+
+
+                return listarAreas;
 
             }
         }
