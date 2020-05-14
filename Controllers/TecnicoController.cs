@@ -48,5 +48,24 @@ namespace ASGARDAPI.Controllers
             return rpta;
 
         }
+
+        //Método listar técnico
+        [HttpGet]
+        [Route("api/Tenico/listarTenico")]
+        public IEnumerable<TecnicoAF> listarTecnico()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TecnicoAF> listaTenico = (from tecnico in bd.Tecnicos
+                                                   where tecnico.Dhabilitado == 1
+                                                   select new TecnicoAF
+                                                   {
+                                                      idtecnico=tecnico.IdTecnico,
+                                                      nombre=tecnico.Nombre,
+                                                      empresa=tecnico.Empresa
+                                                   }).ToList();
+                return listaTenico;
+            }
+        }
     }
 }
