@@ -142,5 +142,45 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        //Método buscar técnico
+        [HttpGet]
+        [Route("api/Tecnico/buscarTecnico/{buscador?}")]
+        public IEnumerable<TecnicoAF> buscarTecnico(string buscador = "")
+        {
+            List<TecnicoAF> listaTecnico;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaTecnico = (from tecnico in bd.Tecnicos
+                                  where tecnico.Dhabilitado == 1
+                                  select new TecnicoAF
+                                  {
+                                      idtecnico=tecnico.IdTecnico,
+                                      nombre=tecnico.Nombre,
+                                      empresa=tecnico.Empresa
+
+                                  }).ToList();
+
+                    return listaTecnico;
+                }
+                else
+                {
+                    listaTecnico = (from tecnico in bd.Tecnicos
+                                  where tecnico.Dhabilitado == 1
+
+                                  && ((tecnico.IdTecnico).ToString().Contains(buscador) || (tecnico.Nombre).ToLower().Contains(buscador.ToLower()) || (tecnico.Empresa).ToLower().Contains(buscador.ToLower()))
+                                  select new TecnicoAF
+                                  {
+                                      idtecnico = tecnico.IdTecnico,
+                                      nombre = tecnico.Nombre,
+                                      empresa = tecnico.Empresa
+                                  }).ToList();
+
+                    return listaTecnico;
+                }
+            }
+        }
+
     }
 }
