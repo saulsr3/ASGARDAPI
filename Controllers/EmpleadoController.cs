@@ -223,7 +223,38 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+        [HttpGet]
+        [Route("api/Empleado/validardui/{dui}")]
+        public int validardui(string dui)
+        {
+            int respuesta = 0;
+            try
+            {
 
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (dui == " ")
+                    {
+                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui && p.Dui.ToLower() != dui && p.Dhabilitado == 1).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
 
         [HttpGet]
         [Route("api/Empleado/listarCargoCombo")]
