@@ -12,6 +12,7 @@ namespace ASGARDAPI.Clases
         public int IdSucursal { get; set; }
         public string Correlativo { get; set; }
         public int Dhabilitado { get; set; }
+        public string nombreSucursal { get; set; }
 
     }
 }
