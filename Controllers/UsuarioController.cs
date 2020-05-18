@@ -32,7 +32,7 @@ namespace ASGARDAPI.Controllers
                                                 {
                                                     iidusuario = usuario.IdUsuario,
                                                     nombreusuario = usuario.NombreUsuario,
-                                                    nombreEmpleado = empleado.Nombres + "" + empleado.Apellidos,
+                                                    nombreEmpleado = empleado.Nombres + " " + empleado.Apellidos,
                                                     nombreTipoUsuario = tipoUsuario.TipoUsuario1
 
                                                 }).ToList();
@@ -69,6 +69,82 @@ namespace ASGARDAPI.Controllers
             catch (Exception ex)
             {
                 rpta = 0;
+            }
+            return rpta;
+        }
+
+        [HttpGet]
+        [Route("api/Usuario/listarEmpleadoCombo")]
+        public IEnumerable<EmpleadoAF> listarEmpleadoCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<EmpleadoAF> listarEmpleado = (from empleado in bd.Empleado
+                                                                 where empleado.Dhabilitado == 1
+                                                                 && empleado.BtieneUsuario==0
+                                                                 select new EmpleadoAF
+                                                                 {
+                                                                    dui = empleado.Dui,
+                                                                   nombres = empleado.Nombres + " " + empleado.Apellidos,
+
+                                                                 }).ToList();
+
+
+                return listarEmpleado;
+
+            }
+        }
+
+
+
+        [HttpGet]
+        [Route("api/Usuario/listarTipoCombo")]
+        public IEnumerable<TipoUsuarioAF> listarTipoCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TipoUsuarioAF> listarTipo = (from tipoUsuario in bd.TipoUsuario
+                                                          where tipoUsuario.Dhabilitado == 1
+                                                         
+                                                          select new TipoUsuarioAF
+                                                          {
+                                                              iidtipousuario = tipoUsuario.IdTipoUsuario,
+                                                              tipo = tipoUsuario.TipoUsuario1,
+
+                                                          }).ToList();
+
+
+                return listarTipo;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Usuario/validarUsuario/{iidusuario}/{tipo}")]
+        public int validarUsuario(int iidusuario, string tipo)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (iidusuario == 0)
+                    {
+                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() 
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() && p.IdTipoUsuario != iidusuario 
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
             }
             return rpta;
         }
