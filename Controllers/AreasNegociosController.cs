@@ -47,5 +47,31 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
+        [HttpPost]
+        [Route("api/AreasNegocios/agregarSucursal")]
+        public int aregarMarca([FromBody]AreasDeNegocioAF oAreaAF) {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext()) {
+                    AreaDeNegocio oArea = new AreaDeNegocio();
+                    oArea.IdAreaNegocio = oAreaAF.IdAreaNegocio;
+                    oArea.Nombre = oAreaAF.Nombre;
+                    oArea.IdSucursal = oAreaAF.IdSucursal;
+                    oArea.Correlativo = oAreaAF.Correlativo;
+                    oArea.Dhabilitado = 1;
+                    bd.AreaDeNegocio.Add(oArea);
+                    bd.SaveChanges();
+                    res = 1;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                res = 0;
+            }
+            return res;
+        }
     }
 }
