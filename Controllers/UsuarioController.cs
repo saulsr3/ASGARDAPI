@@ -88,14 +88,10 @@ namespace ASGARDAPI.Controllers
                                                                    nombres = empleado.Nombres + " " + empleado.Apellidos,
 
                                                                  }).ToList();
-
-
                 return listarEmpleado;
 
             }
         }
-
-
 
         [HttpGet]
         [Route("api/Usuario/listarTipoCombo")]
@@ -105,19 +101,90 @@ namespace ASGARDAPI.Controllers
             {
                 IEnumerable<TipoUsuarioAF> listarTipo = (from tipoUsuario in bd.TipoUsuario
                                                           where tipoUsuario.Dhabilitado == 1
-                                                         
                                                           select new TipoUsuarioAF
                                                           {
                                                               iidtipousuario = tipoUsuario.IdTipoUsuario,
                                                               tipo = tipoUsuario.TipoUsuario1,
 
                                                           }).ToList();
-
-
                 return listarTipo;
 
             }
         }
+
+
+        [HttpGet]
+        [Route("api/Usuario/RecuperarUsuario/{id}")]
+        public UsuarioAF RecuperarUsuario(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                UsuarioAF oUsuarioAF = new UsuarioAF();
+                Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == id).First();
+                oUsuarioAF.iidusuario = oUsuario.IdUsuario;
+                oUsuarioAF.nombreusuario = oUsuario.NombreUsuario;
+                //oUsuarioAF.nombreEmpleado =  oUsuario.IdEmpleado;
+                oUsuarioAF.iidTipousuario = (int)oUsuario.IdTipoUsuario;  
+
+                return oUsuarioAF;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Usuario/modificarUsuario")]
+        public int modificarUsuario([FromBody]UsuarioAF oUsuarioAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //para editar tenemos que sacar la informacion
+                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == oUsuarioAF.iidusuario).First();
+                    oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
+                    oUsuario.Contra = oUsuarioAF.contra;
+                    oUsuario.IdEmpleado = oUsuarioAF.nombreEmpleado;
+                    oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
+                    //para guardar cambios
+                    bd.SaveChanges();
+                    //si todo esta bien
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+        [HttpGet]
+        [Route("api/Usuario/eliminarUsuario/{iidusuario}")]
+        public int eliminarUsuario(int iidusuario)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == iidusuario).First();
+                    oUsuario.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
 
         [HttpGet]
         [Route("api/Usuario/validarUsuario/{iidusuario}/{tipo}")]
@@ -135,7 +202,7 @@ namespace ASGARDAPI.Controllers
                     }
                     else
                     {
-                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() && p.IdTipoUsuario != iidusuario 
+                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() && p.IdUsuario != iidusuario 
                         && p.Dhabilitado == 1).Count();
                     }
                 }
@@ -148,5 +215,64 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+
+        [HttpGet]
+        [Route("api/Usuario/buscarUsuario/{buscador?}")]
+        public IEnumerable<UsuarioAF> buscarUsuario(string buscador = "")
+        {
+            List<UsuarioAF> listaUsuario;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaUsuario = (from usuario in bd.Usuario
+                                    join empleado in bd.Empleado
+                                    on usuario.IdEmpleado equals empleado.Dui
+                                    join tipoUsuario in bd.TipoUsuario
+                                    on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
+                                    where usuario.Dhabilitado == 1
+                                    select new UsuarioAF
+                                    {
+                                        iidusuario = usuario.IdUsuario,
+                                        nombreusuario = usuario.NombreUsuario,
+                                        contra = usuario.Contra,
+                                        //iidEmpleado = empleado.Dui,
+                                       // iidTipousuario = tipoUsuario.TipoUsuario1
+
+                                    }).ToList();
+
+                    return listaUsuario;
+                }
+                else
+                {
+                    listaUsuario = (from usuario in bd.Usuario
+                                    join empleado in bd.Empleado
+                                   on usuario.IdEmpleado equals empleado.Dui
+                                    join tipoUsuario in bd.TipoUsuario
+                                    on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
+                                    where usuario.Dhabilitado == 1
+
+                                    && ((usuario.IdUsuario).ToString().Contains(buscador)
+                                      || (usuario.NombreUsuario).ToLower().Contains(buscador.ToLower())
+                                      || (usuario.Contra).ToLower().Contains(buscador.ToLower())
+                                     // || (usuario.IdEmpleado).ToLower().Contains(buscador.ToLower())
+                                      //|| (usuario.IdTipoUsuario).ToLower().Contains(buscador.ToLower())
+                                      )
+                                    select new UsuarioAF
+                                    {
+                                        iidusuario = usuario.IdUsuario,
+                                        nombreusuario = usuario.NombreUsuario,
+                                        contra = usuario.Contra,
+                                        // iidEmpleado = empleado.Dui,
+                                        //iidTipousuario = tipoUsuario.TipoUsuario1
+                                    }).ToList();
+
+                    return listaUsuario;
+                }
+            }
+        }
+
+        
+
     }
 }

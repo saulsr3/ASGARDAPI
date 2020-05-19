@@ -26,7 +26,7 @@ namespace ASGARDAPI.Controllers
                 {
 
                     TipoUsuario oTipoUsuario = new TipoUsuario();
-                    oTipoUsuario.IdTipoUsuario = oTipoUsuarioAF.iidtipousuario;
+                    oTipoUsuario.IdTipoUsuario= oTipoUsuarioAF.iidtipousuario;
                     oTipoUsuario.TipoUsuario1 = oTipoUsuarioAF.tipo;
                     oTipoUsuario.Descripcion = oTipoUsuarioAF.descripcion;
                     oTipoUsuario.Dhabilitado = 1;
@@ -48,21 +48,20 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         [Route("api/TipoUsuario/ListarTipoUsuarios")]
-        public List<TipoUsuarioAF> ListarTipoUsuarios()
+        public IEnumerable<TipoUsuarioAF> ListarTipoUsuarios()
         {
-            //definimos una lista de usuario
-            List<TipoUsuarioAF> listaTipoUsuario = new List<TipoUsuarioAF>();
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                listaTipoUsuario = (from tipoUsuario in bd.TipoUsuario
-                                    where tipoUsuario.Dhabilitado == 1
-                                    select new TipoUsuarioAF
-                                    {
-                                        iidtipousuario = tipoUsuario.IdTipoUsuario,
-                                        tipo = tipoUsuario.TipoUsuario1,
-                                        descripcion = tipoUsuario.Descripcion,
-                                       // dhabilitado = (int)tipoUsuario.Dhabilitado
-                                    }).ToList();
+
+                //definimos una lista 
+                List<TipoUsuarioAF> listaTipoUsuario = (from tipoUsuario in bd.TipoUsuario
+                                                        where tipoUsuario.Dhabilitado == 1
+                                                        select new TipoUsuarioAF
+                                                        {
+                                                            iidtipousuario = tipoUsuario.IdTipoUsuario,
+                                                            tipo = tipoUsuario.TipoUsuario1,
+                                                            descripcion = tipoUsuario.Descripcion
+                                                        }).ToList();
 
                 return listaTipoUsuario;
             }
