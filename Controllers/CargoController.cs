@@ -137,7 +137,7 @@ namespace ASGARDAPI.Controllers
 
         //Método buscar cargo
         [HttpGet]
-        [Route("api/Cargo/buscarMarca/{buscador?}")]
+        [Route("api/Cargo/buscarCargo/{buscador?}")]
         public IEnumerable<CargoAF> buscarCargo(string buscador = "")
         {
             List<CargoAF> listaCargo;

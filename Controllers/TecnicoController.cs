@@ -51,7 +51,7 @@ namespace ASGARDAPI.Controllers
 
         //Método listar técnico
         [HttpGet]
-        [Route("api/Tenico/listarTenico")]
+        [Route("api/Tecnico/listarTenico")]
         public IEnumerable<TecnicoAF> listarTecnico()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -67,5 +67,120 @@ namespace ASGARDAPI.Controllers
                 return listaTenico;
             }
         }
+
+        //Método recuperar técnico
+        [HttpGet]
+        [Route("api/Tecnico/recuperarTecnico/{id}")]
+        public TecnicoAF recuperarTecnico(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                TecnicoAF oTecnicoAF = new TecnicoAF();
+                Tecnicos oTecnico = bd.Tecnicos.Where(p => p.IdTecnico == id).First();
+
+                oTecnicoAF.idtecnico = oTecnico.IdTecnico;
+                oTecnicoAF.nombre = oTecnico.Nombre;
+                oTecnicoAF.empresa = oTecnico.Empresa;
+
+                return oTecnicoAF;
+            }
+
+        }
+
+        //Método modificar técnico
+        [HttpPost]
+        [Route("api/Tecnico/modificarTecnico")]
+        public int modificarTecnico([FromBody] TecnicoAF oTecnicoAF)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Tecnicos oTecnico = bd.Tecnicos.Where(p => p.IdTecnico == oTecnicoAF.idtecnico).First();
+
+                    oTecnico.IdTecnico = oTecnicoAF.idtecnico;
+                    oTecnico.Nombre = oTecnicoAF.nombre;
+                    oTecnico.Empresa = oTecnicoAF.empresa;
+
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+        //Método eliminar técnico
+        [HttpGet]
+        [Route("api/Tecnico/eliminarTecnico/{idTecnico}")]
+        public int eliminarTecnico(int idTecnico)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Tecnicos oTecnico = bd.Tecnicos.Where(p => p.IdTecnico == idTecnico).First();
+                    oTecnico.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+
+        }
+
+        //Método buscar técnico
+        [HttpGet]
+        [Route("api/Tecnico/buscarTecnico/{buscador?}")]
+        public IEnumerable<TecnicoAF> buscarTecnico(string buscador = "")
+        {
+            List<TecnicoAF> listaTecnico;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaTecnico = (from tecnico in bd.Tecnicos
+                                  where tecnico.Dhabilitado == 1
+                                  select new TecnicoAF
+                                  {
+                                      idtecnico=tecnico.IdTecnico,
+                                      nombre=tecnico.Nombre,
+                                      empresa=tecnico.Empresa
+
+                                  }).ToList();
+
+                    return listaTecnico;
+                }
+                else
+                {
+                    listaTecnico = (from tecnico in bd.Tecnicos
+                                  where tecnico.Dhabilitado == 1
+
+                                  && ((tecnico.IdTecnico).ToString().Contains(buscador) || (tecnico.Nombre).ToLower().Contains(buscador.ToLower()) || (tecnico.Empresa).ToLower().Contains(buscador.ToLower()))
+                                  select new TecnicoAF
+                                  {
+                                      idtecnico = tecnico.IdTecnico,
+                                      nombre = tecnico.Nombre,
+                                      empresa = tecnico.Empresa
+                                  }).ToList();
+
+                    return listaTecnico;
+                }
+            }
+        }
+
     }
 }
