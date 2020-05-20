@@ -29,6 +29,7 @@ namespace ASGARDAPI.Controllers
                                                          where empleado.Dhabilitado == 1
                                                          select new EmpleadoAF
                                                                    {
+                                                                       
                                                                        dui= empleado.Dui,
                                                                        nombres=empleado.Nombres,
                                                                        apellidos=empleado.Apellidos,

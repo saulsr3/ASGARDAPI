@@ -8,7 +8,7 @@ namespace ASGARDAPI.Clases
 {
     public class EmpleadoAF
     {
-        public int id { get; set; }
+        public int idempleado { get; set; }
         public string dui { get; set; }
         public string nombres { get; set; }
         public string apellidos { get; set; }
