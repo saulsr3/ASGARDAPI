@@ -29,7 +29,7 @@ namespace ASGARDAPI.Controllers
                                                          where empleado.Dhabilitado == 1
                                                          select new EmpleadoAF
                                                                    {
-                                                                       
+                                                                       idempleado=empleado.IdEmpleado,
                                                                        dui= empleado.Dui,
                                                                        nombres=empleado.Nombres,
                                                                        apellidos=empleado.Apellidos,
@@ -45,13 +45,14 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/Empleado/RecuperarEmpleado/{dui}")]
-        public EmpleadoAF RecuperarEmpleado(string dui)
+        [Route("api/Empleado/RecuperarEmpleado/{idempleado}")]
+        public EmpleadoAF RecuperarEmpleado(int idempleado)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 EmpleadoAF oEmpleadoAF = new EmpleadoAF();
-                Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == dui).First();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado).First();
+                oEmpleadoAF.idempleado = oEmpleado.IdEmpleado;
                 oEmpleadoAF.dui = oEmpleado.Dui;
                 oEmpleadoAF.nombres = oEmpleado.Nombres;
                 oEmpleadoAF.apellidos = oEmpleado.Apellidos;
@@ -78,7 +79,8 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == oEmpleadoAF.dui).First();
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oEmpleadoAF.idempleado).First();
+                    oEmpleado.IdEmpleado = oEmpleadoAF.idempleado;
                     oEmpleado.Dui = oEmpleadoAF.dui;
                     oEmpleado.Nombres = oEmpleadoAF.nombres;
                     oEmpleado.Apellidos = oEmpleadoAF.apellidos;
@@ -110,7 +112,7 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     Empleado oEmpleado = new Empleado();
-
+                    oEmpleado.IdEmpleado = oEmpleadoAF.idempleado;
                     oEmpleado.Dui = oEmpleadoAF.dui;
                     oEmpleado.Nombres = oEmpleadoAF.nombres;
                     oEmpleado.Apellidos = oEmpleadoAF.apellidos;
@@ -151,7 +153,9 @@ namespace ASGARDAPI.Controllers
                                      on empleado.IdCargo equals cargos.IdCargo
                                      where empleado.Dhabilitado == 1
                                      select new EmpleadoAF
-                                     {
+                                     { 
+                                         
+                                         idempleado=empleado.IdEmpleado,
                                          dui = empleado.Dui,
                                          nombres = empleado.Nombres,
                                          apellidos = empleado.Apellidos,
@@ -173,7 +177,8 @@ namespace ASGARDAPI.Controllers
                                      on empleado.IdCargo equals cargos.IdCargo
                                      where empleado.Dhabilitado == 1
 
-                                     &&((empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
+                                     &&((empleado.IdEmpleado).ToString().Contains(buscador.ToLower()) ||
+                                     (empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
                                      (empleado.Nombres).ToLower().Contains(buscador.ToLower()) ||
                                      (empleado.Apellidos).ToLower().Contains(buscador.ToLower()) ||
                                      (empleado.Direccion).ToLower().Contains(buscador.ToLower()) ||
@@ -184,6 +189,7 @@ namespace ASGARDAPI.Controllers
 
                                       select new EmpleadoAF
                                           {
+                                          idempleado=empleado.IdEmpleado,
                                           dui = empleado.Dui,
                                           nombres = empleado.Nombres,
                                           apellidos = empleado.Apellidos,
@@ -199,8 +205,8 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/Empleado/eliminarEmpleado/{dui}")]
-        public int eliminarEmpleado(string dui)
+        [Route("api/Empleado/eliminarEmpleado/{idempleado}")]
+        public int eliminarEmpleado(int idempleado)
         {
             int respuesta = 0;
 
@@ -208,7 +214,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    Empleado oEmpleado = bd.Empleado.Where(p => p.Dui == dui).First();
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado).First();
                     oEmpleado.Dhabilitado = 0;
                     bd.SaveChanges();
                     respuesta = 1;
@@ -225,8 +231,8 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/Empleado/validardui/{nombres}/{dui}")]
-        public string validardui(string nombres,string dui)
+        [Route("api/Empleado/validardui/{idempleado}/{dui}")]
+        public int validardui(int idempleado, string dui)
         {
             int respuesta = 0;
             try
@@ -235,14 +241,14 @@ namespace ASGARDAPI.Controllers
 
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    if (nombres == " ")
+                    if (idempleado == 0)
                     {
                         respuesta = bd.Empleado.Where(p => p.Dui == dui && p.Dhabilitado == 1).Count();
                     }
                     else
                     {
                        
-                        respuesta = bd.Empleado.Where(p => p.Dui == dui &&  p.Nombres.ToLower() != nombres.ToLower() && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Empleado.Where(p => p.Dui == dui &&  p.IdEmpleado != idempleado && p.Dhabilitado == 1).Count();
                        
                     }
 
@@ -255,7 +261,7 @@ namespace ASGARDAPI.Controllers
                 respuesta = 0;
 
             }
-            return respuesta.ToString();
+            return respuesta;
 
         }
 
@@ -285,16 +291,16 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         [Route("api/Empleado/listarAreaCombo")]
-        public IEnumerable<AreasDeNegocioAFdato> listarAreaCombo()
+        public IEnumerable<AreasDeNegocioAF> listarAreaCombo()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<AreasDeNegocioAFdato> listarAreas = (from area in bd.AreaDeNegocio
+                IEnumerable<AreasDeNegocioAF> listarAreas = (from area in bd.AreaDeNegocio
                                                      where area.Dhabilitado == 1
-                                                     select new AreasDeNegocioAFdato
+                                                     select new AreasDeNegocioAF
                                                      {
-                                                         idareadenegocio= area.IdAreaNegocio,
-                                                         nombre= area.Nombre
+                                                         IdAreaNegocio= area.IdAreaNegocio,
+                                                         Nombre= area.Nombre
 
                                                      }).ToList();
 
