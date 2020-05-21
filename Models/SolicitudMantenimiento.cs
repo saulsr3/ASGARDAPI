@@ -8,7 +8,5 @@ namespace ASGARDAPI.Models
         public int IdSolicitud { get; set; }
         public DateTime? Fecha { get; set; }
         public int? Folio { get; set; }
-
-        public BienMantenimiento BienMantenimiento { get; set; }
     }
 }

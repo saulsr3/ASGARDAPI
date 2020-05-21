@@ -13,7 +13,7 @@ namespace ASGARDAPI.Models
         public int IdUsuario { get; set; }
         public string NombreUsuario { get; set; }
         public string Contra { get; set; }
-        public string IdEmpleado { get; set; }
+        public int? IdEmpleado { get; set; }
         public int? IdTipoUsuario { get; set; }
         public int? Dhabilitado { get; set; }
 
