@@ -29,6 +29,7 @@ namespace ASGARDAPI.Controllers
                                                          where empleado.Dhabilitado == 1
                                                          select new EmpleadoAF
                                                                    {
+                                                                       
                                                                        dui= empleado.Dui,
                                                                        nombres=empleado.Nombres,
                                                                        apellidos=empleado.Apellidos,
@@ -224,8 +225,8 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/Empleado/validardui/{dui}")]
-        public int validardui(string dui)
+        [Route("api/Empleado/validardui/{nombres}/{dui}")]
+        public string validardui(string nombres,string dui)
         {
             int respuesta = 0;
             try
@@ -234,13 +235,15 @@ namespace ASGARDAPI.Controllers
 
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    if (dui == " ")
+                    if (nombres == " ")
                     {
-                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui.ToLower() && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Empleado.Where(p => p.Dui == dui && p.Dhabilitado == 1).Count();
                     }
                     else
                     {
-                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui && p.Dui.ToLower() != dui && p.Dhabilitado == 1).Count();
+                       
+                        respuesta = bd.Empleado.Where(p => p.Dui == dui &&  p.Nombres.ToLower() != nombres.ToLower() && p.Dhabilitado == 1).Count();
+                       
                     }
 
 
@@ -252,9 +255,12 @@ namespace ASGARDAPI.Controllers
                 respuesta = 0;
 
             }
-            return respuesta;
+            return respuesta.ToString();
 
         }
+
+
+       
 
         [HttpGet]
         [Route("api/Empleado/listarCargoCombo")]
