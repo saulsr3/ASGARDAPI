@@ -59,8 +59,9 @@ namespace ASGARDAPI.Controllers
                 oEmpleadoAF.direccion = oEmpleado.Direccion;
                 oEmpleadoAF.telefono = oEmpleado.Telefono;
                 oEmpleadoAF.telefonopersonal = oEmpleado.TelefonoPersonal;
-                oEmpleadoAF.idareadenegocio = (int)oEmpleado.IdAreaDeNegocio;
                 oEmpleadoAF.idcargo = (int)oEmpleado.IdCargo;
+                oEmpleadoAF.idareadenegocio = (int)oEmpleado.IdAreaDeNegocio;
+               
 
 
 
@@ -243,12 +244,12 @@ namespace ASGARDAPI.Controllers
                 {
                     if (idempleado == 0)
                     {
-                        respuesta = bd.Empleado.Where(p => p.Dui == dui && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui.ToLower() && p.Dhabilitado == 1).Count();
                     }
                     else
                     {
                        
-                        respuesta = bd.Empleado.Where(p => p.Dui == dui &&  p.IdEmpleado != idempleado && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Empleado.Where(p => p.Dui.ToLower() == dui.ToLower() &&  p.IdEmpleado != idempleado && p.Dhabilitado == 1).Count();
                        
                     }
 
