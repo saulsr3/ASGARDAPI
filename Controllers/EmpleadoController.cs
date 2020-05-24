@@ -61,8 +61,6 @@ namespace ASGARDAPI.Controllers
                 oEmpleadoAF.telefonopersonal = oEmpleado.TelefonoPersonal;
                 oEmpleadoAF.idcargo = (int)oEmpleado.IdCargo;
                 oEmpleadoAF.idareadenegocio = (int)oEmpleado.IdAreaDeNegocio;
-               
-
 
 
                 return oEmpleadoAF;
@@ -297,7 +295,7 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<AreasDeNegocioAF> listarAreas = (from area in bd.AreaDeNegocio
-                                                     where area.Dhabilitado == 1
+                                                     where area.Dhabilitado==1
                                                      select new AreasDeNegocioAF
                                                      {
                                                          IdAreaNegocio= area.IdAreaNegocio,
