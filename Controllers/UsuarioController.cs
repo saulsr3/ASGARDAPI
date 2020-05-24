@@ -8,6 +8,7 @@ using ASGARDAPI.Models;
 
 namespace ASGARDAPI.Controllers
 {
+    //
     public class UsuarioController : Controller
     {
         public IActionResult Index()
