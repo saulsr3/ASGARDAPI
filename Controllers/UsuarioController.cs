@@ -15,7 +15,7 @@ namespace ASGARDAPI.Controllers
         {
             return View();
         }
-
+        //lista usuarios
         [HttpGet]
         [Route("api/Usuario/listarUsuario")]
 
