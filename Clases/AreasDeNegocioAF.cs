@@ -13,6 +13,7 @@ namespace ASGARDAPI.Clases
         public string Correlativo { get; set; }
         public int Dhabilitado { get; set; }
         public string nombreSucursal { get; set; }
+        public string ubicacion { get; set; }
 
     }
 }
