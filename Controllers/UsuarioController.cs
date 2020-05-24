@@ -54,7 +54,7 @@ namespace ASGARDAPI.Controllers
                     oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
                     oUsuario.Contra = oUsuarioAF.contra;
-                    oUsuario.IdEmpleado = oUsuarioAF.nombreEmpleado;
+                    oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
 
                     oUsuario.Dhabilitado = 1;
@@ -143,7 +143,7 @@ namespace ASGARDAPI.Controllers
                     Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == oUsuarioAF.iidusuario).First();
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
                     oUsuario.Contra = oUsuarioAF.contra;
-                    oUsuario.IdEmpleado = oUsuarioAF.nombreEmpleado;
+                    oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
                     //para guardar cambios
                     bd.SaveChanges();
@@ -227,7 +227,7 @@ namespace ASGARDAPI.Controllers
                 {
                     listaUsuario = (from usuario in bd.Usuario
                                     join empleado in bd.Empleado
-                                    on usuario.IdEmpleado equals empleado.Dui
+                                    on usuario.IdEmpleado equals empleado.IdEmpleado
                                     join tipoUsuario in bd.TipoUsuario
                                     on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
                                     where usuario.Dhabilitado == 1
@@ -236,8 +236,8 @@ namespace ASGARDAPI.Controllers
                                         iidusuario = usuario.IdUsuario,
                                         nombreusuario = usuario.NombreUsuario,
                                         contra = usuario.Contra,
-                                        //iidEmpleado = empleado.Dui,
-                                       // iidTipousuario = tipoUsuario.TipoUsuario1
+                                        iidEmpleado = empleado.IdEmpleado,
+                                       iidTipousuario = tipoUsuario.IdTipoUsuario
 
                                     }).ToList();
 
@@ -247,7 +247,7 @@ namespace ASGARDAPI.Controllers
                 {
                     listaUsuario = (from usuario in bd.Usuario
                                     join empleado in bd.Empleado
-                                   on usuario.IdEmpleado equals empleado.Dui
+                                   on usuario.IdEmpleado equals empleado.IdEmpleado
                                     join tipoUsuario in bd.TipoUsuario
                                     on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
                                     where usuario.Dhabilitado == 1
@@ -255,7 +255,7 @@ namespace ASGARDAPI.Controllers
                                     && ((usuario.IdUsuario).ToString().Contains(buscador)
                                       || (usuario.NombreUsuario).ToLower().Contains(buscador.ToLower())
                                       || (usuario.Contra).ToLower().Contains(buscador.ToLower())
-                                     // || (usuario.IdEmpleado).ToLower().Contains(buscador.ToLower())
+                                      //|| (usuario.IdEmpleado).Contains(buscador.ToLower())
                                       //|| (usuario.IdTipoUsuario).ToLower().Contains(buscador.ToLower())
                                       )
                                     select new UsuarioAF

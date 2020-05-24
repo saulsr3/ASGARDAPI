@@ -53,8 +53,7 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
 
-                //definimos una lista 
-                List<TipoUsuarioAF> listaTipoUsuario = (from tipoUsuario in bd.TipoUsuario
+                IEnumerable<TipoUsuarioAF> listaTipoUsuario = (from tipoUsuario in bd.TipoUsuario
                                                         where tipoUsuario.Dhabilitado == 1
                                                         select new TipoUsuarioAF
                                                         {
@@ -133,6 +132,7 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 TipoUsuarioAF oTipoUsuarioAF = new TipoUsuarioAF();
+
                 TipoUsuario oTipoUsuario = bd.TipoUsuario.Where(p => p.IdTipoUsuario == id).First();
                 oTipoUsuarioAF.iidtipousuario = oTipoUsuario.IdTipoUsuario;
                 oTipoUsuarioAF.tipo = oTipoUsuario.TipoUsuario1;
