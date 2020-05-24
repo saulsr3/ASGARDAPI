@@ -24,7 +24,7 @@ namespace ASGARDAPI.Controllers
             {
                 List<UsuarioAF> listaUsuario = (from usuario in bd.Usuario
                                                 join empleado in bd.Empleado
-                                                on usuario.IdEmpleado equals empleado.Dui
+                                                on usuario.IdEmpleado equals empleado.IdEmpleado
                                                 join tipoUsuario in bd.TipoUsuario
                                                 on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
                                                 where usuario.Dhabilitado == 1
