@@ -121,6 +121,7 @@ namespace ASGARDAPI.Controllers
                     oEmpleado.IdAreaDeNegocio = oEmpleadoAF.idareadenegocio;
                     oEmpleado.IdCargo = oEmpleadoAF.idcargo;
                     oEmpleado.Dhabilitado = 1;
+                    oEmpleado.BtieneUsuario = 0;
                     bd.Empleado.Add(oEmpleado);
                     bd.SaveChanges();
                     respuesta = 1;
