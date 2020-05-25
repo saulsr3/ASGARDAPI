@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Clases;
 using ASGARDAPI.Models;
+using System.Security.Cryptography;
+using System.Text;
+using System.Transactions;
 
 namespace ASGARDAPI.Controllers
 {
@@ -50,22 +53,34 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-
-                    Usuario oUsuario = new Usuario();
+                    using (var transaccion = new TransactionScope())
+                    { 
+                        Usuario oUsuario = new Usuario();
                     oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
-                    oUsuario.Contra = oUsuarioAF.contra;
+                    //cifrar contraseña
+                    SHA256Managed sha = new SHA256Managed();
+                    string clave = oUsuarioAF.contra;
+                    byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
+                    byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
+                    string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-","");
+                    oUsuario.Contra = claveCifrada;
                     oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
 
                     oUsuario.Dhabilitado = 1;
 
                     bd.Usuario.Add(oUsuario);
+
+                        //para q me desabilite los q ya tienen usuario en el combo
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuarioAF.iidEmpleado).First();
+                    oEmpleado.BtieneUsuario = 1;
                     bd.SaveChanges();
+                    transaccion.Complete();
                     rpta = 1;
+                    }
                 }
             }
-
 
             catch (Exception ex)
             {
@@ -81,11 +96,11 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<EmpleadoAF> listarEmpleado = (from empleado in bd.Empleado
-                                                                 where empleado.Dhabilitado == 1
+                                                                 where empleado.Dhabilitado==1
                                                                  && empleado.BtieneUsuario==0
                                                                  select new EmpleadoAF
                                                                  {
-                                                                    dui = empleado.Dui,
+                                                                    idempleado = empleado.IdEmpleado,
                                                                    nombres = empleado.Nombres + " " + empleado.Apellidos,
 
                                                                  }).ToList();
@@ -101,13 +116,13 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<TipoUsuarioAF> listarTipo = (from tipoUsuario in bd.TipoUsuario
-                                                          where tipoUsuario.Dhabilitado == 1
-                                                          select new TipoUsuarioAF
-                                                          {
-                                                              iidtipousuario = tipoUsuario.IdTipoUsuario,
-                                                              tipo = tipoUsuario.TipoUsuario1,
-
-                                                          }).ToList();
+                                                         where tipoUsuario.Dhabilitado==1
+                                                         select new TipoUsuarioAF
+                                                         {
+                                                             iidtipousuario = tipoUsuario.IdTipoUsuario,
+                                                             tipo = tipoUsuario.TipoUsuario1,
+                                                             
+                                                         }).ToList();
                 return listarTipo;
 
             }
@@ -122,9 +137,10 @@ namespace ASGARDAPI.Controllers
             {
                 UsuarioAF oUsuarioAF = new UsuarioAF();
                 Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == id).First();
+
                 oUsuarioAF.iidusuario = oUsuario.IdUsuario;
                 oUsuarioAF.nombreusuario = oUsuario.NombreUsuario;
-                //oUsuarioAF.nombreEmpleado =  oUsuario.IdEmpleado;
+                //oUsuarioAF.iidEmpleado = (int) oUsuario.IdEmpleado;
                 oUsuarioAF.iidTipousuario = (int)oUsuario.IdTipoUsuario;  
 
                 return oUsuarioAF;
@@ -143,8 +159,8 @@ namespace ASGARDAPI.Controllers
                     //para editar tenemos que sacar la informacion
                     Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == oUsuarioAF.iidusuario).First();
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
-                    oUsuario.Contra = oUsuarioAF.contra;
-                    oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
+                    //oUsuario.Contra = oUsuarioAF.contra;
+                    //oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
                     //para guardar cambios
                     bd.SaveChanges();

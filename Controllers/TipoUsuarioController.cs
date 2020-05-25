@@ -182,5 +182,36 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("api/TipoUsuario/validarTipoUsuario/{iidtipousuario}/{tipo}")]
+        public int validarTipoUsuario(int iidtipousuario, string tipo)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (iidtipousuario == 0)
+                    {
+                        rpta = bd.TipoUsuario.Where(p => p.TipoUsuario1.ToLower() == tipo.ToLower()
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.TipoUsuario.Where(p => p.TipoUsuario1.ToLower() == tipo.ToLower() && p.IdTipoUsuario != iidtipousuario
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
+            }
+            return rpta;
+        }
+
     }
 }
