@@ -1,17 +1,12 @@
-﻿using System;
+﻿using ASGARDAPI.Clases;
+using ASGARDAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ASGARDAPI.Clases;
-using ASGARDAPI.Models;
-using System.Security.Cryptography;
-using System.Text;
-using System.Transactions;
 
 namespace ASGARDAPI.Controllers
 {
-    //
     public class UsuarioController : Controller
     {
         public IActionResult Index()
@@ -53,32 +48,32 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    using (var transaccion = new TransactionScope())
-                    { 
-                        Usuario oUsuario = new Usuario();
+                    //using (var transaccion = new TransactionScope())
+                    // if (oUsuarioAF.iidusuario == 0)
+                    //  {
+                    Usuario oUsuario = new Usuario();
                     oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
                     //cifrar contraseña
-                    SHA256Managed sha = new SHA256Managed();
-                    string clave = oUsuarioAF.contra;
-                    byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
-                    byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
-                    string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-","");
-                    oUsuario.Contra = claveCifrada;
+                    //SHA256Managed sha = new SHA256Managed();
+                    //string clave = oUsuarioAF.contra;
+                    //byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
+                    //byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
+                    //string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
+                    //oUsuario.Contra = claveCifrada;
+                    oUsuario.Contra = oUsuarioAF.contra;
                     oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
-
                     oUsuario.Dhabilitado = 1;
-
                     bd.Usuario.Add(oUsuario);
 
-                        //para q me desabilite los q ya tienen usuario en el combo
+                    //para que asigne el valor de 1 al empleado q ya tiene usuario
                     Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuarioAF.iidEmpleado).First();
                     oEmpleado.BtieneUsuario = 1;
                     bd.SaveChanges();
-                    transaccion.Complete();
+                    //  transaccion.Complete();
                     rpta = 1;
-                    }
+                    //   }
                 }
             }
 
@@ -96,14 +91,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<EmpleadoAF> listarEmpleado = (from empleado in bd.Empleado
-                                                                 where empleado.Dhabilitado==1
-                                                                 && empleado.BtieneUsuario==0
-                                                                 select new EmpleadoAF
-                                                                 {
-                                                                    idempleado = empleado.IdEmpleado,
-                                                                   nombres = empleado.Nombres + " " + empleado.Apellidos,
+                                                          where empleado.Dhabilitado == 1
+                                                          && empleado.BtieneUsuario == 0
+                                                          select new EmpleadoAF
+                                                          {
+                                                              idempleado = empleado.IdEmpleado,
+                                                              nombres = empleado.Nombres + " " + empleado.Apellidos,
 
-                                                                 }).ToList();
+                                                          }).ToList();
                 return listarEmpleado;
 
             }
@@ -116,12 +111,12 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<TipoUsuarioAF> listarTipo = (from tipoUsuario in bd.TipoUsuario
-                                                         where tipoUsuario.Dhabilitado==1
+                                                         where tipoUsuario.Dhabilitado == 1
                                                          select new TipoUsuarioAF
                                                          {
                                                              iidtipousuario = tipoUsuario.IdTipoUsuario,
                                                              tipo = tipoUsuario.TipoUsuario1,
-                                                             
+
                                                          }).ToList();
                 return listarTipo;
 
@@ -141,7 +136,7 @@ namespace ASGARDAPI.Controllers
                 oUsuarioAF.iidusuario = oUsuario.IdUsuario;
                 oUsuarioAF.nombreusuario = oUsuario.NombreUsuario;
                 //oUsuarioAF.iidEmpleado = (int) oUsuario.IdEmpleado;
-                oUsuarioAF.iidTipousuario = (int)oUsuario.IdTipoUsuario;  
+                oUsuarioAF.iidTipousuario = (int)oUsuario.IdTipoUsuario;
 
                 return oUsuarioAF;
             }
@@ -158,6 +153,7 @@ namespace ASGARDAPI.Controllers
                 {
                     //para editar tenemos que sacar la informacion
                     Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == oUsuarioAF.iidusuario).First();
+                    oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
                     //oUsuario.Contra = oUsuarioAF.contra;
                     //oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
@@ -175,33 +171,6 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
-        [HttpGet]
-        [Route("api/Usuario/eliminarUsuario/{iidusuario}")]
-        public int eliminarUsuario(int iidusuario)
-        {
-            int respuesta = 0;
-
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == iidusuario).First();
-                    oUsuario.Dhabilitado = 0;
-                    bd.SaveChanges();
-                    respuesta = 1;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                respuesta = 0;
-            }
-            return respuesta;
-        }
-
-
 
         [HttpGet]
         [Route("api/Usuario/validarUsuario/{iidusuario}/{tipo}")]
@@ -214,12 +183,12 @@ namespace ASGARDAPI.Controllers
                 {
                     if (iidusuario == 0)
                     {
-                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() 
+                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower()
                         && p.Dhabilitado == 1).Count();
                     }
                     else
                     {
-                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() && p.IdUsuario != iidusuario 
+                        rpta = bd.Usuario.Where(p => p.NombreUsuario.ToLower() == tipo.ToLower() && p.IdUsuario != iidusuario
                         && p.Dhabilitado == 1).Count();
                     }
                 }
@@ -254,7 +223,7 @@ namespace ASGARDAPI.Controllers
                                         nombreusuario = usuario.NombreUsuario,
                                         contra = usuario.Contra,
                                         iidEmpleado = empleado.IdEmpleado,
-                                       iidTipousuario = tipoUsuario.IdTipoUsuario
+                                        iidTipousuario = tipoUsuario.IdTipoUsuario
 
                                     }).ToList();
 
@@ -289,7 +258,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        
+
 
     }
 }
