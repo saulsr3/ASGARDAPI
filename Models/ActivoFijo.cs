@@ -5,6 +5,7 @@ namespace ASGARDAPI.Models
 {
     public partial class ActivoFijo
     {
+        public int IdBien { get; set; }
         public string CodigoBien { get; set; }
         public int? NoFormulario { get; set; }
         public string Desripcion { get; set; }
@@ -21,6 +22,7 @@ namespace ASGARDAPI.Models
         public int? IdResponsable { get; set; }
         public string DestinoInicial { get; set; }
         public byte[] Foto { get; set; }
+        public int? EstaAsignado { get; set; }
         public int? Dhabilitado { get; set; }
 
         public AreaDeNegocio IdAreaDeNegocioNavigation { get; set; }

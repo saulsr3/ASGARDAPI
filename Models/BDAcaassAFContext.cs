@@ -46,12 +46,11 @@ namespace ASGARDAPI.Models
         {
             modelBuilder.Entity<ActivoFijo>(entity =>
             {
-                entity.HasKey(e => e.CodigoBien);
+                entity.HasKey(e => e.IdBien);
 
                 entity.Property(e => e.CodigoBien)
                     .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .ValueGeneratedNever();
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Desripcion)
                     .HasMaxLength(100)
@@ -185,11 +184,11 @@ namespace ASGARDAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nombre)
-                    .HasMaxLength(100)
+                    .HasMaxLength(75)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Telefono)
-                    .HasMaxLength(50)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
             });
 
@@ -209,7 +208,7 @@ namespace ASGARDAPI.Models
 
                 entity.Property(e => e.Dui)
                     .HasColumnName("DUI")
-                    .HasMaxLength(15)
+                    .HasMaxLength(10)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nombres)
@@ -238,8 +237,6 @@ namespace ASGARDAPI.Models
             modelBuilder.Entity<FormularioIngreso>(entity =>
             {
                 entity.HasKey(e => e.NoFormulario);
-
-                entity.Property(e => e.NoFormulario).ValueGeneratedNever();
 
                 entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
 
@@ -328,7 +325,7 @@ namespace ASGARDAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Ubicacion)
-                    .HasMaxLength(100)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 
@@ -341,7 +338,7 @@ namespace ASGARDAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nombre)
-                    .HasMaxLength(100)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 
