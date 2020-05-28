@@ -79,6 +79,7 @@ namespace ASGARDAPI.Controllers
             }
             return res;
         }
+       
         [HttpGet]
         [Route("api/Sucursal/buscarSucursal/{buscador?}")]
         public IEnumerable<SucursalAF> buscarSucursal(string buscador = "")
@@ -179,6 +180,26 @@ namespace ASGARDAPI.Controllers
                 respuesta = 0;
             }
             return respuesta;
+        }
+        //Metodo para ver si la sucursal se esta utilizando en un area de negocio
+        [HttpGet]
+        [Route("api/Sucursal/validarArea/{idSucursal}")]
+        public int validarArea(int idSucursal)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdSucursal == idSucursal && p.Dhabilitado == 1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
         }
     }
 }
