@@ -21,7 +21,7 @@ namespace ASGARDAPI.Models
         public double? CuotaAsignanda { get; set; }
         public int? IdResponsable { get; set; }
         public string DestinoInicial { get; set; }
-        public byte[] Foto { get; set; }
+        public string Foto { get; set; }
         public int? EstaAsignado { get; set; }
         public int? Dhabilitado { get; set; }
 
