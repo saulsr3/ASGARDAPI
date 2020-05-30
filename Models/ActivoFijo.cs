@@ -34,7 +34,7 @@ namespace ASGARDAPI.Models
         public byte[] Foto { get; set; }
         public int? EstaAsignado { get; set; }
         public string DestinoInicial { get; set; }
-        public int? Dhabilitado { get; set; }
+        public int? EstadoActual { get; set; }
 
         public Clasificacion IdClasificacionNavigation { get; set; }
         public Donantes IdDonanteNavigation { get; set; }

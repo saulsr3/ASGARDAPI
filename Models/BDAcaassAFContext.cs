@@ -299,6 +299,11 @@ namespace ASGARDAPI.Models
                     .WithMany(p => p.InformeMantenimiento)
                     .HasForeignKey(d => d.IdMantenimiento)
                     .HasConstraintName("FK__InformeMa__IdMan__4F7CD00D");
+
+                entity.HasOne(d => d.IdTecnicoNavigation)
+                    .WithMany(p => p.InformeMantenimiento)
+                    .HasForeignKey(d => d.IdTecnico)
+                    .HasConstraintName("FK__InformeMa__IdTec__5070F446");
             });
 
             modelBuilder.Entity<Marcas>(entity =>
@@ -319,11 +324,11 @@ namespace ASGARDAPI.Models
                 entity.HasKey(e => e.IdProveedor);
 
                 entity.Property(e => e.Direccion)
-                    .HasMaxLength(25)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Encargado)
-                    .HasMaxLength(25)
+                    .HasMaxLength(75)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nombre)
@@ -331,7 +336,7 @@ namespace ASGARDAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Rubro)
-                    .HasMaxLength(25)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Telefono)
@@ -347,13 +352,16 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdSolicitud);
 
-                entity.Property(e => e.IdSolicitud).ValueGeneratedNever();
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
                 entity.Property(e => e.Fecha)
                     .HasColumnName("fecha")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Folio).HasColumnName("folio");
+                entity.Property(e => e.Folio)
+                    .HasColumnName("folio")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Sucursal>(entity =>
@@ -405,7 +413,7 @@ namespace ASGARDAPI.Models
                 entity.HasKey(e => e.IdUsuario);
 
                 entity.Property(e => e.Contra)
-                    .HasMaxLength(50)
+                    .HasMaxLength(150)
                     .IsUnicode(false);
 
                 entity.Property(e => e.NombreUsuario)
