@@ -7,7 +7,6 @@ namespace ASGARDAPI.Models
     {
         public AreaDeNegocio()
         {
-            ActivoFijo = new HashSet<ActivoFijo>();
             Empleado = new HashSet<Empleado>();
         }
 
@@ -18,7 +17,6 @@ namespace ASGARDAPI.Models
         public int? Dhabilitado { get; set; }
 
         public Sucursal IdSucursalNavigation { get; set; }
-        public ICollection<ActivoFijo> ActivoFijo { get; set; }
         public ICollection<Empleado> Empleado { get; set; }
     }
 }

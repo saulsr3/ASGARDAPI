@@ -13,7 +13,6 @@ namespace ASGARDAPI.Models
         public int IdClasificacion { get; set; }
         public string Clasificacion1 { get; set; }
         public string Correlativo { get; set; }
-        public int? VidaUtil { get; set; }
         public string Descripcion { get; set; }
         public int? Dhabilitado { get; set; }
 
