@@ -48,6 +48,8 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdBien);
 
+                entity.Property(e => e.CodigoBarra).IsUnicode(false);
+
                 entity.Property(e => e.Color)
                     .HasMaxLength(15)
                     .IsUnicode(false);
@@ -68,7 +70,7 @@ namespace ASGARDAPI.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Foto).HasColumnType("image");
+                entity.Property(e => e.Foto).IsUnicode(false);
 
                 entity.Property(e => e.Modelo)
                     .HasMaxLength(50)

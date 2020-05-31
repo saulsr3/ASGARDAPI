@@ -12,9 +12,19 @@ namespace ASGARDAPI.Models
 
         public int IdBien { get; set; }
         public string CorrelativoBien { get; set; }
+        public string CodigoBarra { get; set; }
         public int? NoFormulario { get; set; }
         public string Desripcion { get; set; }
+        public string Modelo { get; set; }
         public int? TipoAdquicicion { get; set; }
+        public string Color { get; set; }
+        public string NoSerie { get; set; }
+        public int? IdMarca { get; set; }
+        public int? IdClasificacion { get; set; }
+        public int? IdProveedor { get; set; }
+        public int? IdDonante { get; set; }
+        public int? VidaUtil { get; set; }
+        public int? IdResponsable { get; set; }
         public string EstadoIngreso { get; set; }
         public double? ValorAdquicicion { get; set; }
         public string PlazoPago { get; set; }
@@ -22,16 +32,7 @@ namespace ASGARDAPI.Models
         public double? CuotaAsignanda { get; set; }
         public double? Intereses { get; set; }
         public double? ValorResidual { get; set; }
-        public int? IdClasificacion { get; set; }
-        public int? IdProveedor { get; set; }
-        public int? IdDonante { get; set; }
-        public int? IdMarca { get; set; }
-        public string Modelo { get; set; }
-        public string Color { get; set; }
-        public string NoSerie { get; set; }
-        public int? VidaUtil { get; set; }
-        public int? IdResponsable { get; set; }
-        public byte[] Foto { get; set; }
+        public string Foto { get; set; }
         public int? EstaAsignado { get; set; }
         public string DestinoInicial { get; set; }
         public int? EstadoActual { get; set; }
