@@ -27,14 +27,14 @@ namespace ASGARDAPI.Controllers
                                                    on activo.IdClasificacion equals clasif.IdClasificacion
                                                    join marca in bd.Marcas
                                                    on activo.IdMarca equals  marca.IdMarca
-                                                   //where activo.EstadoActual == 1 && activo.EstaAsignado==0
-                                                   //orderby noFormulario.NoFormulario
+                                                   where activo.EstadoActual == 1 && activo.EstaAsignado==0
+                                                   orderby noFormulario.NoFormulario
                                                            select new ActivoFijoAF
                                                            {
                                                                IdBien=activo.IdBien,
                                                                NoFormulario=noFormulario.NoFormulario,
-                                                               FechaIngreso=noFormulario.FechaIngreso,
-                                                               Desripcion=activo.Desripcion,
+                                                               fechacadena=noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                               Desripcion =activo.Desripcion,
                                                                Clasificacion=clasif.Clasificacion1,
                                                                Marca=marca.Marca
                                                            }).ToList();

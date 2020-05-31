@@ -268,7 +268,7 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.NoFormulario);
 
-                entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
+                entity.Property(e => e.FechaIngreso).HasColumnType("date");
 
                 entity.Property(e => e.NoFactura)
                     .HasMaxLength(10)
