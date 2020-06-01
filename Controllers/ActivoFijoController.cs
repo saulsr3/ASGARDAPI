@@ -42,6 +42,42 @@ namespace ASGARDAPI.Controllers
             }
         }
         [HttpGet]
+        [Route("api/ActivoFijo/listarProveedoresCombo")]
+        public IEnumerable<ComboAnidadoAF> listarProveedoresCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ComboAnidadoAF> lista = (from proveedor in bd.Proveedor
+                                                     where proveedor.Dhabilitado == 1
+                                                     select new ComboAnidadoAF
+                                                     {
+                                                         id=proveedor.IdProveedor,
+                                                         nombre= proveedor.Nombre
+                                                        
+                                                     }).ToList();
+                return lista;
+            }
+        }
+        [HttpGet]
+        [Route("api/ActivoFijo/listarDonantesCombo")]
+        public IEnumerable<ComboAnidadoAF> listarDonantesCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ComboAnidadoAF> lista = (from donante in bd.Donantes
+                                                 where donante.Dhabilitado == 1
+                                                 select new ComboAnidadoAF
+                                                 {
+                                                     id = donante.IdDonante,
+                                                     nombre = donante.Nombre
+                                                    
+                                                 }).ToList();
+                return lista;
+            }
+        }
+        [HttpGet]
         [Route("api/ActivoFijo/listarEmpleadosCombo")]
         public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
         {
@@ -49,13 +85,13 @@ namespace ASGARDAPI.Controllers
             {
 
                 IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
-                                                     where empleado.Dhabilitado == 1
-                                                     select new EmpleadoAF
-                                                     {
-                                                         idempleado=empleado.IdEmpleado,
-                                                         nombres= empleado.Nombres,
-                                                         apellidos = empleado.Apellidos
-                                                     }).ToList();
+                                                 where empleado.Dhabilitado == 1
+                                                 select new EmpleadoAF
+                                                 {
+                                                     idempleado = empleado.IdEmpleado,
+                                                     nombres = empleado.Nombres,
+                                                     apellidos = empleado.Apellidos
+                                                 }).ToList();
                 return lista;
             }
         }
