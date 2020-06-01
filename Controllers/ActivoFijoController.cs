@@ -41,5 +41,65 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
+        [HttpGet]
+        [Route("api/ActivoFijo/listarEmpleadosCombo")]
+        public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
+                                                     where empleado.Dhabilitado == 1
+                                                     select new EmpleadoAF
+                                                     {
+                                                         idempleado=empleado.IdEmpleado,
+                                                         nombres= empleado.Nombres,
+                                                         apellidos = empleado.Apellidos
+                                                     }).ToList();
+                return lista;
+            }
+        }
+        [HttpGet]
+        [Route("api/Empleado/GenerarCodigo/{idempleado}/{idbien}")]
+        public CodigoAF GenerarCodigo(int idempleado,int idbien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                //objeto de la clase codigo que contiene los elementos
+                CodigoAF oCodigo = new CodigoAF();
+                //Extraer los datos padres de la base
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado).First();
+                //Utilizar los datos padres para extraer loc correlativos
+                AreaDeNegocio oarea= bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oarea.IdSucursal).First();
+                Clasificacion oclasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+
+                //LLenado de objeto
+                oCodigo.CorrelativoSucursal = osucursal.Correlativo;
+                oCodigo.CorrelativoArea = oarea.Correlativo;
+                oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
+                //selccionar cuantos hay de esa clasificacion
+                int oActivoC = bd.ActivoFijo.Where(p => p.IdClasificacion == oclasificacion.IdClasificacion).Count();
+                //comparar para la concatenacion correspondiente 
+                if (oActivoC >= 0 && oActivoC <= 9)
+                {
+                    oActivoC = oActivoC+1;
+                    oCodigo.Correlativo = "00" + oActivoC.ToString();
+                }
+                else if (oActivoC >= 10 && oActivoC <= 99)
+                {
+                    oActivoC = oActivoC+1;
+                    oCodigo.Correlativo = "0" + oActivoC.ToString();
+                }
+                else {
+                    oActivoC = oActivoC+1;
+                    oCodigo.Correlativo = oActivoC.ToString();
+                }
+               
+
+                return oCodigo;
+            }
+        }
     }
 }
