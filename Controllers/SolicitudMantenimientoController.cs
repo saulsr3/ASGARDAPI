@@ -25,14 +25,15 @@ namespace ASGARDAPI.Controllers
                                                                on solicitud.IdSolicitud equals bienmante.IdSolicitud
                                                                join activo in bd.ActivoFijo
                                                                on bienmante.IdBien equals activo.IdBien
-                                                               join empleado in bd.Empleado
-                                                               on activo.IdResponsable equals empleado.IdEmpleado
-                                                               join areanegocio in bd.AreaDeNegocio
-                                                               on empleado.IdAreaDeNegocio equals areanegocio.IdAreaNegocio
-                                                               join sucursal in bd.Sucursal
-                                                               on areanegocio.IdSucursal equals sucursal.IdSucursal
-                                                               where solicitud.Estado == 1
-                                                               //orderby solicitud.Folio
+                                                               //join empleado in bd.Empleado
+                                                               //on activo.IdResponsable equals empleado.IdEmpleado
+                                                              // join areanegocio in bd.AreaDeNegocio
+                                                              //on empleado.IdAreaDeNegocio equals areanegocio.IdAreaNegocio
+                                                              // join sucursal in bd.Sucursal
+                                                               //on areanegocio.IdSucursal equals sucursal.IdSucursal
+                                                              where solicitud.Estado == 1 
+
+                                                             //  orderby solicitud.Folio
 
                                                                select new SolicitudMantenimientoAF
                                                                {
@@ -40,18 +41,18 @@ namespace ASGARDAPI.Controllers
                                                                    
                                                                    folio = solicitud.Folio,
                                                                    fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
-                                                                   idmantenimiento = bienmante.IdMantenimiento,
-                                                                   idbien = (int)bienmante.IdBien,
+                                                                   idmantenimiento = bienmante.IdMantenimiento,                     
                                                                    razonesmantenimiento = bienmante.RazonMantenimiento,
                                                                    periodomantenimiento = bienmante.PeriodoMantenimiento,
-                                                                   idresponsable = (int)activo.IdResponsable,
+                                                                   //idresponsable = (int)activo.IdResponsable
+                                                                   idbien = (int)bienmante.IdBien,
                                                                    descripcionbien = activo.Desripcion,
-                                                                   codigobien = activo.CorrelativoBien,
-                                                                   nombrecompleto = empleado.Nombres + " " + empleado.Apellidos,
-                                                                   idareadenegocio = areanegocio.IdAreaNegocio,
-                                                                   areadenegocio = areanegocio.Nombre,
-                                                                   idsucursal = sucursal.IdSucursal,
-                                                                   sucursal = sucursal.Nombre
+                                                                   codigobien = activo.CorrelativoBien
+                                                                 //  nombrecompleto = empleado.Nombres + " " + empleado.Apellidos
+                                                                  // idareadenegocio = areanegocio.IdAreaNegocio,
+                                                                   //areadenegocio = areanegocio.Nombre,
+                                                                  // idsucursal = sucursal.IdSucursal,
+                                                                   //sucursal = sucursal.Nombre
 
 
 
@@ -62,7 +63,47 @@ namespace ASGARDAPI.Controllers
 
         }
 
-        [HttpGet]
+
+
+        [HttpPost]
+        [Route("api/SolicitudMantenimiento/guardarSolicitud")]
+        public int guardarSolicitud ([FromBody] SolicitudMantenimientoAF oSolicitudAF)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudMantenimiento oSolicitud = new SolicitudMantenimiento();
+                    oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
+                    oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
+                    oSolicitud.Folio = oSolicitudAF.folio;
+                  
+                    AreaDeNegocio oArea = new AreaDeNegocio();
+                    oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
+                    Sucursal oSucursal = new Sucursal();
+                    oSucursal.IdSucursal = oSolicitudAF.idsucursal;
+                    Empleado oEmpleado = new Empleado();
+                    oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
+
+                    oSolicitud.Estado = 1;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+                    
+                    
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
+
+       [HttpGet]
         [Route("api/SolicitudMantenimiento/listarEmpleadosCombo")]
         public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
         {
