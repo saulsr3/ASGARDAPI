@@ -65,6 +65,48 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/Bienes/listarAreaCombo")]
+        public IEnumerable<ComboAnidadoAF> listarAreaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarAreas = (from area in bd.AreaDeNegocio
+                                                             where area.Dhabilitado == 1
+                                                             select new ComboAnidadoAF
+                                                             {
+                                                                 id = area.IdAreaNegocio,
+                                                                 nombre = area.Nombre
+
+                                                             }).ToList();
+
+
+                return listarAreas;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Bienes/listarSucursalCombo")]
+        public IEnumerable<ComboAnidadoAF> listarSucirsalCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarSucursal = (from sucursal in bd.Sucursal
+                                                           where sucursal.Dhabilitado == 1
+                                                           select new ComboAnidadoAF
+                                                           {
+                                                               id = sucursal.IdSucursal,
+                                                               nombre = sucursal.Nombre
+
+                                                           }).ToList();
+
+
+                return listarSucursal;
+
+            }
+        }
+
 
     }
 }

@@ -172,5 +172,67 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+
+        [HttpGet]
+        [Route("api/ActivoFijo/RecuperarBienes/{id}")]
+        public ActivoFijoAF RecuperarBienes(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoFijoAF oActivoFijoAF = new ActivoFijoAF();
+                ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                oActivoFijoAF.idbien = oActivoFijo.IdBien;
+                oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
+                oActivoFijoAF.numformulario = (int)oActivoFijo.NoFormulario;
+                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
+                oActivoFijoAF.color = oActivoFijo.Color;
+                oActivoFijoAF.modelo = oActivoFijo.Modelo;
+
+                return oActivoFijoAF;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarAreaCombo")]
+        public IEnumerable<ComboAnidadoAF> listarAreaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarAreas = (from area in bd.AreaDeNegocio
+                                                           where area.Dhabilitado == 1
+                                                           select new ComboAnidadoAF
+                                                           {
+                                                               id = area.IdAreaNegocio,
+                                                               nombre = area.Nombre
+
+                                                           }).ToList();
+
+
+                return listarAreas;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarSucursalCombo")]
+        public IEnumerable<ComboAnidadoAF> listarSucursalCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarSucursal = (from sucursal in bd.Sucursal
+                                                              where sucursal.Dhabilitado == 1
+                                                              select new ComboAnidadoAF
+                                                              {
+                                                                  id = sucursal.IdSucursal,
+                                                                  nombre = sucursal.Nombre
+
+                                                              }).ToList();
+
+
+                return listarSucursal;
+
+            }
+        }
     }
 }
