@@ -21,11 +21,8 @@ namespace ASGARDAPI.Clases
         public string Resposnsable { get; set; }
 
         ///////////////////////////////////////////////
-        public string correlativobien { get; set; }
+      
         public string codigobarra { get; set; }
-        public string tipoactivo { get; set; }
-        public string area { get; set; }
-        public string responsable { get; set; }
         public string modelo { get; set; }
         public int tipoadquisicion { get; set; }
         public string color { get; set; }
@@ -47,8 +44,7 @@ namespace ASGARDAPI.Clases
         public int estadoasignado { get; set; }
         public string destinoinicial { get; set; }
         public int estadoactual { get; set; }
-        public int idbien { get; set; }
-        public int numformulario { get; set; }
+      
 
     }
 }

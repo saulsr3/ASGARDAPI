@@ -182,9 +182,9 @@ namespace ASGARDAPI.Controllers
             {
                 ActivoFijoAF oActivoFijoAF = new ActivoFijoAF();
                 ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                oActivoFijoAF.idbien = oActivoFijo.IdBien;
+                oActivoFijoAF.IdBien = oActivoFijo.IdBien;
                 oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
-                oActivoFijoAF.numformulario = (int)oActivoFijo.NoFormulario;
+                oActivoFijoAF.NoFormulario = (int)oActivoFijo.NoFormulario;
                 oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
                 oActivoFijoAF.color = oActivoFijo.Color;
                 oActivoFijoAF.modelo = oActivoFijo.Modelo;
