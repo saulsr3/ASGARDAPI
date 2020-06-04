@@ -110,7 +110,7 @@ namespace ASGARDAPI.Controllers
                 oTipoUsuarioAF.iidtipousuario = oTipoUsuario.IdTipoUsuario;
                 oTipoUsuarioAF.tipo = oTipoUsuario.TipoUsuario1;
                 oTipoUsuarioAF.descripcion = oTipoUsuario.Descripcion;
-                
+
                 return oTipoUsuarioAF;
             }
         }
@@ -129,7 +129,7 @@ namespace ASGARDAPI.Controllers
                     oTipoUsuario.IdTipoUsuario = oTipoUsuarioAF.iidtipousuario;
                     oTipoUsuario.TipoUsuario1 = oTipoUsuarioAF.tipo;
                     oTipoUsuario.Descripcion = oTipoUsuarioAF.descripcion;
-                    
+
                     //para guardar cambios
                     bd.SaveChanges();
                     //si todo esta bien

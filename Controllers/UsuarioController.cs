@@ -172,6 +172,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
+
         [HttpGet]
         [Route("api/Usuario/validarUsuario/{iidusuario}/{tipo}")]
         public int validarUsuario(int iidusuario, string tipo)
