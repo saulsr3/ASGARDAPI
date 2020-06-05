@@ -43,42 +43,7 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
-        [HttpGet]
-        [Route("api/ActivoFijo/listarProveedoresCombo")]
-        public IEnumerable<ComboAnidadoAF> listarProveedoresCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-
-                IEnumerable<ComboAnidadoAF> lista = (from proveedor in bd.Proveedor
-                                                     where proveedor.Dhabilitado == 1
-                                                     select new ComboAnidadoAF
-                                                     {
-                                                         id = proveedor.IdProveedor,
-                                                         nombre = proveedor.Nombre
-
-                                                     }).ToList();
-                return lista;
-            }
-        }
-        [HttpGet]
-        [Route("api/ActivoFijo/listarDonantesCombo")]
-        public IEnumerable<ComboAnidadoAF> listarDonantesCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-
-                IEnumerable<ComboAnidadoAF> lista = (from donante in bd.Donantes
-                                                     where donante.Dhabilitado == 1
-                                                     select new ComboAnidadoAF
-                                                     {
-                                                         id = donante.IdDonante,
-                                                         nombre = donante.Nombre
-
-                                                     }).ToList();
-                return lista;
-            }
-        }
+        
         [HttpGet]
         [Route("api/ActivoFijo/listarEmpleadosCombo")]
         public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
@@ -232,6 +197,137 @@ namespace ASGARDAPI.Controllers
 
                 return listarSucursal;
 
+            }
+        }
+
+
+        //Método guardar nuevo bien
+        [HttpPost]
+        [Route("api/ActivoFijo/guardarnuevoBien")]
+        public int guardarnuevoBien([FromBody]ActivoFijoAF oActivoFijoAF, FormularioIngresoAF oFormularioIngresoAF)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivoFijo = new ActivoFijo();
+                    FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+
+                    oActivoFijo.IdBien = oActivoFijoAF.IdBien;
+                    oFormularioIngreso.NoFormulario = oFormularioIngresoAF.noformulario;
+                    oFormularioIngreso.FechaIngreso = oFormularioIngresoAF.fechaingreso;
+                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquisicion;
+                    oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
+                    oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
+                    oActivoFijo.Color = oActivoFijoAF.color;
+                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
+                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
+                    oFormularioIngreso.NoFactura = oFormularioIngresoAF.nofactura;
+                    oActivoFijo.ValorAdquicicion = oActivoFijoAF.costo;
+                    oActivoFijo.Prima = oActivoFijoAF.prima;
+                    oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    oActivoFijo.Intereses = oActivoFijoAF.interes;
+                    oFormularioIngreso.PersonaEntrega = oFormularioIngresoAF.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oFormularioIngresoAF.personarecibe;
+                    oActivoFijo.Foto = oActivoFijoAF.foto;
+                    oFormularioIngreso.Observaciones = oFormularioIngresoAF.observaciones;
+
+                    oActivoFijo.EstadoActual = 1;
+                    bd.ActivoFijo.Add(oActivoFijo);
+                    bd.FormularioIngreso.Add(oFormularioIngreso);
+                    bd.SaveChanges();
+                    rpta = 1;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+
+            return rpta;
+        }
+
+        //Métodos para llenar combos del form
+        [HttpGet]
+        [Route("api/ActivoFijo/listarClasificacionCombo")]
+        public IEnumerable<ClasificacionAF> listarClasificacionCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
+                                                      where clasificacion.Dhabilitado == 1
+                                                      select new ClasificacionAF
+                                                      {
+                                                          idclasificacion = clasificacion.IdClasificacion,
+                                                          clasificacion = clasificacion.Clasificacion1,
+                                                          correlativo = clasificacion.Correlativo
+
+                                                      }).ToList();
+                return lista;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarProveedoresCombo")]
+        public IEnumerable<ComboAnidadoAF> listarProveedoresCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ComboAnidadoAF> lista = (from proveedor in bd.Proveedor
+                                                     where proveedor.Dhabilitado == 1
+                                                     select new ComboAnidadoAF
+                                                     {
+                                                         id = proveedor.IdProveedor,
+                                                         nombre = proveedor.Nombre
+
+                                                     }).ToList();
+                return lista;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarDonantesCombo")]
+        public IEnumerable<ComboAnidadoAF> listarDonantesCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ComboAnidadoAF> lista = (from donante in bd.Donantes
+                                                     where donante.Dhabilitado == 1
+                                                     select new ComboAnidadoAF
+                                                     {
+                                                         id = donante.IdDonante,
+                                                         nombre = donante.Nombre
+
+                                                     }).ToList();
+                return lista;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarMarcasCombo")]
+        public IEnumerable<MarcasAF> listarMarcasCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<MarcasAF> lista = (from marca in bd.Marcas
+                                                     where marca.Dhabilitado == 1
+                                                     select new MarcasAF
+                                                     {
+                                                         IdMarca=marca.IdMarca,
+                                                         Marca=marca.Marca
+
+                                                     }).ToList();
+                return lista;
             }
         }
     }
