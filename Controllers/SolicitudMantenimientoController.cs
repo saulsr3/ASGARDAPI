@@ -121,27 +121,36 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
-                  
+                    bd.SolicitudMantenimiento.Add(oSolicitud);
+
                     AreaDeNegocio oArea = new AreaDeNegocio();
                     oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
+                    bd.AreaDeNegocio.Add(oArea);
                     Sucursal oSucursal = new Sucursal();
                     oSucursal.IdSucursal = oSolicitudAF.idsucursal;
+                    bd.Sucursal.Add(oSucursal);
                     Empleado oEmpleado = new Empleado();
                     oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
-
+                    bd.Empleado.Add(oEmpleado);
+                   
                     // estos son los datos de la tabla
 
                     ActivoFijo oActivo = new ActivoFijo();
                     oActivo.IdBien = oSolicitudAF.idbien;
                     oActivo.CorrelativoBien = oSolicitudAF.codigobien;
                     oActivo.Desripcion = oSolicitudAF.descripcionbien;
-
+                    bd.ActivoFijo.Add(oActivo);
                     BienMantenimiento oBienMantenimiento = new BienMantenimiento();
 
                     oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
                     oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
                     oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
+                    bd.BienMantenimiento.Add(oBienMantenimiento);
 
+                   
+
+                   
+                   
                     oSolicitud.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
@@ -157,10 +166,28 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/listarCodigoCombo")]
+        public IEnumerable<ActivoFijoAF> listarCodigoCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ActivoFijoAF> lista = (from activofijo in bd.ActivoFijo
+                                                 where activofijo.EstadoActual==1
+                                                 select new ActivoFijoAF
+                                                 {
+                                                     IdBien=activofijo.IdBien,
+                                                     Codigo=activofijo.CorrelativoBien,
+                                                     descripcion=activofijo.Desripcion
+                                                    
+                                                 }).ToList();
+                return lista;
+            }
+        }
 
 
-
-       [HttpGet]
+        [HttpGet]
         [Route("api/SolicitudMantenimiento/listarEmpleadosCombo")]
         public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
         {
