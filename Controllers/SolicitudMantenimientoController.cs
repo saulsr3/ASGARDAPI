@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
+using System.Threading;
 
 namespace ASGARDAPI.Controllers
 {
@@ -64,6 +65,48 @@ namespace ASGARDAPI.Controllers
         }
 
 
+        [HttpPost]
+        [Route("api/SolicitudMantenimiento/guardarBienesSolicitud")]
+             public int guardarBienesSolicitud([FromBody] SolicitudMantenimientoAF oSolicitudAF)
+        {
+            int respuesta = 0;
+
+            
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = new ActivoFijo();
+                    oActivo.IdBien = oSolicitudAF.idbien;
+                    oActivo.CorrelativoBien = oSolicitudAF.codigobien;
+                    oActivo.Desripcion = oSolicitudAF.descripcionbien;
+
+                    BienMantenimiento oBienMantenimiento = new BienMantenimiento();
+
+                    oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
+                    oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
+                    oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
+
+                    //for (int i = 0; i < oBienMantenimiento.IdMantenimiento; i++)
+                    //{
+                    //    cadena = ((oBienMantenimiento.IdMantenimiento) ); 
+                    //}
+
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+
+
+        }
 
         [HttpPost]
         [Route("api/SolicitudMantenimiento/guardarSolicitud")]
@@ -86,6 +129,19 @@ namespace ASGARDAPI.Controllers
                     Empleado oEmpleado = new Empleado();
                     oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
 
+                    // estos son los datos de la tabla
+
+                    ActivoFijo oActivo = new ActivoFijo();
+                    oActivo.IdBien = oSolicitudAF.idbien;
+                    oActivo.CorrelativoBien = oSolicitudAF.codigobien;
+                    oActivo.Desripcion = oSolicitudAF.descripcionbien;
+
+                    BienMantenimiento oBienMantenimiento = new BienMantenimiento();
+
+                    oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
+                    oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
+                    oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
+
                     oSolicitud.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
@@ -100,6 +156,7 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+
 
 
 
