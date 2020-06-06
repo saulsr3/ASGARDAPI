@@ -65,48 +65,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        [HttpPost]
-        [Route("api/SolicitudMantenimiento/guardarBienesSolicitud")]
-             public int guardarBienesSolicitud([FromBody] SolicitudMantenimientoAF oSolicitudAF)
-        {
-            int respuesta = 0;
 
-            
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    ActivoFijo oActivo = new ActivoFijo();
-                    oActivo.IdBien = oSolicitudAF.idbien;
-                    oActivo.CorrelativoBien = oSolicitudAF.codigobien;
-                    oActivo.Desripcion = oSolicitudAF.descripcionbien;
-
-                    BienMantenimiento oBienMantenimiento = new BienMantenimiento();
-
-                    oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
-                    oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
-                    oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
-
-                    //for (int i = 0; i < oBienMantenimiento.IdMantenimiento; i++)
-                    //{
-                    //    cadena = ((oBienMantenimiento.IdMantenimiento) ); 
-                    //}
-
-                    bd.SaveChanges();
-                    respuesta = 1;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                respuesta = 0;
-            }
-            return respuesta;
-
-
-        }
 
         [HttpPost]
         [Route("api/SolicitudMantenimiento/guardarSolicitud")]
@@ -125,33 +84,34 @@ namespace ASGARDAPI.Controllers
 
                     AreaDeNegocio oArea = new AreaDeNegocio();
                     oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
-                    bd.AreaDeNegocio.Add(oArea);
+                    //  bd.AreaDeNegocio.Add(oArea);
                     Sucursal oSucursal = new Sucursal();
                     oSucursal.IdSucursal = oSolicitudAF.idsucursal;
-                    bd.Sucursal.Add(oSucursal);
+                    // bd.Sucursal.Add(oSucursal);
                     Empleado oEmpleado = new Empleado();
                     oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
                     bd.Empleado.Add(oEmpleado);
-                   
-                    // estos son los datos de la tabla
 
-                    ActivoFijo oActivo = new ActivoFijo();
+                    //estos son los datos de la tabla
+
+                   ActivoFijo oActivo = new ActivoFijo();
                     oActivo.IdBien = oSolicitudAF.idbien;
-                    oActivo.CorrelativoBien = oSolicitudAF.codigobien;
-                    oActivo.Desripcion = oSolicitudAF.descripcionbien;
+                    //oActivo.CorrelativoBien = oSolicitudAF.codigobien;
+                   // oActivo.Desripcion = oSolicitudAF.descripcionbien;
                     bd.ActivoFijo.Add(oActivo);
                     BienMantenimiento oBienMantenimiento = new BienMantenimiento();
 
                     oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
+                  //  oBienMantenimiento.IdSolicitud = oSolicitudAF.idsolicitud;
                     oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
                     oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
                     bd.BienMantenimiento.Add(oBienMantenimiento);
 
-                   
 
-                   
-                   
-                    oSolicitud.Estado = 1;
+
+
+
+                    // oSolicitud.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
                 }
