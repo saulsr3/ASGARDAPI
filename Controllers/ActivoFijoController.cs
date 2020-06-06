@@ -235,7 +235,7 @@ namespace ASGARDAPI.Controllers
         //Método guardar nuevo bien
         [HttpPost]
         [Route("api/ActivoFijo/guardarnuevoBien")]
-        public int guardarnuevoBien([FromBody]ActivoFijoAF oActivoFijoAF, FormularioIngresoAF oFormularioIngresoAF)
+        public int guardarnuevoBien([FromBody]ActivoFijoAF oActivoFijoAF)
         {
             int rpta = 0;
 
@@ -244,32 +244,36 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     ActivoFijo oActivoFijo = new ActivoFijo();
-                    FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+                   // FormularioIngreso oFormularioIngreso = new FormularioIngreso();
 
                     oActivoFijo.IdBien = oActivoFijoAF.IdBien;
-                    oFormularioIngreso.NoFormulario = oFormularioIngresoAF.noformulario;
-                    oFormularioIngreso.FechaIngreso = oFormularioIngresoAF.fechaingreso;
-                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    oActivoFijo.NoFormulario = oActivoFijoAF.noformulario;
+                    oActivoFijo.Desripcion = oActivoFijoAF.descripcion;
+                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
                     oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquisicion;
+                    oActivoFijo.Color = oActivoFijoAF.color;
+                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
                     oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
                     oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
-                    oActivoFijo.Color = oActivoFijoAF.color;
-                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
-                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
-                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
-                    oFormularioIngreso.NoFactura = oFormularioIngresoAF.nofactura;
+                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
                     oActivoFijo.ValorAdquicicion = oActivoFijoAF.costo;
-                    oActivoFijo.Prima = oActivoFijoAF.prima;
                     oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    oActivoFijo.Prima = oActivoFijoAF.prima;
+                    oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
                     oActivoFijo.Intereses = oActivoFijoAF.interes;
-                    oFormularioIngreso.PersonaEntrega = oFormularioIngresoAF.personaentrega;
-                    oFormularioIngreso.PersonaRecibe = oFormularioIngresoAF.personarecibe;
                     oActivoFijo.Foto = oActivoFijoAF.foto;
-                    oFormularioIngreso.Observaciones = oFormularioIngresoAF.observaciones;
+
+                    //Variables para formularioIngreso
+                    //  oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
+                    //  oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
+                    //   oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
+                    //   oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
+                    //   oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
+                    //  oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
 
                     oActivoFijo.EstadoActual = 1;
                     bd.ActivoFijo.Add(oActivoFijo);
-                    bd.FormularioIngreso.Add(oFormularioIngreso);
                     bd.SaveChanges();
                     rpta = 1;
 

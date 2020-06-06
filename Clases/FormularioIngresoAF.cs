@@ -3,7 +3,7 @@ namespace ASGARDAPI.Clases
 {
     public class FormularioIngresoAF
     {
-        //Variables
+        //Variables del formularioIngreso
         public int noformulario { get; set; }
         public DateTime? fechaingreso { get; set; }
         public string nofactura { get; set; }
