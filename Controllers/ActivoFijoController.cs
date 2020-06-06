@@ -83,7 +83,8 @@ namespace ASGARDAPI.Controllers
                 oCodigo.CorrelativoArea = oarea.Correlativo;
                 oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
                 //selccionar cuantos hay de esa clasificacion
-                int oActivoC = bd.ActivoFijo.Where(p => p.IdClasificacion == oclasificacion.IdClasificacion).Count();
+                int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado==1 &&p.IdClasificacion== oclasificacion.IdClasificacion).Count();
+             
                 //comparar para la concatenacion correspondiente 
                 if (oActivoC >= 0 && oActivoC <= 9)
                 {
@@ -104,6 +105,36 @@ namespace ASGARDAPI.Controllers
 
                 return oCodigo;
             }
+        }
+        [HttpPost]
+        [Route("api/ActivoFIjo/asignarBien")]
+        public int asignarBien([FromBody]AsignacionAF oAsignacionAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oAsignacionAF.idBien).First();
+                    oActivo.IdBien = oAsignacionAF.idBien;
+                    oActivo.NoSerie = oAsignacionAF.noSerie;
+                    oActivo.VidaUtil = oAsignacionAF.vidaUtil;
+                    oActivo.IdResponsable = oAsignacionAF.idEmpleado;
+                    Empleado oEmpleado= bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                    AreaDeNegocio oArea=bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                    Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                    oActivo.CorrelativoBien = oAsignacionAF.Codigo;
+                    oActivo.EstaAsignado = 1;
+                    oActivo.DestinoInicial = oArea.Nombre + " " + oSucursal.Nombre;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
         }
         //Medotos para modulo de control mayra
         [HttpGet]
@@ -204,7 +235,7 @@ namespace ASGARDAPI.Controllers
         //Método guardar nuevo bien
         [HttpPost]
         [Route("api/ActivoFijo/guardarnuevoBien")]
-        public int guardarnuevoBien([FromBody]ActivoFijoAF oActivoFijoAF, FormularioIngresoAF oFormularioIngresoAF)
+        public int guardarnuevoBien([FromBody]ActivoFijoAF oActivoFijoAF)
         {
             int rpta = 0;
 
@@ -213,32 +244,36 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     ActivoFijo oActivoFijo = new ActivoFijo();
-                    FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+                   // FormularioIngreso oFormularioIngreso = new FormularioIngreso();
 
                     oActivoFijo.IdBien = oActivoFijoAF.IdBien;
-                    oFormularioIngreso.NoFormulario = oFormularioIngresoAF.noformulario;
-                    oFormularioIngreso.FechaIngreso = oFormularioIngresoAF.fechaingreso;
-                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    oActivoFijo.NoFormulario = oActivoFijoAF.noformulario;
+                    oActivoFijo.Desripcion = oActivoFijoAF.descripcion;
+                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
                     oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquisicion;
+                    oActivoFijo.Color = oActivoFijoAF.color;
+                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
                     oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
                     oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
-                    oActivoFijo.Color = oActivoFijoAF.color;
-                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
-                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
-                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
-                    oFormularioIngreso.NoFactura = oFormularioIngresoAF.nofactura;
+                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
                     oActivoFijo.ValorAdquicicion = oActivoFijoAF.costo;
-                    oActivoFijo.Prima = oActivoFijoAF.prima;
                     oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    oActivoFijo.Prima = oActivoFijoAF.prima;
+                    oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
                     oActivoFijo.Intereses = oActivoFijoAF.interes;
-                    oFormularioIngreso.PersonaEntrega = oFormularioIngresoAF.personaentrega;
-                    oFormularioIngreso.PersonaRecibe = oFormularioIngresoAF.personarecibe;
                     oActivoFijo.Foto = oActivoFijoAF.foto;
-                    oFormularioIngreso.Observaciones = oFormularioIngresoAF.observaciones;
+
+                    //Variables para formularioIngreso
+                    //  oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
+                    //  oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
+                    //   oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
+                    //   oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
+                    //   oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
+                    //  oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
 
                     oActivoFijo.EstadoActual = 1;
                     bd.ActivoFijo.Add(oActivoFijo);
-                    bd.FormularioIngreso.Add(oFormularioIngreso);
                     bd.SaveChanges();
                     rpta = 1;
 
