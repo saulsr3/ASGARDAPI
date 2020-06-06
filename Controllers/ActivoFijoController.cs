@@ -83,7 +83,8 @@ namespace ASGARDAPI.Controllers
                 oCodigo.CorrelativoArea = oarea.Correlativo;
                 oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
                 //selccionar cuantos hay de esa clasificacion
-                int oActivoC = bd.ActivoFijo.Where(p => p.IdClasificacion == oclasificacion.IdClasificacion).Count();
+                int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado==1 &&p.IdClasificacion== oclasificacion.IdClasificacion).Count();
+             
                 //comparar para la concatenacion correspondiente 
                 if (oActivoC >= 0 && oActivoC <= 9)
                 {
@@ -104,6 +105,36 @@ namespace ASGARDAPI.Controllers
 
                 return oCodigo;
             }
+        }
+        [HttpPost]
+        [Route("api/ActivoFIjo/asignarBien")]
+        public int asignarBien([FromBody]AsignacionAF oAsignacionAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oAsignacionAF.idBien).First();
+                    oActivo.IdBien = oAsignacionAF.idBien;
+                    oActivo.NoSerie = oAsignacionAF.noSerie;
+                    oActivo.VidaUtil = oAsignacionAF.vidaUtil;
+                    oActivo.IdResponsable = oAsignacionAF.idEmpleado;
+                    Empleado oEmpleado= bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                    AreaDeNegocio oArea=bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                    Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                    oActivo.CorrelativoBien = oAsignacionAF.Codigo;
+                    oActivo.EstaAsignado = 1;
+                    oActivo.DestinoInicial = oArea.Nombre + " " + oSucursal.Nombre;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
         }
         //Medotos para modulo de control mayra
         [HttpGet]
