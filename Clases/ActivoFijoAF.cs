@@ -28,6 +28,14 @@ namespace ASGARDAPI.Clases
         public double interes { get; set; }
         public string foto { get; set; }
 
+        //Variables del formularioIngreso
+        public int noformulario { get; set; }
+        public DateTime? fechaingreso { get; set; }
+        public string nofactura { get; set; }
+        public string personaentrega { get; set; }
+        public string personarecibe { get; set; }
+        public string observaciones { get; set; }
+
         //para mostrar las fechas en string
         public string fechacadena { get; set; }
         public string Desripcion { get; set; }
