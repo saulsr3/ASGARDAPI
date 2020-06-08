@@ -135,7 +135,7 @@ namespace ASGARDAPI.Controllers
                                                  {
                                                      IdBien=activofijo.IdBien,
                                                      Codigo=activofijo.CorrelativoBien,
-                                                     descripcion=activofijo.Desripcion
+                                                     Desripcion=activofijo.Desripcion
                                                     
                                                  }).ToList();
                 return lista;

@@ -38,7 +38,7 @@ namespace ASGARDAPI.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BDAcaassAF;database=BDAcaassAF;Integrated Security=true");
             }
         }
 
@@ -47,8 +47,6 @@ namespace ASGARDAPI.Models
             modelBuilder.Entity<ActivoFijo>(entity =>
             {
                 entity.HasKey(e => e.IdBien);
-
-                entity.Property(e => e.CodigoBarra).HasColumnType("image");
 
                 entity.Property(e => e.Color)
                     .HasMaxLength(15)
