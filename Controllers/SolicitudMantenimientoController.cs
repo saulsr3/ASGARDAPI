@@ -82,23 +82,23 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Folio = oSolicitudAF.folio;
                     bd.SolicitudMantenimiento.Add(oSolicitud);
 
-                    AreaDeNegocio oArea = new AreaDeNegocio();
-                    oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
-                    //  bd.AreaDeNegocio.Add(oArea);
-                    Sucursal oSucursal = new Sucursal();
-                    oSucursal.IdSucursal = oSolicitudAF.idsucursal;
-                    // bd.Sucursal.Add(oSucursal);
-                    Empleado oEmpleado = new Empleado();
-                    oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
-                    bd.Empleado.Add(oEmpleado);
+                    //AreaDeNegocio oArea = new AreaDeNegocio();
+                    //oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
+                    ////  bd.AreaDeNegocio.Add(oArea);
+                    //Sucursal oSucursal = new Sucursal();
+                    //oSucursal.IdSucursal = oSolicitudAF.idsucursal;
+                    //// bd.Sucursal.Add(oSucursal);
+                    //Empleado oEmpleado = new Empleado();
+                    //oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
+                    //bd.Empleado.Add(oEmpleado);
 
                     //estos son los datos de la tabla
 
-                   ActivoFijo oActivo = new ActivoFijo();
-                    oActivo.IdBien = oSolicitudAF.idbien;
-                    //oActivo.CorrelativoBien = oSolicitudAF.codigobien;
+                   //ActivoFijo oActivo = new ActivoFijo();
+                   // oActivo.IdBien = oSolicitudAF.idbien;
+                   // oActivo.CorrelativoBien = oSolicitudAF.codigobien;
                    // oActivo.Desripcion = oSolicitudAF.descripcionbien;
-                    bd.ActivoFijo.Add(oActivo);
+                   // bd.ActivoFijo.Add(oActivo);
                     BienMantenimiento oBienMantenimiento = new BienMantenimiento();
 
                     oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
@@ -107,11 +107,7 @@ namespace ASGARDAPI.Controllers
                     oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
                     bd.BienMantenimiento.Add(oBienMantenimiento);
 
-
-
-
-
-                    // oSolicitud.Estado = 1;
+                    oSolicitud.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
                 }
