@@ -15,6 +15,27 @@ namespace ASGARDAPI.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/listarBienes")]
+        public IEnumerable<SolicitudMantenimientoAF> listarBienes()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
+                                                               where activo.EstadoActual == 1
+
+                                                               select new SolicitudMantenimientoAF
+                                                               {
+                                                                   codigobien = activo.CorrelativoBien,
+                                                                   descripcionbien = activo.Desripcion
+
+
+                                                               }).ToList();
+                return lista;
+            }
+        }
+
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarSolicitudMante")]
         public IEnumerable<SolicitudMantenimientoAF> listarSolicitudMante()
