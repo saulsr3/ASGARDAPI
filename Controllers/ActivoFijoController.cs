@@ -251,37 +251,75 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     ActivoFijo oActivoFijo = new ActivoFijo();
-                   // FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+                    FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+                    //oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
+                    //oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
+                    //oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
+                    //oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
+                    //oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
+                    //oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
+                    //bd.FormularioIngreso.Add(oFormularioIngreso);
+                    //bd.SaveChanges();
 
-                    oActivoFijo.IdBien = oActivoFijoAF.IdBien;
-                    oActivoFijo.NoFormulario = oActivoFijoAF.noformulario;
-                    oActivoFijo.Desripcion = oActivoFijoAF.descripcion;
-                    oActivoFijo.Modelo = oActivoFijoAF.modelo;
-                    oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquisicion;
-                    oActivoFijo.Color = oActivoFijoAF.color;
-                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
-                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
-                    oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
-                    oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
-                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
-                    oActivoFijo.ValorAdquicicion = oActivoFijoAF.costo;
-                    oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
-                    oActivoFijo.Prima = oActivoFijoAF.prima;
-                    oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
-                    oActivoFijo.Intereses = oActivoFijoAF.interes;
-                    oActivoFijo.Foto = oActivoFijoAF.foto;
+
+                    //oActivoFijo.IdBien = oActivoFijoAF.IdBien;
+                    //oActivoFijo.NoFormulario = oActivoFijoAF.noformulario;
+                    //oActivoFijo.Desripcion = oActivoFijoAF.descripcion;
+                    //oActivoFijo.Modelo = oActivoFijoAF.modelo;
+                    //oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquisicion;
+                    //oActivoFijo.Color = oActivoFijoAF.color;
+                    //oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    //oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
+                    //oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
+                    //oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
+                    //oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    //oActivoFijo.ValorAdquicicion = oActivoFijoAF.costo;
+                    //oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    //oActivoFijo.Prima = oActivoFijoAF.prima;
+                    //oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
+                    //oActivoFijo.Intereses = oActivoFijoAF.interes;
+                    //oActivoFijo.Foto = oActivoFijoAF.foto;
 
                     //Variables para formularioIngreso
-                    //  oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
-                    //  oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
-                    //   oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
-                    //   oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
-                    //   oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
-                    //  oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
+                    
 
-                    oActivoFijo.EstadoActual = 1;
-                    bd.ActivoFijo.Add(oActivoFijo);
+                    //oActivoFijo.EstadoActual = 1;
+                    //bd.ActivoFijo.Add(oActivoFijo);
+
+                    rpta = 1;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+
+            return rpta;
+        }
+        [HttpPost]
+        [Route("api/ActivoFijo/guardarFormulario")]
+        public int guardarFormulario([FromBody]FormularioIngresoAF oformulario)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //ActivoFijo oActivoFijo = new ActivoFijo();
+                    FormularioIngreso oFormularioIngreso = new FormularioIngreso();
+                    oFormularioIngreso.NoFormulario = oformulario.noformulario;
+                    oFormularioIngreso.FechaIngreso = oformulario.fechaingreso;
+                    oFormularioIngreso.NoFactura = oformulario.nofactura;
+                    oFormularioIngreso.PersonaEntrega = oformulario.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oformulario.personarecibe;
+                    oFormularioIngreso.Observaciones = oformulario.observaciones;
+                    bd.FormularioIngreso.Add(oFormularioIngreso);
                     bd.SaveChanges();
+
+
                     rpta = 1;
 
                 }

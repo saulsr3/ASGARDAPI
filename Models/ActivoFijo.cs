@@ -12,7 +12,6 @@ namespace ASGARDAPI.Models
 
         public int IdBien { get; set; }
         public string CorrelativoBien { get; set; }
-        public byte[] CodigoBarra { get; set; }
         public int? NoFormulario { get; set; }
         public string Desripcion { get; set; }
         public string Modelo { get; set; }
