@@ -250,9 +250,6 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivoFijo = new ActivoFijo();
-                   // FormularioIngreso oFormularioIngreso = new FormularioIngreso();
-
                     oActivoFijo.IdBien = oActivoFijoAF.IdBien;
                     oActivoFijo.NoFormulario = oActivoFijoAF.noformulario;
                     oActivoFijo.Desripcion = oActivoFijoAF.descripcion;
@@ -272,15 +269,16 @@ namespace ASGARDAPI.Controllers
                     oActivoFijo.Foto = oActivoFijoAF.foto;
 
                     //Variables para formularioIngreso
-                    //  oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
-                    //  oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
-                    //   oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
-                    //   oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
-                    //   oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
-                    //  oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
+                    oFormularioIngreso.NoFormulario = oActivoFijoAF.noformulario;
+                    oFormularioIngreso.FechaIngreso = oActivoFijoAF.fechaingreso;
+                    oFormularioIngreso.NoFactura = oActivoFijoAF.nofactura;
+                    oFormularioIngreso.PersonaEntrega = oActivoFijoAF.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oActivoFijoAF.personarecibe;
+                    oFormularioIngreso.Observaciones = oActivoFijoAF.observaciones;
 
                     oActivoFijo.EstadoActual = 1;
                     bd.ActivoFijo.Add(oActivoFijo);
+                    bd.FormularioIngreso.Add(oFormularioIngreso);
                     bd.SaveChanges();
                     rpta = 1;
 
