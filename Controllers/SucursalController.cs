@@ -181,6 +181,31 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+        [HttpGet]
+        [Route("api/Sucursal/validarCorrelativo/{idSucursal}/{nombre}/{ubicacion}")]
+        public int noRepetirSucursalUbicacion(int idSucursal, string nombre,string ubicacion)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idSucursal == 0)
+                    {
+                        respuesta = bd.Sucursal.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.Ubicacion.ToLower()==ubicacion.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.Sucursal.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.Ubicacion.ToLower() == ubicacion.ToLower() && p.IdSucursal != idSucursal && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+            }
+            return respuesta;
+        }
         //Metodo para ver si la sucursal se esta utilizando en un area de negocio
         [HttpGet]
         [Route("api/Sucursal/validarArea/{idSucursal}")]

@@ -179,5 +179,49 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+        [HttpGet]
+        [Route("api/AreasNegocios/validarCorrelativo/{idArea}/{correlativo}")]
+        public int validarCorrelativo(int idArea, string correlativo)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idArea == 0)
+                    {
+                        respuesta = bd.AreaDeNegocio.Where(p => p.Correlativo.ToLower() == correlativo.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.AreaDeNegocio.Where(p => p.Correlativo.ToLower() == correlativo.ToLower() && p.IdAreaNegocio != idArea && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        [HttpGet]
+        [Route("api/AreasNegocios/validarEmpleados/{idArea}")]
+        public int validarEmpleados(int idArea)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdAreaDeNegocio == idArea && p.Dhabilitado == 1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
     }
 }

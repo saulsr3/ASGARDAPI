@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
+using BarcodeLib;
 
 namespace ASGARDAPI.Controllers
 {
@@ -115,6 +116,8 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
+                   // BarcodeLib.Barcode CodigoBarras = new BarcodeLib.Barcode();
+                    //CodigoBarras.IncludeLabel = true;
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oAsignacionAF.idBien).First();
                     oActivo.IdBien = oAsignacionAF.idBien;
                     oActivo.NoSerie = oAsignacionAF.noSerie;
@@ -124,6 +127,10 @@ namespace ASGARDAPI.Controllers
                     AreaDeNegocio oArea=bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
                     Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
                     oActivo.CorrelativoBien = oAsignacionAF.Codigo;
+                   // oActivo.CodigoBarra= CodigoBarras.Encode(BarcodeLib.TYPE.CODE128, oActivo.CorrelativoBien,BackColor:ConsoleColor.White,ForeColor:ConsoleColor.Black).;
+                  
+                
+                   //= CodigoBarras;
                     oActivo.EstaAsignado = 1;
                     oActivo.DestinoInicial = oArea.Nombre + " " + oSucursal.Nombre;
                     bd.SaveChanges();
