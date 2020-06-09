@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ASGARDAPI.Controllers
+namespace ASGARDAPI.Clases
 {
     public class SolicitudMantenimientoPAF
     {
@@ -14,4 +14,5 @@ namespace ASGARDAPI.Controllers
         public DateTime? fechasolicitud { get; set; }
         public string fechacadena { get; set; }
     }
+}
 }
