@@ -189,8 +189,8 @@ namespace ASGARDAPI.Controllers
                 oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
                 oActivoFijoAF.NoFormulario = (int)oActivoFijo.NoFormulario;
                 oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
-                oActivoFijoAF.color = oActivoFijo.Color;
-                oActivoFijoAF.modelo = oActivoFijo.Modelo;
+                oActivoFijoAF.Color = oActivoFijo.Color;
+                oActivoFijoAF.Modelo = oActivoFijo.Modelo;
 
                 return oActivoFijoAF;
             }

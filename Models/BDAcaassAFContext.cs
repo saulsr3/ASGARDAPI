@@ -38,7 +38,7 @@ namespace ASGARDAPI.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BDAcaassAF;database=BDAcaassAF;Integrated Security=true");
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
             }
         }
 
@@ -212,7 +212,7 @@ namespace ASGARDAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nombre)
-                    .HasMaxLength(75)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Telefono)
@@ -352,14 +352,13 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdSolicitud);
 
-                entity.Property(e => e.Estado).HasColumnName("estado");
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
 
-                entity.Property(e => e.Fecha)
-                    .HasColumnName("fecha")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.Fecha).HasColumnType("datetime");
 
                 entity.Property(e => e.Folio)
-                    .HasColumnName("folio")
                     .HasMaxLength(10)
                     .IsUnicode(false);
             });

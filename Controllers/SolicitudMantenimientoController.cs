@@ -47,20 +47,36 @@ namespace ASGARDAPI.Controllers
         public IEnumerable<SolicitudMantenimientoPAF> listarSolicitudMante()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
             {
-                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento                                                       
-                                                              where solicitud.Estado == 1 
-
-                                                             //  orderby solicitud.Folio
-
+               
+                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento
+                                                                //join bienMtoto in bd.BienMantenimiento
+                                                                //on solicitud.IdSolicitud equals bienMtoto.IdSolicitud
+                                                                //join bien in bd.ActivoFijo
+                                                                //on bienMtoto.IdBien equals bien.IdBien
+                                                                //join empleado in bd.Empleado
+                                                                //on bien.IdResponsable equals empleado.IdEmpleado
+                                                                //join areaNegocio in bd.AreaDeNegocio
+                                                                //on empleado.IdAreaDeNegocio equals areaNegocio.IdAreaNegocio
+                                                                //join sucursal in bd.Sucursal
+                                                                //on areaNegocio.IdSucursal equals sucursal.IdSucursal
+                                                                 
+                                                                  where solicitud.Estado == 1 
+                                                                  
                                                                select new SolicitudMantenimientoPAF
                                                                {
                                                                    idsolicitud = solicitud.IdSolicitud,
-                                                                   
-                                                                   //folio = solicitud.Folio,
-                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
-
+                                                                   folio=solicitud.Folio,
+                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                                                    
+                                                                   //areadenegocio = areaNegocio.Nombre,
+                                                                   //sucursal=sucursal.Nombre,
+                                                                   //solicitante=empleado.Nombres
+                                                                 
                                                                }).ToList();
+               
+
                 return lista;
 
             }
@@ -191,5 +207,6 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+       
     }
 }
