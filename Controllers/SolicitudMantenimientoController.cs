@@ -23,13 +23,18 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
-                                                               where activo.EstadoActual == 1
+                                                               join bienmante in bd.BienMantenimiento
+                                                             
 
                                                                select new SolicitudMantenimientoAF
                                                                {
+                                                                  
                                                                    codigobien = activo.CorrelativoBien,
-                                                                   descripcionbien = activo.Desripcion
-
+                                                                   descripcionbien = activo.Desripcion,
+                                                                   idbien = (int)bienmante.IdBien,
+                                                                   idmantenimiento = bienmante.IdMantenimiento,
+                                                                   razonesmantenimiento = bienmante.RazonMantenimiento,
+                                                                   periodomantenimiento = bienmante.PeriodoMantenimiento,
 
                                                                }).ToList();
                 return lista;
