@@ -25,7 +25,7 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
                                                                    //join bienmante in bd.BienMantenimiento
                                                                    //on activo.IdBien equals bienmante.IdBien
-                                                               where activo.EstaAsignado==1 && activo.EstadoActual==1
+                                                               where activo.EstaAsignado==1 && activo.EstadoActual==1 && activo.EstadoActual!=2
 
                                                                select new SolicitudMantenimientoAF
                                                                {
@@ -107,39 +107,46 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
-                    bd.SolicitudMantenimiento.Add(oSolicitud);
-
-                    //AreaDeNegocio oArea = new AreaDeNegocio();
-                    //oArea.IdAreaNegocio = oSolicitudAF.idareadenegocio;
-                    ////  bd.AreaDeNegocio.Add(oArea);
-                    //Sucursal oSucursal = new Sucursal();
-                    //oSucursal.IdSucursal = oSolicitudAF.idsucursal;
-                    //// bd.Sucursal.Add(oSucursal);
-                    //Empleado oEmpleado = new Empleado();
-                    //oEmpleado.IdEmpleado = oSolicitudAF.idresponsable;
-                    //bd.Empleado.Add(oEmpleado);
-
-                    //estos son los datos de la tabla
-
-                   //ActivoFijo oActivo = new ActivoFijo();
-                   // oActivo.IdBien = oSolicitudAF.idbien;
-                   // oActivo.CorrelativoBien = oSolicitudAF.codigobien;
-                   // oActivo.Desripcion = oSolicitudAF.descripcionbien;
-                   // bd.ActivoFijo.Add(oActivo);
-                    BienMantenimiento oBienMantenimiento = new BienMantenimiento();
-
-                    oBienMantenimiento.IdMantenimiento = oSolicitudAF.idmantenimiento;
-                  //  oBienMantenimiento.IdSolicitud = oSolicitudAF.idsolicitud;
-                    oBienMantenimiento.RazonMantenimiento = oSolicitudAF.razonesmantenimiento;
-                    oBienMantenimiento.PeriodoMantenimiento = oSolicitudAF.periodomantenimiento;
-                    bd.BienMantenimiento.Add(oBienMantenimiento);
-
                     oSolicitud.Estado = 1;
+                    bd.SolicitudMantenimiento.Add(oSolicitud);
                     bd.SaveChanges();
                     respuesta = 1;
                 }
                     
                     
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        [HttpPost]
+        [Route("api/SolicitudMantenimiento/guardarBienes")]
+        public int guardarBienes([FromBody]ArrayMantenimientoAF oArray)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                   
+                    BienMantenimiento bienMtto = new BienMantenimiento();
+                    SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado==1).Last();
+                    bienMtto.IdMantenimiento = oArray.idMantenimiento;
+                    bienMtto.IdSolicitud=idSolicitud.IdSolicitud;
+                    bienMtto.IdBien = oArray.idBien;
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
+                    oActivo.EstadoActual = 2;
+                    bienMtto.RazonMantenimiento = oArray.razonesMantenimiento;
+                    bienMtto.PeriodoMantenimiento = oArray.periodoMantenimiento;
+                    bd.BienMantenimiento.Add(bienMtto);
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
             }
             catch (Exception ex)
             {
