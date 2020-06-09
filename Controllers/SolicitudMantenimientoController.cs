@@ -23,18 +23,19 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
-                                                               join bienmante in bd.BienMantenimiento
+                                                               //join bienmante in bd.BienMantenimiento
+                                                               //on activo.IdBien equals bienmante.IdBien
                                                              
 
                                                                select new SolicitudMantenimientoAF
                                                                {
-                                                                  
+                                                                  idbien=activo.IdBien,
                                                                    codigobien = activo.CorrelativoBien,
-                                                                   descripcionbien = activo.Desripcion,
-                                                                   idbien = (int)bienmante.IdBien,
-                                                                   idmantenimiento = bienmante.IdMantenimiento,
-                                                                   razonesmantenimiento = bienmante.RazonMantenimiento,
-                                                                   periodomantenimiento = bienmante.PeriodoMantenimiento,
+                                                                   descripcionbien = activo.Desripcion
+                                                                  // idbien = (int)bienmante.IdBien,
+                                                                   //idmantenimiento = bienmante.IdMantenimiento,
+                                                                   //razonesmantenimiento = bienmante.RazonMantenimiento,
+                                                                   //periodomantenimiento = bienmante.PeriodoMantenimiento,
 
                                                                }).ToList();
                 return lista;
