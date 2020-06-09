@@ -44,45 +44,21 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarSolicitudMante")]
-        public IEnumerable<SolicitudMantenimientoAF> listarSolicitudMante()
+        public IEnumerable<SolicitudMantenimientoPAF> listarSolicitudMante()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<SolicitudMantenimientoAF> lista = (from solicitud in bd.SolicitudMantenimiento
-                                                               join bienmante in bd.BienMantenimiento
-                                                               on solicitud.IdSolicitud equals bienmante.IdSolicitud
-                                                               join activo in bd.ActivoFijo
-                                                               on bienmante.IdBien equals activo.IdBien
-                                                               //join empleado in bd.Empleado
-                                                               //on activo.IdResponsable equals empleado.IdEmpleado
-                                                              // join areanegocio in bd.AreaDeNegocio
-                                                              //on empleado.IdAreaDeNegocio equals areanegocio.IdAreaNegocio
-                                                              // join sucursal in bd.Sucursal
-                                                               //on areanegocio.IdSucursal equals sucursal.IdSucursal
+                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento                                                       
                                                               where solicitud.Estado == 1 
 
                                                              //  orderby solicitud.Folio
 
-                                                               select new SolicitudMantenimientoAF
+                                                               select new SolicitudMantenimientoPAF
                                                                {
                                                                    idsolicitud = solicitud.IdSolicitud,
                                                                    
-                                                                   folio = solicitud.Folio,
-                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
-                                                                   idmantenimiento = bienmante.IdMantenimiento,                     
-                                                                   razonesmantenimiento = bienmante.RazonMantenimiento,
-                                                                   periodomantenimiento = bienmante.PeriodoMantenimiento,
-                                                                   //idresponsable = (int)activo.IdResponsable
-                                                                   idbien = (int)bienmante.IdBien,
-                                                                   descripcionbien = activo.Desripcion,
-                                                                   codigobien = activo.CorrelativoBien
-                                                                 //  nombrecompleto = empleado.Nombres + " " + empleado.Apellidos
-                                                                  // idareadenegocio = areanegocio.IdAreaNegocio,
-                                                                   //areadenegocio = areanegocio.Nombre,
-                                                                  // idsucursal = sucursal.IdSucursal,
-                                                                   //sucursal = sucursal.Nombre
-
-
+                                                                   //folio = solicitud.Folio,
+                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
 
                                                                }).ToList();
                 return lista;
