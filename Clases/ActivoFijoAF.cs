@@ -18,13 +18,12 @@ namespace ASGARDAPI.Clases
         public string Marca { get; set; }
         public string AreaDeNegocio { get; set; }
         public string Resposnsable { get; set; }
-        public string color { get; set; }
-        public string modelo { get; set; }
+        public string Color { get; set; }
+        public string Modelo { get; set; }
         public int idclasificacion { get; set; }
 
 
         //Variables que faltan de activo fijo 
-        public string descripcion { get; set; }
         public int tipoadquicicion { get; set; }
         public int idmarca { get; set; }
         public int idproveedor { get; set; }

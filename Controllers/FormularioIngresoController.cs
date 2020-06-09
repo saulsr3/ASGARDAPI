@@ -55,7 +55,7 @@ namespace ASGARDAPI.Controllers
         //Método guardar en activo fijo
         [HttpPost]
         [Route("api/FormularioIngreso/guardarActivoFijo")]
-        public int guardarActivoFijo([FromBody] ActivoAF oActivoAF)
+        public int guardarActivoFijo([FromBody] ActivoFijoAF oActivoAF)
         {
             int rpta = 0;
 
@@ -64,45 +64,45 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     ActivoFijo oActivoFijo = new ActivoFijo();
-
-                  
                     //Datos para la tabla activo fijo
-                 //   oActivoFijo.IdBien = oActivoAF.idbien;
-                 //   oActivoFijo.NoFormulario = oActivoAF.noformularioactivo;
-                 //   oActivoFijo.Desripcion = oActivoAF.descripcion;
-                 //   oActivoFijo.Modelo = oActivoAF.modelo;
-                 //   oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
-                 //   oActivoFijo.Color = oActivoAF.color;
-                 //   oActivoFijo.IdMarca = oActivoAF.idmarca;
-                 //   oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
-                 //   oActivoFijo.IdProveedor = oActivoAF.idproveedor;
-                 //   oActivoFijo.IdDonante = oActivoAF.iddonante;
-                 //   oActivoFijo.IdResponsable = oActivoAF.idresponsable;
-                 //   oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
-                 //  oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
-                 //   oActivoFijo.PlazoPago = oActivoAF.plazopago;
-                 //   oActivoFijo.Prima = oActivoAF.prima;
-                 //   oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
-                 //   oActivoFijo.Intereses = oActivoAF.interes;
-                 //   oActivoFijo.ValorResidual = oActivoAF.valorresidual;
-                    //Queda pendiente para agregar la foto
-
+                    oActivoFijo.IdBien = oActivoAF.IdBien;
+                    oActivoFijo.CorrelativoBien = null;
+                    FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
+                    oActivoFijo.NoFormulario = oFormulario.NoFormulario;
+                    oActivoFijo.Desripcion = oActivoAF.Desripcion;
+                    oActivoFijo.Modelo = oActivoAF.Modelo;
+                    oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
+                    oActivoFijo.Color = oActivoAF.Color;
+                    oActivoFijo.NoSerie = null;
+                    oActivoFijo.IdMarca = oActivoAF.idmarca;
+                    oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                    oActivoFijo.IdProveedor = oActivoAF.idproveedor;
+                    oActivoFijo.IdDonante = oActivoAF.iddonante;
+                    oActivoFijo.VidaUtil = null;
+                    oActivoFijo.IdResponsable = null;
+                    oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
+                    oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
+                    oActivoFijo.PlazoPago = oActivoAF.plazopago;
+                    oActivoFijo.Prima = oActivoAF.prima;
+                    oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
+                    oActivoFijo.Intereses = oActivoAF.interes;
+                    oActivoFijo.ValorResidual = oActivoAF.valorresidual;
+                    oActivoFijo.Foto = null;
+                    oActivoFijo.EstaAsignado = 0;
+                    oActivoFijo.DestinoInicial = null;
                     oActivoFijo.EstadoActual = 1;
                     bd.ActivoFijo.Add(oActivoFijo);
                     bd.SaveChanges();
                     rpta = 1;
                 }
-
             }
             catch (Exception ex)
             {
                 rpta = 0;
             }
-
             return rpta;
-
         }
-    }
+        }
     }
     
 
