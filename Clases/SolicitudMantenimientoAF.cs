@@ -10,6 +10,7 @@ namespace ASGARDAPI.Clases
     {
         public int idsolicitud { get; set; }
         public string folio { get; set; }
+        public string descripcion { get; set; }
         public DateTime? fechasolicitud { get; set; }
         public string areasolicitante  { get; set; }
         public string sucursal { get; set; } 

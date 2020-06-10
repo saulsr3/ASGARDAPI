@@ -68,12 +68,13 @@ namespace ASGARDAPI.Controllers
                                                                {
                                                                    idsolicitud = solicitud.IdSolicitud,
                                                                    folio=solicitud.Folio,
-                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
-                                                                    
+                                                                   descripcion = solicitud.Descripcion,
+                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
+                                                                 
                                                                    //areadenegocio = areaNegocio.Nombre,
                                                                    //sucursal=sucursal.Nombre,
                                                                    //solicitante=empleado.Nombres
-                                                                 
+
                                                                }).ToList();
                
 
@@ -99,6 +100,7 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
+                    oSolicitud.Descripcion = oSolicitudAF.descripcion;
                     oSolicitud.Estado = 1;
                     bd.SolicitudMantenimiento.Add(oSolicitud);
                     bd.SaveChanges();
