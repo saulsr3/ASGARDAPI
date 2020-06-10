@@ -23,6 +23,7 @@ namespace ASGARDAPI.Clases
         public double interes { get; set; }
         public double valorresidual { get; set; }
         public string foto { get; set; }
+        public int cantidad { get; set; }
 
     }
 }

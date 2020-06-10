@@ -63,36 +63,42 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivoFijo = new ActivoFijo();
-                    //Datos para la tabla activo fijo
-                    oActivoFijo.IdBien = oActivoAF.idbien;
-                 //   oActivoFijo.CorrelativoBien = null;
-                    FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
-                    oActivoFijo.NoFormulario = oFormulario.NoFormulario;
-                    oActivoFijo.Desripcion = oActivoAF.descripcion;
-                 //   oActivoFijo.Modelo = oActivoAF.Modelo;
-                 //   oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
-                    oActivoFijo.Color = oActivoAF.color;
-                 //   oActivoFijo.NoSerie = null;
-                 //   oActivoFijo.IdMarca = oActivoAF.idmarca;
-                 //   oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
-                 //   oActivoFijo.IdProveedor = oActivoAF.idproveedor;
-                 //   oActivoFijo.IdDonante = oActivoAF.iddonante;
-                 //   oActivoFijo.VidaUtil = null;
-                 //   oActivoFijo.IdResponsable = null;
-                 //   oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
-                 //   oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
-                 //   oActivoFijo.PlazoPago = oActivoAF.plazopago;
-                 //   oActivoFijo.Prima = oActivoAF.prima;
-                 //   oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
-                 //   oActivoFijo.Intereses = oActivoAF.interes;
-                 //   oActivoFijo.ValorResidual = oActivoAF.valorresidual;
-                 //   oActivoFijo.Foto = null;
-                 //   oActivoFijo.EstaAsignado = 0;
-                 //   oActivoFijo.DestinoInicial = null;
-                    oActivoFijo.EstadoActual = 1;
-                    bd.ActivoFijo.Add(oActivoFijo);
-                    bd.SaveChanges();
+                    for (int i = 0; i < oActivoAF.cantidad; i++)
+                    {
+                        ActivoFijo oActivoFijo = new ActivoFijo();
+                        //Datos para la tabla activo fijo
+                        oActivoFijo.IdBien = oActivoAF.idbien;
+                        FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
+                        oActivoFijo.NoFormulario = oFormulario.NoFormulario;
+                        oActivoFijo.Desripcion = oActivoAF.descripcion;
+                        oActivoFijo.Modelo = oActivoAF.modelo;
+                        oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
+                        oActivoFijo.Color = oActivoAF.color;
+                        oActivoFijo.IdMarca = oActivoAF.idmarca;
+                        oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                        if (oActivoAF.tipoadquicicion == 1 || oActivoAF.tipoadquicicion == 2)
+                        {
+                            oActivoFijo.IdProveedor = oActivoAF.idproveedor;
+                            if (oActivoAF.tipoadquicicion == 2)
+                            {
+                                oActivoFijo.PlazoPago = oActivoAF.plazopago;
+                                oActivoFijo.Prima = oActivoAF.prima;
+                                oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
+                                oActivoFijo.Intereses = oActivoAF.interes;
+                            }
+                        }
+                        else
+                        {
+                            oActivoFijo.IdDonante = oActivoAF.idproveedor;
+                        }
+                        oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
+                        oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
+                        oActivoFijo.ValorResidual = 0;
+                        oActivoFijo.EstaAsignado = 0;
+                        oActivoFijo.EstadoActual = 1;
+                        bd.ActivoFijo.Add(oActivoFijo);
+                        bd.SaveChanges();
+                    }
                     rpta = 1;
                 }
             }
