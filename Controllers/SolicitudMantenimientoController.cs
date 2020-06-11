@@ -25,11 +25,11 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
                                                                    //join bienmante in bd.BienMantenimiento
                                                                    //on activo.IdBien equals bienmante.IdBien
-                                                               where activo.EstaAsignado==1 && activo.EstadoActual==1 && activo.EstadoActual!=2
+                                                               where activo.EstaAsignado == 1 && activo.EstadoActual == 1 && activo.EstadoActual != 2
 
                                                                select new SolicitudMantenimientoAF
                                                                {
-                                                                  idbien=activo.IdBien,
+                                                                   idbien = activo.IdBien,
                                                                    codigobien = activo.CorrelativoBien,
                                                                    descripcionbien = activo.Desripcion
                                                                    // idbien = (int)bienmante.IdBien,
@@ -49,34 +49,34 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
 
             {
-               
-                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento
-                                                                //join bienMtoto in bd.BienMantenimiento
-                                                                //on solicitud.IdSolicitud equals bienMtoto.IdSolicitud
-                                                                //join bien in bd.ActivoFijo
-                                                                //on bienMtoto.IdBien equals bien.IdBien
-                                                                //join empleado in bd.Empleado
-                                                                //on bien.IdResponsable equals empleado.IdEmpleado
-                                                                //join areaNegocio in bd.AreaDeNegocio
-                                                                //on empleado.IdAreaDeNegocio equals areaNegocio.IdAreaNegocio
-                                                                //join sucursal in bd.Sucursal
-                                                                //on areaNegocio.IdSucursal equals sucursal.IdSucursal
-                                                                 
-                                                                  where solicitud.Estado == 1 
-                                                                  
-                                                               select new SolicitudMantenimientoPAF
-                                                               {
-                                                                   idsolicitud = solicitud.IdSolicitud,
-                                                                   folio=solicitud.Folio,
-                                                                   descripcion = solicitud.Descripcion,
-                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
-                                                                 
-                                                                   //areadenegocio = areaNegocio.Nombre,
-                                                                   //sucursal=sucursal.Nombre,
-                                                                   //solicitante=empleado.Nombres
 
-                                                               }).ToList();
-               
+                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento
+                                                                    //join bienMtoto in bd.BienMantenimiento
+                                                                    //on solicitud.IdSolicitud equals bienMtoto.IdSolicitud
+                                                                    //join bien in bd.ActivoFijo
+                                                                    //on bienMtoto.IdBien equals bien.IdBien
+                                                                    //join empleado in bd.Empleado
+                                                                    //on bien.IdResponsable equals empleado.IdEmpleado
+                                                                    //join areaNegocio in bd.AreaDeNegocio
+                                                                    //on empleado.IdAreaDeNegocio equals areaNegocio.IdAreaNegocio
+                                                                    //join sucursal in bd.Sucursal
+                                                                    //on areaNegocio.IdSucursal equals sucursal.IdSucursal
+
+                                                                where solicitud.Estado == 1
+
+                                                                select new SolicitudMantenimientoPAF
+                                                                {
+                                                                    idsolicitud = solicitud.IdSolicitud,
+                                                                    folio = solicitud.Folio,
+                                                                    descripcion = solicitud.Descripcion,
+                                                                    fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
+
+                                                                    //areadenegocio = areaNegocio.Nombre,
+                                                                    //sucursal=sucursal.Nombre,
+                                                                    //solicitante=empleado.Nombres
+
+                                                                }).ToList();
+
 
                 return lista;
 
@@ -89,7 +89,7 @@ namespace ASGARDAPI.Controllers
 
         [HttpPost]
         [Route("api/SolicitudMantenimiento/guardarSolicitud")]
-        public int guardarSolicitud ([FromBody] SolicitudMantenimientoAF oSolicitudAF)
+        public int guardarSolicitud([FromBody] SolicitudMantenimientoAF oSolicitudAF)
         {
             int respuesta = 0;
             try
@@ -106,8 +106,8 @@ namespace ASGARDAPI.Controllers
                     bd.SaveChanges();
                     respuesta = 1;
                 }
-                    
-                    
+
+
             }
             catch (Exception ex)
             {
@@ -125,11 +125,11 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                   
+
                     BienMantenimiento bienMtto = new BienMantenimiento();
-                    SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado==1).Last();
+                    SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 1).Last();
                     bienMtto.IdMantenimiento = oArray.idMantenimiento;
-                    bienMtto.IdSolicitud=idSolicitud.IdSolicitud;
+                    bienMtto.IdSolicitud = idSolicitud.IdSolicitud;
                     bienMtto.IdBien = oArray.idBien;
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
                     oActivo.EstadoActual = 2;
@@ -158,14 +158,14 @@ namespace ASGARDAPI.Controllers
             {
 
                 IEnumerable<ActivoFijoAF> lista = (from activofijo in bd.ActivoFijo
-                                                 where activofijo.EstadoActual==1
-                                                 select new ActivoFijoAF
-                                                 {
-                                                     IdBien=activofijo.IdBien,
-                                                     Codigo=activofijo.CorrelativoBien,
-                                                     Desripcion=activofijo.Desripcion
-                                                    
-                                                 }).ToList();
+                                                   where activofijo.EstadoActual == 1
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activofijo.IdBien,
+                                                       Codigo = activofijo.CorrelativoBien,
+                                                       Desripcion = activofijo.Desripcion
+
+                                                   }).ToList();
                 return lista;
             }
         }
@@ -193,7 +193,7 @@ namespace ASGARDAPI.Controllers
         [Route("api/SolicitudMantenimiento/listarAreaCombo")]
         public IEnumerable<AreasDeNegocioAF> listarAreaCombo()
         {
-            using (BDAcaassAFContext bd= new BDAcaassAFContext())
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<AreasDeNegocioAF> lista = (from area in bd.AreaDeNegocio
                                                        join sucursal in bd.Sucursal
@@ -209,6 +209,49 @@ namespace ASGARDAPI.Controllers
             }
 
         }
-       
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/listaBienesSolicitados/{idSolicitud}")]
+        public IEnumerable<BienesSolicitadosMttoAF> listaBienesSolicitados(int idSolicitud)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
+                                                              join activo in bd.ActivoFijo
+                                                              on bienMtto.IdBien equals activo.IdBien
+                                                              where bienMtto.IdSolicitud == idSolicitud
+                                                              select new BienesSolicitadosMttoAF
+                                                              {
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion,
+                                                                  Periodo = bienMtto.PeriodoMantenimiento,
+                                                                  Razon = bienMtto.RazonMantenimiento
+
+                                                              }).ToList();
+
+
+                return lista;
+            }
+
+        }
+        [HttpGet]
+        [Route("api/Empleado/DatosSolicitud/{idSolicitud}")]
+        public BienesSolicitadosMttoAF DatosSolicitud(int idSolicitud)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                BienesSolicitadosMttoAF odatos = new BienesSolicitadosMttoAF();
+                SolicitudMantenimiento osolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idSolicitud).First();
+                odatos.NoSolicitud = "00" + osolicitud.IdSolicitud.ToString();
+                odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
+                BienMantenimiento obienMtto=bd.BienMantenimiento.Where(p => p.IdSolicitud == osolicitud.IdSolicitud).First();
+                ActivoFijo obien= bd.ActivoFijo.Where(p => p.IdBien == obienMtto.IdBien).First();
+                Empleado oempleado= bd.Empleado.Where(p => p.IdEmpleado == obien.IdResponsable).First();
+                AreaDeNegocio oArea= bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
+                odatos.jefe = oempleado.Nombres+" "+oempleado.Apellidos;
+                odatos.areanegocio = oArea.Nombre;
+                return odatos;
+
+            }
+        }
     }
 }
