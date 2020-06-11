@@ -76,7 +76,11 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.Color = oActivoAF.color;
                         oActivoFijo.IdMarca = oActivoAF.idmarca;
                         oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
-                        if (oActivoAF.tipoadquicicion == 1 || oActivoAF.tipoadquicicion == 2)
+                        if (oActivoAF.tipoadquicicion == 3)
+                        {
+                            oActivoFijo.IdDonante = oActivoAF.idproveedor;
+                        }
+                        else
                         {
                             oActivoFijo.IdProveedor = oActivoAF.idproveedor;
                             if (oActivoAF.tipoadquicicion == 2)
@@ -86,10 +90,6 @@ namespace ASGARDAPI.Controllers
                                 oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
                                 oActivoFijo.Intereses = oActivoAF.interes;
                             }
-                        }
-                        else
-                        {
-                            oActivoFijo.IdDonante = oActivoAF.idproveedor;
                         }
                         oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
                         oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
