@@ -143,102 +143,7 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
-        //Medotos para modulo de control mayra
-        [HttpGet]
-        [Route("api/ActivoFIjo/listarActivos")]
-        public IEnumerable<ActivoFijoAF> listarActivos()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
-                                                   join noFormulario in bd.FormularioIngreso
-                                                   on activo.NoFormulario equals noFormulario.NoFormulario
-                                                   join clasif in bd.Clasificacion
-                                                   on activo.IdClasificacion equals clasif.IdClasificacion
-                                                   join resposable in bd.Empleado
-                                                   on activo.IdResponsable equals resposable.IdEmpleado
-                                                   join area in bd.AreaDeNegocio
-                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                   where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-                                                   orderby activo.CorrelativoBien
-                                                   select new ActivoFijoAF
-                                                   {
-                                                       IdBien = activo.IdBien,
-                                                       Codigo = activo.CorrelativoBien,
-                                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                       Desripcion = activo.Desripcion,
-                                                       Clasificacion = clasif.Clasificacion1,
-                                                       AreaDeNegocio = area.Nombre,
-                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
-                                                   }).ToList();
-                return lista;
-
-            }
-        }
-
-
-        [HttpGet]
-        [Route("api/ActivoFijo/RecuperarBienes/{id}")]
-        public ActivoFijoAF RecuperarBienes(int id)
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                ActivoFijoAF oActivoFijoAF = new ActivoFijoAF();
-                ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                oActivoFijoAF.IdBien = oActivoFijo.IdBien;
-                oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
-                oActivoFijoAF.NoFormulario = (int)oActivoFijo.NoFormulario;
-                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
-                oActivoFijoAF.Color = oActivoFijo.Color;
-                oActivoFijoAF.Modelo = oActivoFijo.Modelo;
-
-                return oActivoFijoAF;
-            }
-        }
-
-        [HttpGet]
-        [Route("api/ActivoFijo/listarAreaCombo")]
-        public IEnumerable<ComboAnidadoAF> listarAreaCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<ComboAnidadoAF> listarAreas = (from area in bd.AreaDeNegocio
-                                                           where area.Dhabilitado == 1
-                                                           select new ComboAnidadoAF
-                                                           {
-                                                               id = area.IdAreaNegocio,
-                                                               nombre = area.Nombre
-
-                                                           }).ToList();
-
-
-                return listarAreas;
-
-            }
-        }
-
-        [HttpGet]
-        [Route("api/ActivoFijo/listarSucursalCombo")]
-        public IEnumerable<ComboAnidadoAF> listarSucursalCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<ComboAnidadoAF> listarSucursal = (from sucursal in bd.Sucursal
-                                                              where sucursal.Dhabilitado == 1
-                                                              select new ComboAnidadoAF
-                                                              {
-                                                                  id = sucursal.IdSucursal,
-                                                                  nombre = sucursal.Nombre
-
-                                                              }).ToList();
-
-
-                return listarSucursal;
-
-            }
-        }
-
-
+        
         //Método guardar nuevo bien
         [HttpPost]
         [Route("api/ActivoFijo/guardarnuevoBien")]
@@ -410,5 +315,261 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
+
+        //Medotos para modulo de control mayra
+        [HttpGet]
+        [Route("api/ActivoFIjo/listarActivos")]
+        public IEnumerable<ActivoFijoAF> listarActivos()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                   join noFormulario in bd.FormularioIngreso
+                                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                                   join clasif in bd.Clasificacion
+                                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                                   join resposable in bd.Empleado
+                                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                                   join area in bd.AreaDeNegocio
+                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                                                   orderby activo.CorrelativoBien
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activo.IdBien,
+                                                       Codigo = activo.CorrelativoBien,
+                                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                       Desripcion = activo.Desripcion,
+                                                       Clasificacion = clasif.Clasificacion1,
+                                                       AreaDeNegocio = area.Nombre,
+                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                   }).ToList();
+                return lista;
+
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/ActivoFijo/RecuperarBienes/{id}")]
+        public ActivoFijoAF RecuperarBienes(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoFijoAF oActivoFijoAF = new ActivoFijoAF();
+                ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                oActivoFijoAF.IdBien = oActivoFijo.IdBien;
+                oActivoFijoAF.NoFormulario = (int)oActivoFijo.NoFormulario;
+                oActivoFijoAF.Codigo = oActivoFijo.CorrelativoBien;
+                //oActivoFijoAF.fechacadena = oActivoFijo.;
+                oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
+                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
+                oActivoFijoAF.idmarca = (int)oActivoFijo.IdMarca;
+                //oActivoFijoAF.idarea = oActivoFijo;
+                oActivoFijoAF.idresponsable = (int)oActivoFijo.IdResponsable;
+                //oActivoFijoAF.codigobarra = oActivoFijo.CodigoBarra;
+                oActivoFijoAF.Modelo = oActivoFijo.Modelo;
+                oActivoFijoAF.tipoadquicicion = (int)oActivoFijo.TipoAdquicicion;
+                oActivoFijoAF.Color = oActivoFijo.Color;
+                oActivoFijoAF.numserie = oActivoFijo.NoSerie;
+                oActivoFijoAF.idmarca = (int)oActivoFijo.IdMarca;
+                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
+                oActivoFijoAF.idproveedor = (int)oActivoFijo.IdProveedor;
+                oActivoFijoAF.iddonante = (int)oActivoFijo.IdDonante;
+                oActivoFijoAF.vidautil = (int)oActivoFijo.VidaUtil;
+                oActivoFijoAF.idresponsable = (int)oActivoFijo.IdResponsable;
+                oActivoFijoAF.estadoingreso = oActivoFijo.EstadoIngreso;
+                oActivoFijoAF.valoradquisicion = (float)oActivoFijo.ValorAdquicicion;
+                oActivoFijoAF.plazopago = oActivoFijo.PlazoPago;
+                oActivoFijoAF.prima = (float)oActivoFijo.Prima;
+                oActivoFijoAF.cuotaasignada = (float)oActivoFijo.CuotaAsignanda;
+                oActivoFijoAF.intereses = (float)oActivoFijo.Intereses;
+                oActivoFijoAF.valorresidual = (float)oActivoFijo.ValorResidual;
+                oActivoFijoAF.foto = oActivoFijo.Foto;
+                oActivoFijoAF.estadoasignado = (int)oActivoFijo.EstaAsignado;
+                oActivoFijoAF.destinoinicial = oActivoFijo.DestinoInicial;
+                oActivoFijoAF.estadoactual = (int)oActivoFijo.EstadoActual;
+
+                return oActivoFijoAF;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarAreaCombo")]
+        public IEnumerable<ComboAnidadoAF> listarAreaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarAreas = (from area in bd.AreaDeNegocio
+                                                           where area.Dhabilitado == 1
+                                                           select new ComboAnidadoAF
+                                                           {
+                                                               id = area.IdAreaNegocio,
+                                                               nombre = area.Nombre
+
+                                                           }).ToList();
+
+
+                return listarAreas;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/listarSucursalCombo")]
+        public IEnumerable<ComboAnidadoAF> listarSucursalCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> listarSucursal = (from sucursal in bd.Sucursal
+                                                              where sucursal.Dhabilitado == 1
+                                                              select new ComboAnidadoAF
+                                                              {
+                                                                  id = sucursal.IdSucursal,
+                                                                  nombre = sucursal.Nombre
+
+                                                              }).ToList();
+
+
+                return listarSucursal;
+
+            }
+        }
+
+        [HttpPost]
+        [Route("api/ActivoFijo/modificarActivos")]
+        public int modificarActivos([FromBody]ActivoFijoAF oActivoFijoAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //para editar tenemos que sacar la informacion
+                    ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoFijoAF.IdBien).First();
+                    oActivoFijo.IdBien = oActivoFijoAF.IdBien;
+                    oActivoFijo.NoFormulario = oActivoFijoAF.NoFormulario;
+                    oActivoFijo.CorrelativoBien = oActivoFijoAF.Codigo;
+                    //oActivoFijoAF.fechacadena = oActivoFijo.;
+                    oActivoFijo.Desripcion = oActivoFijoAF.Desripcion;
+                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
+                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    //oActivoFijoAF.idarea = oActivoFijo;
+
+                    //para guardar cambios
+                    bd.SaveChanges();
+                    //si todo esta bien
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+
+        [HttpGet]
+        [Route("api/ActivoFijo/buscarActivo/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarActivo(string buscador = "")
+        {
+            List<ActivoFijoAF> listaActivo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join resposable in bd.Empleado
+                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   where activo.EstadoActual == 1
+
+                                   select new ActivoFijoAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Desripcion = activo.Desripcion,
+                                       Clasificacion = clasif.Clasificacion1,
+                                       AreaDeNegocio = area.Nombre,
+                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join resposable in bd.Empleado
+                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   where activo.EstadoActual == 1
+
+
+                                     && ((activo.IdBien).ToString().Contains(buscador)
+                                      || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                      //|| (noFormulario.NoFormulario).Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                      || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
+                                      || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (resposable.Nombres).ToLower().Contains(buscador.ToLower())
+                                      || (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+                                      )
+
+                                   select new ActivoFijoAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Desripcion = activo.Desripcion,
+                                       Clasificacion = clasif.Clasificacion1,
+                                       AreaDeNegocio = area.Nombre,
+                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+
+        [HttpGet]
+        //el ? es para definir que puede ir parametro o no
+        [Route("api/ActivoFijo/FiltrarSucursalTipo/{tipo?}")]
+        public IEnumerable<SucursalAF> FiltrarSucursalTipo(int tipo = 0)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SucursalAF> filtroSucursal = (from sucur in bd.Sucursal
+                                                          join area in bd.AreaDeNegocio
+                                                          on sucur.IdSucursal equals area.IdSucursal
+                                                          where sucur.Dhabilitado == 1
+                                                          && sucur.IdSucursal == tipo
+                                                          select new SucursalAF
+                                                          {
+                                                              IdSucursal = sucur.IdSucursal,
+                                                              Nombre = sucur.Nombre,
+                                                              Correlativo = sucur.Correlativo,
+                                                              Ubicacion = sucur.Ubicacion
+
+
+                                                          }).ToList();
+
+
+                return filtroSucursal;
+
+            }
+        }
+
     }
 }

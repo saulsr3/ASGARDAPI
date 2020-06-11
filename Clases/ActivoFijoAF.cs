@@ -37,5 +37,16 @@ namespace ASGARDAPI.Clases
         public double interes { get; set; }
         public double valorresidual { get; set; }
         public string foto { get; set; }
+
+
+       // public string codigobarra { get; set; }
+        public string numserie { get; set; }
+        public int idarea { get; set; } 
+        public int vidautil { get; set; }
+        public float valoradquisicion { get; set; }
+        public float intereses { get; set; }
+        public int estadoasignado { get; set; }
+        public string destinoinicial { get; set; }
+        public int estadoactual { get; set; }
     }
 }
