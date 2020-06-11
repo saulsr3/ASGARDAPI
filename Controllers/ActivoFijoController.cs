@@ -409,7 +409,6 @@ namespace ASGARDAPI.Controllers
 
                                                            }).ToList();
 
-
                 return listarAreas;
 
             }
