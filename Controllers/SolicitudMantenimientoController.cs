@@ -234,13 +234,14 @@ namespace ASGARDAPI.Controllers
 
         }
         [HttpGet]
-        [Route("api/Empleado/DatosSolicitud/{idSolicitud}")]
+        [Route("api/SolicitudMantenimiento/DatosSolicitud/{idSolicitud}")]
         public BienesSolicitadosMttoAF DatosSolicitud(int idSolicitud)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 BienesSolicitadosMttoAF odatos = new BienesSolicitadosMttoAF();
                 SolicitudMantenimiento osolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idSolicitud).First();
+
                 odatos.NoSolicitud = "00" + osolicitud.IdSolicitud.ToString();
                 odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
                 BienMantenimiento obienMtto=bd.BienMantenimiento.Where(p => p.IdSolicitud == osolicitud.IdSolicitud).First();
