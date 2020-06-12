@@ -93,6 +93,7 @@ namespace ASGARDAPI.Controllers
                         }
                         oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
                         oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
+                        oActivoFijo.Foto = oActivoAF.foto;
                         oActivoFijo.ValorResidual = 0;
                         oActivoFijo.EstaAsignado = 0;
                         oActivoFijo.EstadoActual = 1;
