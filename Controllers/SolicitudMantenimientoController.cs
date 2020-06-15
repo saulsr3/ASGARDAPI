@@ -283,5 +283,24 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/listarTecnicosCombo")]
+        public IEnumerable<TecnicoAF> listarTecnicosCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TecnicoAF> lista = (from tecnico in bd.Tecnicos                                                                                           
+                                                     where tecnico.Dhabilitado == 1
+                                                       select new TecnicoAF
+                                                       {
+                                                           idtecnico=tecnico.IdTecnico,
+                                                           nombre=tecnico.Nombre                                                
+                                                       }).ToList();
+                return lista;
+            }
+
+        }
     }
 }
