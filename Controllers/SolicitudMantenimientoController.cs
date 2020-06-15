@@ -233,6 +233,35 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/aceptarSolicitud/{idsolicitud}")]
+        public int aceptarSolicitud(int idsolicitud)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idsolicitud).First();
+                   // BienMantenimiento obien = bd.BienMantenimiento.Where(p => p.IdSolicitud == idsolicitud).Last();
+                    //SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 2).Last();
+                    //cuando el bien esté en mantenimeitno cambiará su estado a dos.
+                    oSolicitud.Estado = 2;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
         [HttpGet]
         [Route("api/SolicitudMantenimiento/DatosSolicitud/{idSolicitud}")]
         public BienesSolicitadosMttoAF DatosSolicitud(int idSolicitud)
