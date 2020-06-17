@@ -7,6 +7,7 @@ namespace ASGARDAPI.Clases
 {
     public class BienesSolicitadosMttoAF
     {
+        public int estadoActual { get; set; }
         public string Codigo { get; set; }
         public string Descripcion { get; set; }
         public string Razon { get; set; }

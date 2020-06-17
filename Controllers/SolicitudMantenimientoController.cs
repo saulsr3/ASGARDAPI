@@ -150,6 +150,36 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+
+        [HttpPost]
+        [Route("api/SolicitudMantenimiento/guardarEstadoActual")]
+        public int guardarEstadoActual([FromBody]ArrayMantenimientoAF oArray)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+
+                    //BienMantenimiento bienMtto = new BienMantenimiento();
+                    SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 1).Last();                  
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
+                    oActivo.EstadoActual = 3;
+                    bd.ActivoFijo.Add(oActivo);
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarCodigoCombo")]
         public IEnumerable<ActivoFijoAF> listarCodigoCombo()
@@ -221,6 +251,7 @@ namespace ASGARDAPI.Controllers
                                                               where bienMtto.IdSolicitud == idSolicitud
                                                               select new BienesSolicitadosMttoAF
                                                               {
+                                                                  estadoActual= (int) activo.EstadoActual,
                                                                   Codigo = activo.CorrelativoBien,
                                                                   Descripcion = activo.Desripcion,
                                                                   Periodo = bienMtto.PeriodoMantenimiento,
@@ -245,10 +276,52 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idsolicitud).First();
-                   // BienMantenimiento obien = bd.BienMantenimiento.Where(p => p.IdSolicitud == idsolicitud).Last();
-                    //SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 2).Last();
-                    //cuando el bien esté en mantenimeitno cambiará su estado a dos.
+
+                    //BienMantenimiento obienMtto = bd.BienMantenimiento.Where(p => p.IdSolicitud == oSolicitud.IdSolicitud).First();
+                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == obienMtto.IdBien).First();
+
+                    
+                    ////cuando el bien esté en mantenimiento cambiará su estado a dos.
                     oSolicitud.Estado = 2;
+
+                    // el estado del bien cambia a 3 para decir que está en mantenimiento.
+
+                    //oActivo.EstadoActual = 3;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/denegarSolicitud/{idsolicitud}")]
+        public int denegarSolicitud(int idsolicitud)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idsolicitud).First();
+
+                    BienMantenimiento obienMtto = bd.BienMantenimiento.Where(p => p.IdSolicitud == oSolicitud.IdSolicitud).First();
+                    ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == obienMtto.IdBien).First();
+
+                    //cuando el bien esté en mantenimiento cambiará su estado a cero.
+                    oSolicitud.Estado = 0;
+
+                   
+
+                    // el estado del bien cambia a 1 porque la solicitud fué rechazada.
+                    obien.EstadoActual = 2;
                     bd.SaveChanges();
                     respuesta = 1;
                 }
