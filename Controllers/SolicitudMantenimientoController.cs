@@ -162,7 +162,7 @@ namespace ASGARDAPI.Controllers
                 {
 
                     //BienMantenimiento bienMtto = new BienMantenimiento();
-                    SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 1).Last();                  
+                  //  SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 1).Last();                  
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
                     oActivo.EstadoActual = 3;
                     bd.ActivoFijo.Add(oActivo);
