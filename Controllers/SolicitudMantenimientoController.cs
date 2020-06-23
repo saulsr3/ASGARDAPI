@@ -267,8 +267,8 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/SolicitudMantenimiento/aceptarSolicitud/{idsolicitud}")]
-        public int aceptarSolicitud(int idsolicitud)
+        [Route("api/SolicitudMantenimiento/aceptarSolicitud/{idSoli}")]
+        public int aceptarSolicitud(int idSoli)
         {
             int respuesta = 0;
 
@@ -276,20 +276,36 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idsolicitud).First();
-
-                    //BienMantenimiento obienMtto = bd.BienMantenimiento.Where(p => p.IdSolicitud == oSolicitud.IdSolicitud).First();
-                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == obienMtto.IdBien).First();
-
-                    
-                    ////cuando el bien esté en mantenimiento cambiará su estado a dos.
+                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idSoli).First();
                     oSolicitud.Estado = 2;
-
-                    // el estado del bien cambia a 3 para decir que está en mantenimiento.
-
-                    //oActivo.EstadoActual = 3;
                     bd.SaveChanges();
                     respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/camabiarEstado/{idBien}")]
+        public int camabiarEstado(int idBien)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                    oActivo.EstadoActual = 3;
+                    bd.SaveChanges();
+                    respuesta = 1;
+
                 }
 
 
