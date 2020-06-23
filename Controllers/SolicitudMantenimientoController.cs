@@ -251,6 +251,7 @@ namespace ASGARDAPI.Controllers
                                                               where bienMtto.IdSolicitud == idSolicitud
                                                               select new BienesSolicitadosMttoAF
                                                               {
+                                                                  idBien=activo.IdBien,
                                                                   estadoActual= (int) activo.EstadoActual,
                                                                   Codigo = activo.CorrelativoBien,
                                                                   Descripcion = activo.Desripcion,
