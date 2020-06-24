@@ -8,6 +8,7 @@ namespace ASGARDAPI.Models
         public ActivoFijo()
         {
             BienMantenimiento = new HashSet<BienMantenimiento>();
+            TarjetaDepreciacion = new HashSet<TarjetaDepreciacion>();
         }
 
         public int IdBien { get; set; }
@@ -43,5 +44,6 @@ namespace ASGARDAPI.Models
         public Empleado IdResponsableNavigation { get; set; }
         public FormularioIngreso NoFormularioNavigation { get; set; }
         public ICollection<BienMantenimiento> BienMantenimiento { get; set; }
+        public ICollection<TarjetaDepreciacion> TarjetaDepreciacion { get; set; }
     }
 }

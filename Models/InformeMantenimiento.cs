@@ -8,6 +8,7 @@ namespace ASGARDAPI.Models
         public int IdInformeMantenimiento { get; set; }
         public int? IdMantenimiento { get; set; }
         public int? IdTecnico { get; set; }
+        public DateTime? Fecha { get; set; }
         public string Descripcion { get; set; }
         public double? CostoMateriales { get; set; }
         public double? CostoMo { get; set; }
