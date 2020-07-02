@@ -151,34 +151,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        [HttpPost]
-        [Route("api/SolicitudMantenimiento/guardarEstadoActual")]
-        public int guardarEstadoActual([FromBody]ArrayMantenimientoAF oArray)
-        {
-            int respuesta = 0;
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-
-                    //BienMantenimiento bienMtto = new BienMantenimiento();
-                  //  SolicitudMantenimiento idSolicitud = bd.SolicitudMantenimiento.Where(p => p.Estado == 1).Last();                  
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
-                    oActivo.EstadoActual = 3;
-                    bd.ActivoFijo.Add(oActivo);
-                    bd.SaveChanges();
-                    respuesta = 1;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                respuesta = 0;
-            }
-            return respuesta;
-        }
+   
 
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarCodigoCombo")]
@@ -201,44 +174,8 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        [HttpGet]
-        [Route("api/SolicitudMantenimiento/listarEmpleadosCombo")]
-        public IEnumerable<EmpleadoAF> listarEmpleadosCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-
-                IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
-                                                 where empleado.Dhabilitado == 1
-                                                 select new EmpleadoAF
-                                                 {
-                                                     idempleado = empleado.IdEmpleado,
-                                                     nombres = empleado.Nombres,
-                                                     apellidos = empleado.Apellidos
-                                                 }).ToList();
-                return lista;
-            }
-        }
-        [HttpGet]
-        [Route("api/SolicitudMantenimiento/listarAreaCombo")]
-        public IEnumerable<AreasDeNegocioAF> listarAreaCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<AreasDeNegocioAF> lista = (from area in bd.AreaDeNegocio
-                                                       join sucursal in bd.Sucursal
-                                                       on area.IdSucursal equals sucursal.IdSucursal
-                                                       where area.Dhabilitado == 1
-                                                       select new AreasDeNegocioAF
-                                                       {
-                                                           IdAreaNegocio = area.IdAreaNegocio,
-                                                           Nombre = area.Nombre,
-                                                           nombreSucursal = sucursal.Nombre
-                                                       }).ToList();
-                return lista;
-            }
-
-        }
+  
+    
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listaBienesSolicitados/{idSolicitud}")]
         public IEnumerable<BienesSolicitadosMttoAF> listaBienesSolicitados(int idSolicitud)
@@ -265,7 +202,38 @@ namespace ASGARDAPI.Controllers
             }
 
         }
-  
+
+        //listar bienes en manteniento
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/listarBienesMantenimiento")]
+        public IEnumerable<BienesSolicitadosMttoAF> listarBienesMantenimiento()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
+                                                              join activo in bd.ActivoFijo
+                                                              on bienMtto.IdBien equals activo.IdBien
+                                                              where activo.EstadoActual == 3
+                                                              select new BienesSolicitadosMttoAF
+                                                              {
+                                                                  idBien = activo.IdBien,
+                                                                  estadoActual = (int)activo.EstadoActual,
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion,
+                                                                  Periodo = bienMtto.PeriodoMantenimiento,
+                                                                  Razon = bienMtto.RazonMantenimiento
+
+                                                              }).ToList();
+
+
+                return lista;
+            }
+
+        }
+
+
+
+        //metodos para acetptar solicitud y cambiar estado actual
         [HttpGet]
         [Route("api/SolicitudMantenimiento/aceptarSolicitud/{idSoli}")]
         public int aceptarSolicitud(int idSoli)
@@ -281,6 +249,8 @@ namespace ASGARDAPI.Controllers
                     bd.SaveChanges();
                     respuesta = 1;
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -290,10 +260,36 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
         [HttpGet]
-        [Route("api/SolicitudMantenimiento/camabiarEstado/{idBien}")]
-        public int camabiarEstado(int idBien)
+        [Route("api/SolicitudMantenimiento/denegarSolicitud/{idSoli}")]
+        public int denegarSolicitud(int idSoli)
         {
             int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idSoli).First();
+                    oSolicitud.Estado = 0;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/cambiarEstado/{idBien}")]
+        public int cambiarEstado(int idBien)
+        {
+            int respuesta = 0;
+
             try
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -302,36 +298,7 @@ namespace ASGARDAPI.Controllers
                     oActivo.EstadoActual = 3;
                     bd.SaveChanges();
                     respuesta = 1;
-                }
-            }catch (Exception ex){
-                respuesta = 0;
-            }
-            return respuesta;
-        }
-        [HttpGet]
-        [Route("api/SolicitudMantenimiento/denegarSolicitud/{idsolicitud}")]
-        public int denegarSolicitud(int idsolicitud)
-        {
-            int respuesta = 0;
 
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    SolicitudMantenimiento oSolicitud = bd.SolicitudMantenimiento.Where(p => p.IdSolicitud == idsolicitud).First();
-
-                    BienMantenimiento obienMtto = bd.BienMantenimiento.Where(p => p.IdSolicitud == oSolicitud.IdSolicitud).First();
-                    ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == obienMtto.IdBien).First();
-
-                    //cuando el bien esté en mantenimiento cambiará su estado a cero.
-                    oSolicitud.Estado = 0;
-
-                   
-
-                    // el estado del bien cambia a 1 porque la solicitud fué rechazada.
-                    obien.EstadoActual = 2;
-                    bd.SaveChanges();
-                    respuesta = 1;
                 }
 
 
@@ -343,6 +310,35 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/cambiarEstadoDenegado/{idBien}")]
+        public int cambiarEstadoDenegado(int idBien)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                    oActivo.EstadoActual = 1;
+                    bd.SaveChanges();
+                    respuesta = 1;
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
+
         [HttpGet]
         [Route("api/SolicitudMantenimiento/DatosSolicitud/{idSolicitud}")]
         public BienesSolicitadosMttoAF DatosSolicitud(int idSolicitud)
@@ -367,7 +363,7 @@ namespace ASGARDAPI.Controllers
 
 
         [HttpGet]
-        [Route("api/SolicitudMantenimiento/listarTecnicosCombo")]
+        [Route("api/SolicitudMantenimiento/listarTecnicoCombo")]
         public IEnumerable<TecnicoAF> listarTecnicosCombo()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
