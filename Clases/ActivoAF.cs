@@ -3,6 +3,7 @@ namespace ASGARDAPI.Clases
 {
     public class ActivoAF
     {
+        //variables
         //Variables de activo fijo
         public int idbien { get; set; }
         public int noformularioactivo { get; set; }
