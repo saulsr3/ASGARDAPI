@@ -296,7 +296,7 @@ namespace ASGARDAPI.Models
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Fecha).HasColumnType("datetime");
+                entity.Property(e => e.Fecha).HasColumnType("date");
 
                 entity.HasOne(d => d.IdMantenimientoNavigation)
                     .WithMany(p => p.InformeMantenimiento)
@@ -359,7 +359,7 @@ namespace ASGARDAPI.Models
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Fecha).HasColumnType("datetime");
+                entity.Property(e => e.Fecha).HasColumnType("date");
 
                 entity.Property(e => e.Folio)
                     .HasMaxLength(10)
