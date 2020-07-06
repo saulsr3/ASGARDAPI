@@ -116,6 +116,48 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+
+
+        //METODO PARA GUARDAR EL INFORME DE LOS BIENES EN MANTENIMIENTO.
+
+        [HttpPost]
+        [Route("api/SolicitudMantenimiento/guardarInformeMantenimiento")]
+        public int guardarInformeMantenimiento([FromBody] InformeMatenimientoAF oInformeMantenimientoAF)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    InformeMantenimiento oInformeMantenimiento = new InformeMantenimiento();
+
+                    oInformeMantenimiento.IdInformeMantenimiento = oInformeMantenimientoAF.idinformematenimiento;
+                    oInformeMantenimiento.IdMantenimiento = oInformeMantenimientoAF.idmantenimiento;
+                    oInformeMantenimiento.IdTecnico = oInformeMantenimientoAF.idtecnico;
+                    oInformeMantenimiento.Fecha = oInformeMantenimientoAF.fechainforme;
+                    oInformeMantenimiento.Descripcion = oInformeMantenimientoAF.descripcion;
+                    oInformeMantenimiento.CostoMateriales = oInformeMantenimientoAF.costomateriales;
+                    oInformeMantenimiento.CostoMo = oInformeMantenimientoAF.costomo;
+                    oInformeMantenimiento.CostoTotal = oInformeMantenimientoAF.costototal;
+
+                    bd.InformeMantenimiento.Add(oInformeMantenimiento);
+                    bd.SaveChanges();
+                    respuesta = 1;           
+                   
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
+
         [HttpPost]
         [Route("api/SolicitudMantenimiento/guardarBienes")]
         public int guardarBienes([FromBody]ArrayMantenimientoAF oArray)
@@ -217,6 +259,7 @@ namespace ASGARDAPI.Controllers
                                                               select new BienesSolicitadosMttoAF
                                                               {
                                                                   idBien = activo.IdBien,
+                                                                  idmantenimiento = bienMtto.IdMantenimiento,
                                                                   estadoActual = (int)activo.EstadoActual,
                                                                   Codigo = activo.CorrelativoBien,
                                                                   Descripcion = activo.Desripcion,
