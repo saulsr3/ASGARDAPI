@@ -122,15 +122,15 @@ namespace ASGARDAPI.Controllers
 
         [HttpPost]
         [Route("api/SolicitudMantenimiento/guardarInformeMantenimiento")]
-        public int guardarInformeMantenimiento([FromBody] InformeMatenimientoAF oInformeMantenimientoAF)
+        public int guardarInformeMantenimiento([FromBody]InformeMatenimientoAF oInformeMantenimientoAF)
         {
             int respuesta = 0;
+
             try
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     InformeMantenimiento oInformeMantenimiento = new InformeMantenimiento();
-
                     oInformeMantenimiento.IdInformeMantenimiento = oInformeMantenimientoAF.idinformematenimiento;
                     oInformeMantenimiento.IdMantenimiento = oInformeMantenimientoAF.idmantenimiento;
                     oInformeMantenimiento.IdTecnico = oInformeMantenimientoAF.idtecnico;
@@ -139,7 +139,6 @@ namespace ASGARDAPI.Controllers
                     oInformeMantenimiento.CostoMateriales = oInformeMantenimientoAF.costomateriales;
                     oInformeMantenimiento.CostoMo = oInformeMantenimientoAF.costomo;
                     oInformeMantenimiento.CostoTotal = oInformeMantenimientoAF.costototal;
-
                     bd.InformeMantenimiento.Add(oInformeMantenimiento);
                     bd.SaveChanges();
                     respuesta = 1;           
