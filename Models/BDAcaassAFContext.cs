@@ -27,6 +27,7 @@ namespace ASGARDAPI.Models
         public virtual DbSet<InformeMantenimiento> InformeMantenimiento { get; set; }
         public virtual DbSet<Marcas> Marcas { get; set; }
         public virtual DbSet<Proveedor> Proveedor { get; set; }
+        public virtual DbSet<SolicitudBaja> SolicitudBaja { get; set; }
         public virtual DbSet<SolicitudMantenimiento> SolicitudMantenimiento { get; set; }
         public virtual DbSet<Sucursal> Sucursal { get; set; }
         public virtual DbSet<TarjetaDepreciacion> TarjetaDepreciacion { get; set; }
@@ -39,7 +40,7 @@ namespace ASGARDAPI.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=BDAcaassAF;Trusted_Connection=True;");
             }
         }
 
@@ -86,32 +87,32 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdClasificacionNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.IdClasificacion)
-                    .HasConstraintName("FK__ActivoFij__IdCla__45F365D3");
+                    .HasConstraintName("FK__ActivoFij__IdCla__48CFD27E");
 
                 entity.HasOne(d => d.IdDonanteNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.IdDonante)
-                    .HasConstraintName("FK__ActivoFij__IdDon__48CFD27E");
+                    .HasConstraintName("FK__ActivoFij__IdDon__4BAC3F29");
 
                 entity.HasOne(d => d.IdMarcaNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.IdMarca)
-                    .HasConstraintName("FK__ActivoFij__IdMar__47DBAE45");
+                    .HasConstraintName("FK__ActivoFij__IdMar__4AB81AF0");
 
                 entity.HasOne(d => d.IdProveedorNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.IdProveedor)
-                    .HasConstraintName("FK__ActivoFij__IdPro__49C3F6B7");
+                    .HasConstraintName("FK__ActivoFij__IdPro__4CA06362");
 
                 entity.HasOne(d => d.IdResponsableNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.IdResponsable)
-                    .HasConstraintName("FK__ActivoFij__IdRes__4AB81AF0");
+                    .HasConstraintName("FK__ActivoFij__IdRes__4D94879B");
 
                 entity.HasOne(d => d.NoFormularioNavigation)
                     .WithMany(p => p.ActivoFijo)
                     .HasForeignKey(d => d.NoFormulario)
-                    .HasConstraintName("FK__ActivoFij__NoFor__46E78A0C");
+                    .HasConstraintName("FK__ActivoFij__NoFor__49C3F6B7");
             });
 
             modelBuilder.Entity<AreaDeNegocio>(entity =>
@@ -129,7 +130,7 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdSucursalNavigation)
                     .WithMany(p => p.AreaDeNegocio)
                     .HasForeignKey(d => d.IdSucursal)
-                    .HasConstraintName("FK__AreaDeNeg__IdSuc__440B1D61");
+                    .HasConstraintName("FK__AreaDeNeg__IdSuc__46E78A0C");
             });
 
             modelBuilder.Entity<BienMantenimiento>(entity =>
@@ -149,12 +150,12 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdBienNavigation)
                     .WithMany(p => p.BienMantenimiento)
                     .HasForeignKey(d => d.IdBien)
-                    .HasConstraintName("FK__Bien_Mant__IdBie__5070F446");
+                    .HasConstraintName("FK__Bien_Mant__IdBie__534D60F1");
 
                 entity.HasOne(d => d.IdSolicitudNavigation)
                     .WithMany(p => p.BienMantenimiento)
                     .HasForeignKey(d => d.IdSolicitud)
-                    .HasConstraintName("FK__Bien_Mant__IdSol__4F7CD00D");
+                    .HasConstraintName("FK__Bien_Mant__IdSol__52593CB8");
             });
 
             modelBuilder.Entity<Bitacora>(entity =>
@@ -170,7 +171,7 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdUsuarioNavigation)
                     .WithMany(p => p.Bitacora)
                     .HasForeignKey(d => d.IdUsuario)
-                    .HasConstraintName("FK__Bitacora__IdUsua__4E88ABD4");
+                    .HasConstraintName("FK__Bitacora__IdUsua__5165187F");
             });
 
             modelBuilder.Entity<Cargos>(entity =>
@@ -255,12 +256,12 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdAreaDeNegocioNavigation)
                     .WithMany(p => p.Empleado)
                     .HasForeignKey(d => d.IdAreaDeNegocio)
-                    .HasConstraintName("FK__Empleado__IdArea__5165187F");
+                    .HasConstraintName("FK__Empleado__IdArea__5535A963");
 
                 entity.HasOne(d => d.IdCargoNavigation)
                     .WithMany(p => p.Empleado)
                     .HasForeignKey(d => d.IdCargo)
-                    .HasConstraintName("FK__Empleado__IdCarg__44FF419A");
+                    .HasConstraintName("FK__Empleado__IdCarg__47DBAE45");
             });
 
             modelBuilder.Entity<FormularioIngreso>(entity =>
@@ -301,12 +302,12 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdMantenimientoNavigation)
                     .WithMany(p => p.InformeMantenimiento)
                     .HasForeignKey(d => d.IdMantenimiento)
-                    .HasConstraintName("FK__InformeMa__IdMan__52593CB8");
+                    .HasConstraintName("FK__InformeMa__IdMan__5629CD9C");
 
                 entity.HasOne(d => d.IdTecnicoNavigation)
                     .WithMany(p => p.InformeMantenimiento)
                     .HasForeignKey(d => d.IdTecnico)
-                    .HasConstraintName("FK__InformeMa__IdTec__534D60F1");
+                    .HasConstraintName("FK__InformeMa__IdTec__571DF1D5");
             });
 
             modelBuilder.Entity<Marcas>(entity =>
@@ -349,6 +350,44 @@ namespace ASGARDAPI.Models
                 entity.Property(e => e.TelefonoEncargado)
                     .HasMaxLength(25)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SolicitudBaja>(entity =>
+            {
+                entity.HasKey(e => e.IdSolicitud);
+
+                entity.Property(e => e.Contacto)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Domicilio)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EntidadBeneficiaria)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Fecha).HasColumnType("date");
+
+                entity.Property(e => e.Folio)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Motivo).HasColumnName("motivo");
+
+                entity.Property(e => e.Observaciones)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Telefono)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdBienNavigation)
+                    .WithMany(p => p.SolicitudBaja)
+                    .HasForeignKey(d => d.IdBien)
+                    .HasConstraintName("FK__Solicitud__IdBie__5441852A");
             });
 
             modelBuilder.Entity<SolicitudMantenimiento>(entity =>
@@ -396,7 +435,7 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdBienNavigation)
                     .WithMany(p => p.TarjetaDepreciacion)
                     .HasForeignKey(d => d.IdBien)
-                    .HasConstraintName("FK__TarjetaDe__IdBie__4BAC3F29");
+                    .HasConstraintName("FK__TarjetaDe__IdBie__4E88ABD4");
             });
 
             modelBuilder.Entity<Tecnicos>(entity =>
@@ -441,12 +480,12 @@ namespace ASGARDAPI.Models
                 entity.HasOne(d => d.IdEmpleadoNavigation)
                     .WithMany(p => p.Usuario)
                     .HasForeignKey(d => d.IdEmpleado)
-                    .HasConstraintName("FK__Usuario__IdEmple__4CA06362");
+                    .HasConstraintName("FK__Usuario__IdEmple__4F7CD00D");
 
                 entity.HasOne(d => d.IdTipoUsuarioNavigation)
                     .WithMany(p => p.Usuario)
                     .HasForeignKey(d => d.IdTipoUsuario)
-                    .HasConstraintName("FK__Usuario__IdTipoU__4D94879B");
+                    .HasConstraintName("FK__Usuario__IdTipoU__5070F446");
             });
         }
     }

@@ -351,48 +351,53 @@ namespace ASGARDAPI.Controllers
 
 
         [HttpGet]
-        [Route("api/ActivoFijo/RecuperarBienes/{id}")]
-        public ActivoFijoAF RecuperarBienes(int id)
+        [Route("api/ActivoFijo/RecuperarFormCompleto/{id}")]
+        public JsonResult RecuperarFormCompleto(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                ActivoFijoAF oActivoFijoAF = new ActivoFijoAF();
-                ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                oActivoFijoAF.IdBien = oActivoFijo.IdBien;
-                oActivoFijoAF.NoFormulario = (int)oActivoFijo.NoFormulario;
-                oActivoFijoAF.Codigo = oActivoFijo.CorrelativoBien;
-                //oActivoFijoAF.fechacadena = oActivoFijo.;
-                oActivoFijoAF.Desripcion = oActivoFijo.Desripcion;
-                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
-                oActivoFijoAF.idmarca = (int)oActivoFijo.IdMarca;
-                //oActivoFijoAF.idarea = oActivoFijo;
-                oActivoFijoAF.idresponsable = (int)oActivoFijo.IdResponsable;
-                //oActivoFijoAF.codigobarra = oActivoFijo.CodigoBarra;
-                oActivoFijoAF.Modelo = oActivoFijo.Modelo;
-                oActivoFijoAF.tipoadquicicion = (int)oActivoFijo.TipoAdquicicion;
-                oActivoFijoAF.Color = oActivoFijo.Color;
-                oActivoFijoAF.numserie = oActivoFijo.NoSerie;
-                oActivoFijoAF.idmarca = (int)oActivoFijo.IdMarca;
-                oActivoFijoAF.idclasificacion = (int)oActivoFijo.IdClasificacion;
-                oActivoFijoAF.idproveedor = (int)oActivoFijo.IdProveedor;
-                oActivoFijoAF.iddonante = (int)oActivoFijo.IdDonante;
-                oActivoFijoAF.vidautil = (int)oActivoFijo.VidaUtil;
-                oActivoFijoAF.idresponsable = (int)oActivoFijo.IdResponsable;
-                oActivoFijoAF.estadoingreso = oActivoFijo.EstadoIngreso;
-                oActivoFijoAF.valoradquisicion = (float)oActivoFijo.ValorAdquicicion;
-                oActivoFijoAF.plazopago = oActivoFijo.PlazoPago;
-                oActivoFijoAF.prima = (float)oActivoFijo.Prima;
-                oActivoFijoAF.cuotaasignada = (float)oActivoFijo.CuotaAsignanda;
-                oActivoFijoAF.intereses = (float)oActivoFijo.Intereses;
-                oActivoFijoAF.valorresidual = (float)oActivoFijo.ValorResidual;
-                oActivoFijoAF.foto = oActivoFijo.Foto;
-                oActivoFijoAF.estadoasignado = (int)oActivoFijo.EstaAsignado;
-                oActivoFijoAF.destinoinicial = oActivoFijo.DestinoInicial;
-                oActivoFijoAF.estadoactual = (int)oActivoFijo.EstadoActual;
+                //creamos un nuevo objeto dinamico bien
+                dynamic odatos = new Newtonsoft.Json.Linq.JObject();
+                //Extraer los datos padres de la base
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                //FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == id).First();
+                //Utilizar los datos padres para extraer los datos
+                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                Proveedor oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First() : null;
+                Donantes odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First() : null;
 
-                return oActivoFijoAF;
+                //llenado
+                odatos.idbien = oActivo.IdBien;
+                odatos.bandera = 0;
+                odatos.idclasificacion = oclasi.IdClasificacion;
+                odatos.estadoingreso = oActivo.EstadoIngreso;
+                odatos.fechaingreso = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("yyyy-MM-dd");
+                odatos.tipoadquicicion = (int)oActivo.TipoAdquicicion;
+                odatos.idproveedor = (oprov != null) ? oprov.IdProveedor : odona.IdDonante;
+                odatos.descripcion = oActivo.Desripcion;
+                odatos.color = oActivo.Color;
+                odatos.idmarca = omarca.IdMarca;
+                odatos.modelo = oActivo.Modelo;
+                odatos.nofactura = oformu.NoFactura;
+                odatos.valoradquicicion = (double)oActivo.ValorAdquicicion;
+                odatos.prima = (double)oActivo.Prima;
+                odatos.plazopago = oActivo.PlazoPago;
+                odatos.cuotaasignada = (double)oActivo.CuotaAsignanda;
+                odatos.personaentrega = oformu.PersonaEntrega;
+                odatos.personarecibe = oformu.PersonaRecibe;
+                odatos.observaciones = oformu.Observaciones;
+                odatos.foto = oActivo.Foto;
+                odatos.interes = (double)oActivo.Intereses;
+                odatos.noformulario = oformu.NoFormulario;
+                odatos.cantidad = 1;
+                
+                return Json(odatos);
             }
         }
+
+     
 
         [HttpGet]
         [Route("api/ActivoFijo/listarAreaCombo")]
@@ -447,14 +452,24 @@ namespace ASGARDAPI.Controllers
                     //para editar tenemos que sacar la informacion
                     ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoFijoAF.IdBien).First();
                     oActivoFijo.IdBien = oActivoFijoAF.IdBien;
-                    oActivoFijo.NoFormulario = oActivoFijoAF.NoFormulario;
-                    oActivoFijo.CorrelativoBien = oActivoFijoAF.Codigo;
-                    //oActivoFijoAF.fechacadena = oActivoFijo.;
                     oActivoFijo.Desripcion = oActivoFijoAF.Desripcion;
                     oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
                     oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
-                    //oActivoFijoAF.idarea = oActivoFijo;
-
+                    oActivoFijo.Modelo = oActivoFijoAF.Modelo;
+                    oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquicicion;
+                    oActivoFijo.Color = oActivoFijoAF.Color;
+                    oActivoFijo.VidaUtil = oActivoFijoAF.vidautil;
+                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    oActivoFijo.ValorAdquicicion = oActivoFijoAF.valoradquicicion;
+                    oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    oActivoFijo.Prima = oActivoFijoAF.prima;
+                    oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
+                    oActivoFijo.Intereses = oActivoFijoAF.interes;
+                    oActivoFijo.ValorResidual = oActivoFijoAF.valorresidual;
+                    oActivoFijo.Foto = oActivoFijoAF.foto;
+                    oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
+                    oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
+ 
                     //para guardar cambios
                     bd.SaveChanges();
                     //si todo esta bien
@@ -464,9 +479,12 @@ namespace ASGARDAPI.Controllers
             catch (Exception ex)
             {
                 rpta = 0;
+                Console.WriteLine(rpta);
             }
             return rpta;
         }
+
+        
 
 
         [HttpGet]
@@ -518,7 +536,7 @@ namespace ASGARDAPI.Controllers
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
                                       || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
-                                      //|| (noFormulario.NoFormulario).Contains(buscador.ToLower())
+                                      //|| (noFormulario.FechaIngreso).ToLower().Contains(buscador.ToLower())
                                       || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
                                       || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
                                       || (area.Nombre).ToLower().Contains(buscador.ToLower())
@@ -539,6 +557,59 @@ namespace ASGARDAPI.Controllers
 
                     return listaActivo;
                 }
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/ActivoFijo/DatosVer/{id}")]
+        public JsonResult DatosVer(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                //creamos un nuevo objeto dinamico bien
+                dynamic bien = new Newtonsoft.Json.Linq.JObject();
+                //Extraer los datos padres de la base
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                //Utilizar los datos padres para extraer los datos
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                // si los datos son nulos
+                string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
+                string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
+                bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
+                bien.area = oArea.Nombre;
+                bien.marca = omarca.Marca;
+                bien.clasificacion = oclasi.Clasificacion1;
+                bien.destino = oArea.Nombre + " " + oSucursal.Nombre;
+                bien.proveedor = oprov;
+                bien.donante = odona;
+                bien.fecha = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
+
+                bien.noformulario = oActivo.NoFormulario; 
+                bien.Codigo = oActivo.CorrelativoBien;
+                bien.Desripcion = oActivo.Desripcion;
+                bien.Modelo = oActivo.Modelo;
+                bien.tipoadquicicion = oActivo.TipoAdquicicion;
+                bien.Color = oActivo.Color;
+                bien.numserie = oActivo.NoSerie;
+                bien.vidautil = oActivo.VidaUtil;
+                bien.estadoingreso = oActivo.EstadoIngreso;
+                bien.valoradquicicion = oActivo.ValorAdquicicion;
+                bien.plazopago = oActivo.PlazoPago;
+                bien.prima = oActivo.Prima;
+                bien.cuotaasignada = oActivo.CuotaAsignanda;
+                bien.interes = oActivo.Intereses;
+                bien.valorresidual = oActivo.ValorResidual;
+                bien.foto = oActivo.Foto;
+                bien.destinoinicial = oActivo.DestinoInicial;
+                //para saber si es un donante o un proveedor
+                bien.donaprov = false;
+                return Json(bien);
             }
         }
 
@@ -569,6 +640,9 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+        
+
 
     }
 }

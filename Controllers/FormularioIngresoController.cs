@@ -109,7 +109,43 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+
+        [HttpPost]
+        [Route("api/FormularioIngreso/modificarActivosForm")]
+        public int modificarActivosForm([FromBody]FormularioIngresoAF oFormularioIngresoAF)
+        {
+            int rpta = 0;
+            try
+            {
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //para editar tenemos que sacar la informacion
+                    FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oFormularioIngresoAF.noformulario).First();
+                    oFormularioIngreso.NoFormulario = oFormularioIngresoAF.noformulario;
+                    oFormularioIngreso.NoFactura = oFormularioIngresoAF.nofactura;
+                    oFormularioIngreso.PersonaEntrega = oFormularioIngresoAF.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oFormularioIngresoAF.personarecibe;
+                    oFormularioIngreso.FechaIngreso = oFormularioIngresoAF.fechaingreso;
+                    oFormularioIngreso.Observaciones = oFormularioIngresoAF.observaciones;
+
+                    //para guardar cambios
+                    bd.SaveChanges();
+                    //si todo esta bien
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+                //Console.WriteLine(rpta);
+            }
+            return rpta;
+
         }
+
+
     }
+}
     
 
