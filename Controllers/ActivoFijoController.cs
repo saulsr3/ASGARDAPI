@@ -615,33 +615,74 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         //el ? es para definir que puede ir parametro o no
-        [Route("api/ActivoFijo/FiltrarSucursalTipo/{tipo?}")]
-        public IEnumerable<SucursalAF> FiltrarSucursalTipo(int tipo = 0)
+        [Route("api/ActivoFijo/FiltrarSucursalTipo/{id}")]
+        public IEnumerable<ActivoFijoAF> FiltrarSucursalTipo(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<SucursalAF> filtroSucursal = (from sucur in bd.Sucursal
+                IEnumerable<ActivoFijoAF> filtroSucursal = (from activo in bd.ActivoFijo
+                                                          join noFormulario in bd.FormularioIngreso
+                                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                                          join clasif in bd.Clasificacion
+                                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                                          join resposable in bd.Empleado
+                                                          on activo.IdResponsable equals resposable.IdEmpleado
                                                           join area in bd.AreaDeNegocio
-                                                          on sucur.IdSucursal equals area.IdSucursal
-                                                          where sucur.Dhabilitado == 1
-                                                          && sucur.IdSucursal == tipo
-                                                          select new SucursalAF
+                                                          on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                          join sucur in bd.Sucursal
+                                                          on area.IdSucursal equals sucur.IdSucursal
+                                                          where sucur.Dhabilitado ==1
+                                                          && sucur.IdSucursal == id 
+                                                          select new ActivoFijoAF
                                                           {
-                                                              IdSucursal = sucur.IdSucursal,
-                                                              Nombre = sucur.Nombre,
-                                                              Correlativo = sucur.Correlativo,
-                                                              Ubicacion = sucur.Ubicacion
-
-
+                                                              IdBien = activo.IdBien,
+                                                              Codigo = activo.CorrelativoBien,
+                                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                              Desripcion = activo.Desripcion,
+                                                              Clasificacion = clasif.Clasificacion1,
+                                                              AreaDeNegocio = area.Nombre,
+                                                              Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                                           }).ToList();
-
-
                 return filtroSucursal;
 
             }
         }
+        [HttpGet]
+        //el ? es para definir que puede ir parametro o no
+        [Route("api/ActivoFijo/FiltrarAreaTipo/{id}")]
+        public IEnumerable<ActivoFijoAF> FiltrarAreaTipo(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> filtroArea = (from activo in bd.ActivoFijo
+                                                            join noFormulario in bd.FormularioIngreso
+                                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                                            join clasif in bd.Clasificacion
+                                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                                            join resposable in bd.Empleado
+                                                            on activo.IdResponsable equals resposable.IdEmpleado
+                                                            join area in bd.AreaDeNegocio
+                                                            on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucur in bd.Sucursal
+                                                            on area.IdSucursal equals sucur.IdSucursal
+                                                            where area.Dhabilitado == 1
+                                                            && area.IdAreaNegocio == id
+                                                          select new ActivoFijoAF
+                                                          {
+                                                              IdBien = activo.IdBien,
+                                                              Codigo = activo.CorrelativoBien,
+                                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                              Desripcion = activo.Desripcion,
+                                                              Clasificacion = clasif.Clasificacion1,
+                                                              AreaDeNegocio = area.Nombre,
+                                                              Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                          }).ToList();
+                return filtroArea;
 
-        
+            }
+        }
+
+
 
 
     }
