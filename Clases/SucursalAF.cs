@@ -11,5 +11,6 @@ namespace ASGARDAPI.Clases
         public string Nombre { get; set; }
         public string Ubicacion { get; set; }
         public string Correlativo { get; set; }
+        public int IdCooperativa { get; set; }
     }
 }
