@@ -403,6 +403,40 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/validarFolio/{idsolicitud}/{folio}")]
+        public int validarFolio(int idsolicitud, string folio)
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idsolicitud == 0)
+                    {
+                        respuesta = bd.SolicitudMantenimiento.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.SolicitudMantenimiento.Where(p => p.Folio.ToLower() == folio.ToLower() ).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+
+
 
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarTecnicoCombo")]
