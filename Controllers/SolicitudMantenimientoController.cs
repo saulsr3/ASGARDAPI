@@ -51,17 +51,6 @@ namespace ASGARDAPI.Controllers
             {
 
                 IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento
-                                                                    //join bienMtoto in bd.BienMantenimiento
-                                                                    //on solicitud.IdSolicitud equals bienMtoto.IdSolicitud
-                                                                    //join bien in bd.ActivoFijo
-                                                                    //on bienMtoto.IdBien equals bien.IdBien
-                                                                    //join empleado in bd.Empleado
-                                                                    //on bien.IdResponsable equals empleado.IdEmpleado
-                                                                    //join areaNegocio in bd.AreaDeNegocio
-                                                                    //on empleado.IdAreaDeNegocio equals areaNegocio.IdAreaNegocio
-                                                                    //join sucursal in bd.Sucursal
-                                                                    //on areaNegocio.IdSucursal equals sucursal.IdSucursal
-
                                                                 where solicitud.Estado == 1
 
                                                                 select new SolicitudMantenimientoPAF
@@ -70,11 +59,6 @@ namespace ASGARDAPI.Controllers
                                                                     folio = solicitud.Folio,
                                                                     descripcion = solicitud.Descripcion,
                                                                     fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
-
-                                                                    //areadenegocio = areaNegocio.Nombre,
-                                                                    //sucursal=sucursal.Nombre,
-                                                                    //solicitante=empleado.Nombres
-
                                                                 }).ToList();
 
 
@@ -116,45 +100,6 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
-
-
-        //METODO PARA GUARDAR EL INFORME DE LOS BIENES EN MANTENIMIENTO.
-
-        [HttpPost]
-        [Route("api/SolicitudMantenimiento/guardarInformeMantenimiento")]
-        public int guardarInformeMantenimiento([FromBody]InformeMatenimientoAF oInformeMantenimientoAF)
-        {
-            int respuesta = 0;
-
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    InformeMantenimiento oInformeMantenimiento = new InformeMantenimiento();
-                    oInformeMantenimiento.IdInformeMantenimiento = oInformeMantenimientoAF.idinformematenimiento;
-                    oInformeMantenimiento.IdMantenimiento = oInformeMantenimientoAF.idmantenimiento;
-                    oInformeMantenimiento.IdTecnico = oInformeMantenimientoAF.idtecnico;
-                    oInformeMantenimiento.Fecha = oInformeMantenimientoAF.fechainforme;
-                    oInformeMantenimiento.Descripcion = oInformeMantenimientoAF.descripcion;
-                    oInformeMantenimiento.CostoMateriales = oInformeMantenimientoAF.costomateriales;
-                    oInformeMantenimiento.CostoMo = oInformeMantenimientoAF.costomo;
-                    oInformeMantenimiento.CostoTotal = oInformeMantenimientoAF.costototal;
-                    bd.InformeMantenimiento.Add(oInformeMantenimiento);
-                    bd.SaveChanges();
-                    respuesta = 1;           
-                   
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                respuesta = 0;
-            }
-            return respuesta;
-        }
-
 
 
         [HttpPost]
@@ -275,7 +220,7 @@ namespace ASGARDAPI.Controllers
 
 
 
-        //metodos para acetptar solicitud y cambiar estado actual
+        //metodos para aceptar solicitud y cambiar estado actual
         [HttpGet]
         [Route("api/SolicitudMantenimiento/aceptarSolicitud/{idSoli}")]
         public int aceptarSolicitud(int idSoli)
@@ -434,6 +379,73 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
 
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/buscarSolicitudMante/{buscador?}")]
+        public IEnumerable<EmpleadoAF> buscarSolicitudMante(string buscador = "")
+        {
+            List<EmpleadoAF> listaEmpleado;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaEmpleado = (from empleado in bd.Empleado
+                                     join area in bd.AreaDeNegocio
+                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     join cargos in bd.Cargos
+                                     on empleado.IdCargo equals cargos.IdCargo
+                                     where empleado.Dhabilitado == 1
+                                     select new EmpleadoAF
+                                     {
+
+                                         idempleado = empleado.IdEmpleado,
+                                         dui = empleado.Dui,
+                                         nombres = empleado.Nombres,
+                                         apellidos = empleado.Apellidos,
+                                         direccion = empleado.Direccion,
+                                         telefono = empleado.Telefono,
+                                         telefonopersonal = empleado.TelefonoPersonal,
+                                         nombrearea = area.Nombre,
+                                         cargo = cargos.Cargo
+
+                                     }).ToList();
+                    return listaEmpleado;
+                }
+                else
+                {
+                    listaEmpleado = (from empleado in bd.Empleado
+                                     join area in bd.AreaDeNegocio
+                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     join cargos in bd.Cargos
+                                     on empleado.IdCargo equals cargos.IdCargo
+                                     where empleado.Dhabilitado == 1
+
+                                     && ((empleado.IdEmpleado).ToString().Contains(buscador.ToLower()) ||
+                                     (empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Apellidos).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Direccion).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.Telefono).ToLower().Contains(buscador.ToLower()) ||
+                                     (empleado.TelefonoPersonal).ToLower().Contains(buscador.ToLower()) ||
+                                     (area.Nombre).ToLower().Contains(buscador.ToLower()) ||
+                                     (cargos.Cargo).ToLower().Contains(buscador.ToLower()))
+
+                                     select new EmpleadoAF
+                                     {
+                                         idempleado = empleado.IdEmpleado,
+                                         dui = empleado.Dui,
+                                         nombres = empleado.Nombres,
+                                         apellidos = empleado.Apellidos,
+                                         direccion = empleado.Direccion,
+                                         telefono = empleado.Telefono,
+                                         telefonopersonal = empleado.TelefonoPersonal,
+                                         nombrearea = area.Nombre,
+                                         cargo = cargos.Cargo
+                                     }).ToList();
+                    return listaEmpleado;
+                }
+            }
         }
 
 
