@@ -97,7 +97,22 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.ValorResidual = 0;
                         oActivoFijo.EstaAsignado = 0;
                         oActivoFijo.EstadoActual = 1;
+                        
+                        
                         bd.ActivoFijo.Add(oActivoFijo);
+                        bd.SaveChanges();
+                        //Transaccion a tarjeta
+                        TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
+                        ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                        transaccion.IdBien = oActivoFijoTransaccion.IdBien;
+                        transaccion.Fecha = oFormulario.FechaIngreso;
+                        transaccion.Concepto = "Compra";
+                        transaccion.Valor = oActivoFijoTransaccion.ValorAdquicicion;
+                        transaccion.DepreciacionAnual = 0.00;
+                        transaccion.DepreciacionAcumulada = 0.00;
+                        transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
+                        transaccion.ValorMejora = 0.00;
+                        bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
                     }
                     rpta = 1;
