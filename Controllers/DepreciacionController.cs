@@ -20,20 +20,42 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<DepreciacionAF> listaActivos = (from activo  in bd.ActivoFijo
+                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-
-                                                            where activo.EstadoActual == 1 || activo.EstadoActual==2
-                                                           select new DepreciacionAF
-                                                           {
-                                                               codigo = activo.CorrelativoBien,
-                                                               descripcion = activo.Desripcion,
-                                                               areanegocio = area.Nombre,
-                                                               responsable = empleado.Nombres +" " +empleado.Apellidos
-                                                           }).ToList();
+                                                            where activo.EstadoActual == 1 || activo.EstadoActual == 2
+                                                            select new DepreciacionAF
+                                                            {
+                                                                codigo = activo.CorrelativoBien,
+                                                                descripcion = activo.Desripcion,
+                                                                areanegocio = area.Nombre,
+                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
+                                                              
+                                                            }).ToList();
+                return listaActivos;
+            }
+        }
+        [HttpGet]
+        [Route("api/Depreciacion/listarActivosDepreciacionFiltro/{id}")]
+        public IEnumerable<DepreciacionAF> listarActivosDepreciacionFiltro(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                                                            join empleado in bd.Empleado
+                                                            on activo.IdResponsable equals empleado.IdEmpleado
+                                                            join area in bd.AreaDeNegocio
+                                                            on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && area.IdAreaNegocio==id
+                                                            select new DepreciacionAF
+                                                            {
+                                                                codigo = activo.CorrelativoBien,
+                                                                descripcion = activo.Desripcion,
+                                                                areanegocio = area.Nombre,
+                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
+                                                            }).ToList();
                 return listaActivos;
             }
         }
