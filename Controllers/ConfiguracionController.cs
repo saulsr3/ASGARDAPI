@@ -85,5 +85,53 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        //Recuperar
+        [HttpGet]
+        [Route("api/Cooperativa/recuperarCooperativa/{id}")]
+        public CooperativaAF recuperarCooperativa(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == id).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                return oCooperativaAF;
+            }
+
+        }
+
+        //Validar
+        [HttpGet]
+        [Route("api/Cooperativa/validarCooperativa/{idcooperativa}/{cooperativa}")]
+        public int validarCooperativa(int idcooperativa, string cooperativa)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idcooperativa == 0)
+                    {
+                        rpta = bd.Cooperativa.Where(p => p.Nombre.ToLower() == cooperativa.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Cooperativa.Where(p => p.Nombre.ToLower() == cooperativa.ToLower() && p.IdCooperativa != idcooperativa && p.Dhabilitado == 1).Count();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return rpta = 0;
+            }
+
+            return rpta;
+        }
+
     }
 }
