@@ -25,13 +25,17 @@ namespace ASGARDAPI.Controllers
                                                             on activo.IdResponsable equals empleado.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                            on area.IdSucursal equals sucursal.IdSucursal
                                                             where activo.EstadoActual == 1 || activo.EstadoActual == 2
                                                             select new DepreciacionAF
                                                             {
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
+                                                                sucursal= sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
+                                                                
                                                               
                                                             }).ToList();
                 return listaActivos;
@@ -48,12 +52,15 @@ namespace ASGARDAPI.Controllers
                                                             on activo.IdResponsable equals empleado.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                           on area.IdSucursal equals sucursal.IdSucursal
                                                             where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && area.IdAreaNegocio==id
                                                             select new DepreciacionAF
                                                             {
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
+                                                                sucursal=sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
                                                             }).ToList();
                 return listaActivos;

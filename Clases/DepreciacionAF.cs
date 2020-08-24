@@ -9,6 +9,7 @@ namespace ASGARDAPI.Clases
     {
         public string codigo { get; set; }
         public string descripcion { get; set; }
+        public string sucursal { get; set; }
         public string areanegocio { get; set; }
         public string responsable { get; set; }
     }
