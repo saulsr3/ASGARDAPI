@@ -61,15 +61,15 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Folio = oSolicitudAF.folio;
                     oSolicitud.Observaciones = oSolicitudAF.observaciones;
                     oSolicitud.Motivo = oSolicitudAF.motivo;
-                    if (oSolicitudAF.motivo == 4)
-                    {
-                        oSolicitud.EntidadBeneficiaria = oSolicitudAF.entidadbeneficiaria;
-                        oSolicitud.Domicilio = oSolicitudAF.domicilio;
-                        oSolicitud.Contacto = oSolicitudAF.contacto;
-                        oSolicitud.Telefono = oSolicitudAF.telefono;
-                    }
-                    
                     oSolicitud.Estado = 1;
+                    //if (oSolicitudAF.motivo == 4)
+                    //{
+                    //    oSolicitud.EntidadBeneficiaria = oSolicitudAF.entidadbeneficiaria;
+                    //    oSolicitud.Domicilio = oSolicitudAF.domicilio;
+                    //    oSolicitud.Contacto = oSolicitudAF.contacto;
+                    //    oSolicitud.Telefono = oSolicitudAF.telefono;
+                    //}
+
                     bd.SolicitudBaja.Add(oSolicitud);
                     bd.SaveChanges();
                     rpta = 1;
@@ -78,7 +78,7 @@ namespace ASGARDAPI.Controllers
             catch (Exception ex)
             {
                 rpta = 0;
-                Console.WriteLine(rpta);
+                //Console.WriteLine(rpta);
             }
             return rpta;
         }
