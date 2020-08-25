@@ -7,6 +7,7 @@ namespace ASGARDAPI.Clases
 {
     public class DepreciacionAF
     {
+        public int idBien { get; set; }
         public string codigo { get; set; }
         public string descripcion { get; set; }
         public string sucursal { get; set; }
