@@ -381,69 +381,97 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        //metodo para buscar solicitudes de mantenimiento.
         [HttpGet]
         [Route("api/SolicitudMantenimiento/buscarSolicitudMante/{buscador?}")]
-        public IEnumerable<EmpleadoAF> buscarSolicitudMante(string buscador = "")
+        public IEnumerable<SolicitudMantenimientoPAF> buscarSolicitudMante(string buscador = "")
         {
-            List<EmpleadoAF> listaEmpleado;
+            List<SolicitudMantenimientoPAF> listaSolicitudMantenimiento;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 if (buscador == "")
                 {
-                    listaEmpleado = (from empleado in bd.Empleado
-                                     join area in bd.AreaDeNegocio
-                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-                                     join cargos in bd.Cargos
-                                     on empleado.IdCargo equals cargos.IdCargo
-                                     where empleado.Dhabilitado == 1
-                                     select new EmpleadoAF
+                    listaSolicitudMantenimiento = (from solicitudmante in bd.SolicitudMantenimiento  
+                                   where solicitudmante.Estado == 1
+                                     select new SolicitudMantenimientoPAF
                                      {
-
-                                         idempleado = empleado.IdEmpleado,
-                                         dui = empleado.Dui,
-                                         nombres = empleado.Nombres,
-                                         apellidos = empleado.Apellidos,
-                                         direccion = empleado.Direccion,
-                                         telefono = empleado.Telefono,
-                                         telefonopersonal = empleado.TelefonoPersonal,
-                                         nombrearea = area.Nombre,
-                                         cargo = cargos.Cargo
+                                         idsolicitud= solicitudmante.IdSolicitud,
+                                         folio= solicitudmante.Folio,
+                                         fechacadena= solicitudmante.Fecha.ToString(),
+                                         descripcion=solicitudmante.Descripcion
+                                        
 
                                      }).ToList();
-                    return listaEmpleado;
+                    return listaSolicitudMantenimiento;
                 }
                 else
                 {
-                    listaEmpleado = (from empleado in bd.Empleado
-                                     join area in bd.AreaDeNegocio
-                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-                                     join cargos in bd.Cargos
-                                     on empleado.IdCargo equals cargos.IdCargo
-                                     where empleado.Dhabilitado == 1
+                    listaSolicitudMantenimiento = (from solicitudmante in bd.SolicitudMantenimiento
+                                                   where solicitudmante.Estado == 1
 
-                                     && ((empleado.IdEmpleado).ToString().Contains(buscador.ToLower()) ||
-                                     (empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
-                                     (empleado.Nombres).ToLower().Contains(buscador.ToLower()) ||
-                                     (empleado.Apellidos).ToLower().Contains(buscador.ToLower()) ||
-                                     (empleado.Direccion).ToLower().Contains(buscador.ToLower()) ||
-                                     (empleado.Telefono).ToLower().Contains(buscador.ToLower()) ||
-                                     (empleado.TelefonoPersonal).ToLower().Contains(buscador.ToLower()) ||
-                                     (area.Nombre).ToLower().Contains(buscador.ToLower()) ||
-                                     (cargos.Cargo).ToLower().Contains(buscador.ToLower()))
+                                                     && ((solicitudmante.IdSolicitud).ToString().Contains(buscador.ToLower()) ||
+                                     (solicitudmante.Folio).ToLower().Contains(buscador.ToLower()) ||
+                                     (solicitudmante.Fecha).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                     (solicitudmante.Descripcion).ToLower().Contains(buscador.ToLower()))
 
-                                     select new EmpleadoAF
+                                     select new SolicitudMantenimientoPAF
                                      {
-                                         idempleado = empleado.IdEmpleado,
-                                         dui = empleado.Dui,
-                                         nombres = empleado.Nombres,
-                                         apellidos = empleado.Apellidos,
-                                         direccion = empleado.Direccion,
-                                         telefono = empleado.Telefono,
-                                         telefonopersonal = empleado.TelefonoPersonal,
-                                         nombrearea = area.Nombre,
-                                         cargo = cargos.Cargo
+                                         idsolicitud = solicitudmante.IdSolicitud,
+                                         folio = solicitudmante.Folio,
+                                         fechacadena = solicitudmante.Fecha.ToString(),
+                                         descripcion = solicitudmante.Descripcion
                                      }).ToList();
-                    return listaEmpleado;
+                    return listaSolicitudMantenimiento;
+                }
+            }
+        }
+
+
+        //metodo para buscar bienes en mantenimiento.
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/buscarBienesMante/{buscador?}")]
+        public IEnumerable<BienesSolicitadosMttoAF> buscarBienesMante(string buscador = "")
+        {
+            List<BienesSolicitadosMttoAF> listaBienesMantenimiento;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaBienesMantenimiento = (from bienMtto in bd.BienMantenimiento
+                                                join activo in bd.ActivoFijo
+                                                on bienMtto.IdBien equals activo.IdBien
+                                                where activo.EstadoActual == 3
+                                                select new BienesSolicitadosMttoAF
+                                                   {
+                                               
+                                                    Codigo = activo.CorrelativoBien,
+                                                    Descripcion = activo.Desripcion,
+                                                    Periodo = bienMtto.PeriodoMantenimiento,
+                                                    Razon = bienMtto.RazonMantenimiento
+
+                                                }).ToList();
+                    return listaBienesMantenimiento;
+                }
+                else
+                {
+                    listaBienesMantenimiento = (from bienMtto in bd.BienMantenimiento
+                                                join activo in bd.ActivoFijo
+                                                on bienMtto.IdBien equals activo.IdBien
+                                                where activo.EstadoActual == 3
+
+                                                     && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                     (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                     (bienMtto.PeriodoMantenimiento).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                     (bienMtto.RazonMantenimiento).ToLower().Contains(buscador.ToLower()))
+
+                                                   select new BienesSolicitadosMttoAF
+                                                   {
+                                                       Codigo = activo.CorrelativoBien,
+                                                       Descripcion = activo.Desripcion,
+                                                       Periodo = bienMtto.PeriodoMantenimiento,
+                                                       Razon = bienMtto.RazonMantenimiento
+                                                   }).ToList();
+                    return listaBienesMantenimiento;
                 }
             }
         }
