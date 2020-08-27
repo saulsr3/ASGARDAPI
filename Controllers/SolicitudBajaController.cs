@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
 
+
 namespace ASGARDAPI.Controllers
 {
     public class SolicitudBajaController : Controller
     {
+       
         public IActionResult Index()
         {
+            
             return View();
         }
 
@@ -57,18 +60,19 @@ namespace ASGARDAPI.Controllers
                   
                     SolicitudBaja oSolicitud = new SolicitudBaja();
                     oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
+                    oSolicitud.IdBien = oSolicitudAF.idbien;
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
                     oSolicitud.Observaciones = oSolicitudAF.observaciones;
                     oSolicitud.Motivo = oSolicitudAF.motivo;
                     oSolicitud.Estado = 1;
-                    //if (oSolicitudAF.motivo == 4)
-                    //{
-                    //    oSolicitud.EntidadBeneficiaria = oSolicitudAF.entidadbeneficiaria;
-                    //    oSolicitud.Domicilio = oSolicitudAF.domicilio;
-                    //    oSolicitud.Contacto = oSolicitudAF.contacto;
-                    //    oSolicitud.Telefono = oSolicitudAF.telefono;
-                    //}
+                    if (oSolicitudAF.motivo == 4)
+                    {
+                        oSolicitud.EntidadBeneficiaria = oSolicitudAF.entidadbeneficiaria;
+                        oSolicitud.Domicilio = oSolicitudAF.domicilio;
+                        oSolicitud.Contacto = oSolicitudAF.contacto;
+                        oSolicitud.Telefono = oSolicitudAF.telefono;
+                    }
 
                     bd.SolicitudBaja.Add(oSolicitud);
                     bd.SaveChanges();
@@ -78,7 +82,7 @@ namespace ASGARDAPI.Controllers
             catch (Exception ex)
             {
                 rpta = 0;
-                //Console.WriteLine(rpta);
+                Console.WriteLine(ex);
             }
             return rpta;
         }
@@ -225,6 +229,7 @@ namespace ASGARDAPI.Controllers
                 dynamic oActivo = new Newtonsoft.Json.Linq.JObject();
                 //Extraer los datos padres de la base
                 SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).First();
+                //Console.WriteLine(osolicitud.IdSolicitud);
                 //Utilizar los datos padres para extraer los datos
                 ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == osolicitud.IdBien).First();
                 Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oActivoFijo.IdResponsable).First();
@@ -234,7 +239,7 @@ namespace ASGARDAPI.Controllers
                 Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivoFijo.IdClasificacion).First();
                 Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivoFijo.IdMarca).First();
                 //llenado
-                oActivo.IdBien =(int) osolicitud.IdBien;
+                oActivo.IdBien = osolicitud.IdBien;
                 oActivo.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
                 oActivo.Resposnsable = oEmpleado.Nombres + "" + oEmpleado.Apellidos;
                 oActivo.AreaDeNegocio = oarea.Nombre;
@@ -257,8 +262,9 @@ namespace ASGARDAPI.Controllers
                 oActivo.telefono = osolicitud.Telefono;
                 oActivo.folio = osolicitud.Folio;
 
-
                 return Json(oActivo);
+
+                
             }
         }
 
