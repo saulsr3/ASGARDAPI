@@ -28,6 +28,7 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
                                                             where (activo.EstadoActual == 1 || activo.EstadoActual == 2) &&( activo.EstaAsignado==0 || activo.EstaAsignado==1)
+                                                          
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien=activo.IdBien,
@@ -75,17 +76,24 @@ namespace ASGARDAPI.Controllers
             {
                 BienesDepreciacionAF odatos = new BienesDepreciacionAF();
                 ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
-
-                DateTime _date = DateTime.Now;
-                var _dateString = _date.ToString("yyyy");
-                odatos.fecha= _dateString;
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien).Last();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                Periodo oPeriodo =bd.Periodo.Where(p => p.Estado == 1).First();
+                odatos.cooperativa = oCooperativa.Nombre;
+                odatos.anio = oPeriodo.Anio.ToString();
+                odatos.idBien = oactivo.IdBien;
+                //DateTime _date = DateTime.Now;
+                //var _dateString = _date.ToString("yyyy");
+                //odatos.fecha= _dateString;
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
-                odatos.valorDepreciacion = 2555;
-                odatos.mejoras = 00;
-                
+                odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
+                odatos.valorActual = oTarjeta.ValorActual.ToString();
+                double valor=0.00;
+                valor =(double) (oTarjeta.ValorActual / oactivo.VidaUtil);
+                odatos.valorDepreciacion = valor.ToString();
+                odatos.vidaUtil =(int) oactivo.VidaUtil;
                 return odatos;
-
             }
         }
         [HttpGet]
@@ -129,7 +137,7 @@ namespace ASGARDAPI.Controllers
             {
                 IEnumerable<TarjetaTransaccionesAF> ListaTransacciones = (from tarjeta in bd.TarjetaDepreciacion
                                                                          where tarjeta.IdBien == id
-                                                                         orderby tarjeta.Fecha
+                                                                         orderby tarjeta.IdTarjeta
                                                                          select new TarjetaTransaccionesAF
                                                                          {
                                                                 id = tarjeta.IdTarjeta,

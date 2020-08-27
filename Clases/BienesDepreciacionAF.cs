@@ -7,11 +7,17 @@ namespace ASGARDAPI.Clases
 {
     public class BienesDepreciacionAF
     {
+        public int idBien { get; set; }
+        public string cooperativa { get; set; }
+        public string anio { get; set; }
         public string fecha { get; set; }
         public string codigo { get; set; }
         public string descipcion { get; set; }
-        public float valorDepreciacion { get; set; }
+        public string valorAdquicicon { get; set; }
+        public string valorDepreciacion { get; set; }
         public float mejoras { get; set; }
+        public string valorActual { get; set; }
+        public int vidaUtil { get; set; }
 
     }
 }
