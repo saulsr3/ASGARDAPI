@@ -90,8 +90,8 @@ namespace ASGARDAPI.Controllers
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
                 odatos.valorActual = oTarjeta.ValorActual.ToString();
                 double valor=0.00;
-                valor =(double) (oTarjeta.ValorActual / oactivo.VidaUtil);
-                odatos.valorDepreciacion = valor.ToString();
+                valor =(double) (oTarjeta.Valor / oactivo.VidaUtil);
+                odatos.valorDepreciacion = valor;
                 odatos.vidaUtil =(int) oactivo.VidaUtil;
                 return odatos;
             }
@@ -152,6 +152,40 @@ namespace ASGARDAPI.Controllers
                                                                          }).ToList();
                 return ListaTransacciones;
             }
+        }
+        [HttpPost]
+        [Route("api/Depreciacion/transaccionDepreciacion")]
+        public int transaccionDepreciacion([FromBody] DatosDepreciacionAF oActivoAF)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                        //Transaccion a tarjeta
+                        TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
+                        TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien).Last();
+                        //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                        transaccion.IdBien = oActivoAF.idBien;
+                        transaccion.Fecha =  oActivoAF.fecha;
+                        transaccion.Concepto = "Depreciación";
+                        transaccion.Valor = oUltimaTransaccion.Valor;
+                        transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
+                        transaccion.DepreciacionAcumulada = oUltimaTransaccion.DepreciacionAcumulada+oActivoAF.valorDepreciacion;
+                        transaccion.ValorActual = oUltimaTransaccion.ValorActual-oActivoAF.valorDepreciacion;
+                        transaccion.ValorMejora = 0.00;
+                        bd.TarjetaDepreciacion.Add(transaccion);
+                        bd.SaveChanges();
+                    
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
         }
 
 
