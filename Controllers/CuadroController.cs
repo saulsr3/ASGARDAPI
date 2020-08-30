@@ -56,5 +56,44 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Método buscar
+        [HttpGet]
+        [Route("api/CuadroControl/buscarCuadro/{buscador?}")]
+        public IEnumerable<CuadroControlAF> buscarCuadro(string buscador = "")
+        {
+            List<CuadroControlAF> listaCuadro;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaCuadro = (from cuadro in bd.ActivoFijo
+                                   where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                   select new CuadroControlAF
+                                   {
+                                       idbien = cuadro.IdBien,
+                                       codigo = cuadro.CorrelativoBien,
+                                       descripcion = cuadro.Desripcion,
+
+                                   }).ToList();
+
+                    return listaCuadro;
+                }
+                else
+                {
+                    listaCuadro = (from cuadro in bd.ActivoFijo
+                                   where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+
+                                 && ((cuadro.IdBien).ToString().Contains(buscador) || (cuadro.CorrelativoBien).ToLower().Contains(buscador.ToLower()) || (cuadro.Desripcion).ToLower().Contains(buscador.ToLower()))
+                                  select new CuadroControlAF
+                                  {
+                                      idbien = cuadro.IdBien,
+                                      codigo = cuadro.CorrelativoBien,
+                                      descripcion = cuadro.Desripcion,
+                                  }).ToList();
+                    return listaCuadro;
+                }
+            }
+        }
+
     }
 }
