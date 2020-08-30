@@ -20,6 +20,7 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                 IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
@@ -27,18 +28,51 @@ namespace ASGARDAPI.Controllers
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) &&( activo.EstaAsignado==0 || activo.EstaAsignado==1)
-                                                          
+                                                         
+                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) &&( activo.EstaAsignado==0 || activo.EstaAsignado==1)&& (activo.UltimoAnioDepreciacion==null ||(activo.UltimoAnioDepreciacion<(anioActual.Anio)))
+                                                            
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien=activo.IdBien,
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
-                                                                sucursal= sucursal.Nombre,
+                                                            
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
                                                                 
                                                               
+                                                            }).ToList();
+                return listaActivos;
+            }
+        }
+        //Lista de la tarjeta a diferencia de la depreciacion no valida la ultima deoreciacion realizada
+        [HttpGet]
+        [Route("api/Depreciacion/listarActivosTarjeta")]
+        public IEnumerable<DepreciacionAF> listarActivosTarjeta()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                                                            join empleado in bd.Empleado
+                                                            on activo.IdResponsable equals empleado.IdEmpleado
+                                                            join area in bd.AreaDeNegocio
+                                                            on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                            on area.IdSucursal equals sucursal.IdSucursal
+
+                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && (activo.EstaAsignado == 0 || activo.EstaAsignado == 1)
+
+                                                            select new DepreciacionAF
+                                                            {
+                                                                idBien = activo.IdBien,
+                                                                codigo = activo.CorrelativoBien,
+                                                                descripcion = activo.Desripcion,
+                                                                areanegocio = area.Nombre,
+                                                                sucursal=sucursal.Nombre,
+                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
+
+
                                                             }).ToList();
                 return listaActivos;
             }
@@ -163,9 +197,11 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                        //Transaccion a tarjeta
+                    //Transaccion a tarjeta
+                      
                         TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
                         TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien).Last();
+                        
                         //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
                         transaccion.IdBien = oActivoAF.idBien;
                         transaccion.Fecha =  oActivoAF.fecha;
@@ -177,7 +213,12 @@ namespace ASGARDAPI.Controllers
                         transaccion.ValorMejora = 0.00;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
-                    
+                    //cambia ultimo anio de depreciación
+
+                    ActivoFijo activo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF.idBien).First();
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                    activo.UltimoAnioDepreciacion = anioActual.Anio;
+                    bd.SaveChanges();
                     rpta = 1;
                 }
             }

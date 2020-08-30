@@ -36,6 +36,7 @@ namespace ASGARDAPI.Models
         public string Foto { get; set; }
         public int? EstaAsignado { get; set; }
         public string DestinoInicial { get; set; }
+        public int? UltimoAnioDepreciacion { get; set; }
         public int? EstadoActual { get; set; }
 
         public Clasificacion IdClasificacionNavigation { get; set; }
