@@ -29,7 +29,7 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
                                                          
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) &&( activo.EstaAsignado==0 || activo.EstaAsignado==1)&& (activo.UltimoAnioDepreciacion==null ||(activo.UltimoAnioDepreciacion<(anioActual.Anio)))
+                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) &&( activo.EstaAsignado==0 || activo.EstaAsignado==1)
                                                             
                                                             select new DepreciacionAF
                                                             {
@@ -151,6 +151,7 @@ namespace ASGARDAPI.Controllers
                 odatos.valorActual = oTarjeta.ValorActual.ToString();
                 double valor=0.00;
                 valor =(double) (oTarjeta.Valor / oactivo.VidaUtil);
+                
                 odatos.valorDepreciacion = valor;
                 odatos.vidaUtil =(int) oactivo.VidaUtil;
                 return odatos;
@@ -234,8 +235,11 @@ namespace ASGARDAPI.Controllers
                         transaccion.Concepto = "Depreciación";
                         transaccion.Valor = oUltimaTransaccion.Valor;
                         transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
-                        transaccion.DepreciacionAcumulada = oUltimaTransaccion.DepreciacionAcumulada+oActivoAF.valorDepreciacion;
-                        transaccion.ValorActual = oUltimaTransaccion.ValorActual-oActivoAF.valorDepreciacion;
+                        double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; ;
+                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 2);
+                        double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
+                        double rounded = Math.Round(valor,2);
+                        transaccion.ValorActual = rounded;
                         transaccion.ValorMejora = 0.00;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
