@@ -541,7 +541,7 @@ namespace ASGARDAPI.Controllers
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
                                       || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
-                                      //|| (noFormulario.FechaIngreso).ToLower().Contains(buscador.ToLower())
+                                      || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
                                       || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
                                       || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
                                       || (area.Nombre).ToLower().Contains(buscador.ToLower())

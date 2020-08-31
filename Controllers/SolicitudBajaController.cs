@@ -66,6 +66,7 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Observaciones = oSolicitudAF.observaciones;
                     oSolicitud.Motivo = oSolicitudAF.motivo;
                     oSolicitud.Estado = 1;
+                   
                     if (oSolicitudAF.motivo == 4)
                     {
                         oSolicitud.EntidadBeneficiaria = oSolicitudAF.entidadbeneficiaria;
@@ -117,10 +118,43 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("api/SolicitudBaja/guardarBienes")]
+        public int guardarBienes([FromBody]BajaAF oBaja)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+
+                    //BienBaja bien = new BienBaja();
+                    //SolicitudBaja idSolicitud = bd.SolicitudBaja.Where(p => p.Estado == 1).Last();
+                    //bien.IdBienBaja = oBaja.idBienBaja;
+                    //bien.IdSolicitud = idSolicitud.IdSolicitud;
+                    //bien.IdBien = oBaja.idBien;
+                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBaja.idBien).First();
+                    //oActivo.EstadoActual = 11;
+                    
+                    //bd.BienBaja.Add(bien);
+                    //bd.SaveChanges();
+                    //respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
         //metodo para aceptar la solicitud de baja
         [HttpGet]
-        [Route("api/SolicitudBaja/aceptarSolicitud/{idsolicitud}")]
-        public int aceptarSolicitud(int idsolicitud)
+        [Route("api/SolicitudBaja/aceptarSolicitud/{idsolicitud}")] ///{idbien}
+        public int aceptarSolicitud(int idsolicitud)//, int idbien)
         {
             int rpta = 0;
 
@@ -129,6 +163,8 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     SolicitudBaja oSolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == idsolicitud).First();
+                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                    //oActivo.EstadoActual = 0;
                     oSolicitud.Estado = 2;
                     bd.SaveChanges();
                     rpta = 1;
@@ -221,50 +257,212 @@ namespace ASGARDAPI.Controllers
 
 
         [HttpGet]
-        [Route("api/SolicitudBaja/verSolicitud/{id}")]
-        public JsonResult verSolicitud(int id)
+        [Route("api/SolicitudBaja/verSolicitud/{idSolicitud}")]
+        public SolicitadosABajaAF verSolicitud(int idSolicitud)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                dynamic oActivo = new Newtonsoft.Json.Linq.JObject();
-                //Extraer los datos padres de la base
-                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).First();
-                //Console.WriteLine(osolicitud.IdSolicitud);
-                //Utilizar los datos padres para extraer los datos
-                ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == osolicitud.IdBien).First();
-                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oActivoFijo.IdResponsable).First();
-                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
-                Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oarea.IdSucursal).First();
-                Cargos ocargos = bd.Cargos.Where(p => p.IdCargo == oEmpleado.IdCargo).First();
-                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivoFijo.IdClasificacion).First();
-                Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivoFijo.IdMarca).First();
-                //llenado
-                oActivo.IdBien = osolicitud.IdBien;
-                oActivo.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
-                oActivo.Resposnsable = oEmpleado.Nombres + "" + oEmpleado.Apellidos;
-                oActivo.AreaDeNegocio = oarea.Nombre;
-                oActivo.cargo = ocargos.Cargo;
+                SolicitadosABajaAF odatos = new SolicitadosABajaAF();
+                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == idSolicitud).First();
 
-                oActivo.Codigo = oActivoFijo.CorrelativoBien;
-                oActivo.Desripcion = oActivoFijo.Desripcion;
-                oActivo.Clasificacion = oclasi.Clasificacion1;
-                oActivo.Marca = omarca.Marca;
-                oActivo.Modelo = oActivoFijo.Modelo;
-                oActivo.Color = oActivoFijo.Color;
-                oActivo.destinoinicial = oActivoFijo.DestinoInicial;
-                oActivo.ubicacion = osucursal.Ubicacion;
-
-                oActivo.observaciones = osolicitud.Observaciones;
-                oActivo.motivo = osolicitud.Motivo;
-                oActivo.entidad = osolicitud.EntidadBeneficiaria;
-                oActivo.domicilio = osolicitud.Domicilio;
-                oActivo.contacto = osolicitud.Contacto;
-                oActivo.telefono = osolicitud.Telefono;
-                oActivo.folio = osolicitud.Folio;
-
-                return Json(oActivo);
-
+                ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == osolicitud.IdBien).First();
+                //Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == obien.IdResponsable).First();
+                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
                 
+                //odatos.areanegocio = oArea.Nombre;
+                odatos.NoSolicitud =  osolicitud.IdSolicitud;
+                odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
+                odatos.Codigo = obien.CorrelativoBien;
+                odatos.motivo =(int) osolicitud.Motivo;
+                odatos.folio = osolicitud.Folio;
+                odatos.idbien = (int) osolicitud.IdBien;
+                odatos.Codigo = obien.CorrelativoBien;
+                odatos.Descripcion = obien.Desripcion;
+                odatos.observaciones = osolicitud.Observaciones;
+               // odatos.Resposnsable = oempleado.Nombres + "" + oempleado.Apellidos;
+
+                return odatos;
+
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarFolio/{idsolicitud}/{folio}")]
+        public int validarFolio(int idsolicitud, string folio)
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idsolicitud == 0)
+                    {
+                        respuesta = bd.SolicitudBaja.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.SolicitudBaja.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarSolicitud/{idsolicitud}/{id}")]
+        public int validarSolicitud(int idsolicitud, int id)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                   
+                        respuesta = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).Count();
+                   
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarBienesBaja/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarBienesBaja(string buscador = "")
+        {
+            List<ActivoFijoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                             orderby activo.CorrelativoBien
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+
+                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower()) ||
+                                    (cargo.Cargo).ToLower().Contains(buscador.ToLower())
+                                    )
+
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
+
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarSolicitud/{buscador?}")]
+        public IEnumerable<SolicitudBajaAF> buscarSolicitud(string buscador = "")
+        {
+            List<SolicitudBajaAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join solicitud in bd.SolicitudBaja
+                             on activo.IdBien equals solicitud.IdBien
+                             where solicitud.Estado == 1
+                             select new SolicitudBajaAF
+                             {
+                                 idbien = activo.IdBien,
+                                 idsolicitud = solicitud.IdSolicitud,
+                                 folio = solicitud.Folio,
+                                 fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                 observaciones = solicitud.Observaciones,
+                                 motivo = (int)solicitud.Motivo,
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join solicitud in bd.SolicitudBaja
+                             on activo.IdBien equals solicitud.IdBien
+                             where solicitud.Estado == 1
+
+                                 && ((solicitud.Folio).ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.Fecha).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.Motivo).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.Observaciones).ToLower().Contains(buscador.ToLower())
+                                    
+                                    )
+
+                             select new SolicitudBajaAF
+                             {
+                                 idbien = activo.IdBien,
+                                 idsolicitud = solicitud.IdSolicitud,
+                                 folio = solicitud.Folio,
+                                 fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                 observaciones = solicitud.Observaciones,
+                                 motivo = (int)solicitud.Motivo,
+
+                             }).ToList();
+                    return lista;
+                }
             }
         }
 

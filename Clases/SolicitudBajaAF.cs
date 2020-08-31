@@ -21,8 +21,11 @@ namespace ASGARDAPI.Clases
 
         ///----------------------------------------------
         public string fechacadena { get; set; }
-        public int idbien { get; set; } 
-      
+        public int idbien { get; set; }
+        public string Codigo { get; set; }
+        public string Descripcion { get; set; }    
+        public string areanegocio { get; set; }
+        public string jefe { get; set; }
 
     }
 }
