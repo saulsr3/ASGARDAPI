@@ -120,28 +120,23 @@ namespace ASGARDAPI.Controllers
 
         [HttpPost]
         [Route("api/SolicitudBaja/guardarBienes")]
-        public int guardarBienes([FromBody]BajaAF oBaja)
+        public int guardarBienes([FromBody]ActivoFijoAF oBaja)
         {
             int respuesta = 0;
             try
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-
-                    //BienBaja bien = new BienBaja();
-                    //SolicitudBaja idSolicitud = bd.SolicitudBaja.Where(p => p.Estado == 1).Last();
-                    //bien.IdBienBaja = oBaja.idBienBaja;
-                    //bien.IdSolicitud = idSolicitud.IdSolicitud;
-                    //bien.IdBien = oBaja.idBien;
-                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBaja.idBien).First();
-                    //oActivo.EstadoActual = 11;
+                    ActivoFijo bien = new ActivoFijo();
+                    SolicitudBaja idSolicitud = bd.SolicitudBaja.Where(p => p.Estado == 1).First();
                     
-                    //bd.BienBaja.Add(bien);
-                    //bd.SaveChanges();
-                    //respuesta = 1;
+                    Console.WriteLine("IDBIEN" + oBaja.IdBien);
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBaja.IdBien).First();
+                    oActivo.EstadoActual = 4;
+                    bd.ActivoFijo.Update(bien);
+                    bd.SaveChanges();
+                    respuesta = 1;             
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -214,8 +209,10 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
+                    Console.WriteLine("IDESTADO" + idbien);
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
                     oActivo.EstadoActual = 0;
+                    oActivo.EstaAsignado = 0;
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -459,6 +456,101 @@ namespace ASGARDAPI.Controllers
                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                  observaciones = solicitud.Observaciones,
                                  motivo = (int)solicitud.Motivo,
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarBajas")]
+        public IEnumerable<ActivoFijoAF> listarBajas()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                   join resposable in bd.Empleado
+                                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                                   join area in bd.AreaDeNegocio
+                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   join cargo in bd.Cargos
+                                                   on resposable.IdCargo equals cargo.IdCargo
+                                                   where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+                                                   orderby activo.CorrelativoBien
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activo.IdBien,
+                                                       Codigo = activo.CorrelativoBien,
+                                                       Desripcion = activo.Desripcion,
+                                                       AreaDeNegocio = area.Nombre,
+                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                                       cargo = cargo.Cargo,
+
+                                                   }).ToList();
+                return lista;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarBaja/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarBaja(string buscador = "")
+        {
+            List<ActivoFijoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                             orderby activo.CorrelativoBien
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+
+                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower()) ||
+                                    (cargo.Cargo).ToLower().Contains(buscador.ToLower())
+                                    )
+
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
 
                              }).ToList();
                     return lista;
