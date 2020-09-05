@@ -16,6 +16,7 @@ namespace ASGARDAPI.Models
         public string Domicilio { get; set; }
         public string Contacto { get; set; }
         public string Telefono { get; set; }
+        public string Acuerdo { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
     }

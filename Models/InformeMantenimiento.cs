@@ -13,6 +13,7 @@ namespace ASGARDAPI.Models
         public double? CostoMateriales { get; set; }
         public double? CostoMo { get; set; }
         public double? CostoTotal { get; set; }
+        public int? Estado { get; set; }
 
         public BienMantenimiento IdMantenimientoNavigation { get; set; }
         public Tecnicos IdTecnicoNavigation { get; set; }

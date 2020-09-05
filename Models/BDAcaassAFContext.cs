@@ -288,7 +288,7 @@ namespace ASGARDAPI.Models
                 entity.Property(e => e.FechaIngreso).HasColumnType("date");
 
                 entity.Property(e => e.NoFactura)
-                    .HasMaxLength(10)
+                    .HasMaxLength(30)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Observaciones)
@@ -383,6 +383,10 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdSolicitud);
 
+                entity.Property(e => e.Acuerdo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Contacto)
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -400,8 +404,6 @@ namespace ASGARDAPI.Models
                 entity.Property(e => e.Folio)
                     .HasMaxLength(10)
                     .IsUnicode(false);
-
-                entity.Property(e => e.Motivo).HasColumnName("motivo");
 
                 entity.Property(e => e.Observaciones)
                     .HasMaxLength(250)
