@@ -182,5 +182,34 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+
+        //Método validar donante
+        [HttpGet]
+        [Route("api/Cargo/validarDonante/{idDonante}/{donante}")]
+        public int validarDonante(int idDonante, string donante)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idDonante == 0)
+                    {
+                        rpta = bd.Donantes.Where(p => p.Nombre.ToLower() == donante.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Donantes.Where(p => p.Nombre.ToLower() == donante.ToLower() && p.IdDonante != idDonante && p.Dhabilitado == 1).Count();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return rpta = 0;
+            }
+
+            return rpta;
+        }
     }
 }
