@@ -199,7 +199,10 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
                                                               join activo in bd.ActivoFijo
                                                               on bienMtto.IdBien equals activo.IdBien
-                                                              where activo.EstadoActual == 3
+                                                            //  join informe in bd.InformeMantenimiento
+                                                             // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
+                                                              where activo.EstadoActual == 3 
+                                                              //&& informe.Estado!= 1
                                                               select new BienesSolicitadosMttoAF
                                                               {
                                                                   idBien = activo.IdBien,
@@ -425,6 +428,8 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+
+       
 
 
         //metodo para buscar bienes en mantenimiento.

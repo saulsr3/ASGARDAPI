@@ -38,6 +38,7 @@ namespace ASGARDAPI.Controllers
                     oInformeMantenimiento.CostoMo = oInformeMantenimientoAF.costomo;
                     oInformeMantenimiento.CostoTotal = oInformeMantenimientoAF.costomateriales + oInformeMantenimientoAF.costomo;
                     bd.InformeMantenimiento.Add(oInformeMantenimiento);
+                    oInformeMantenimiento.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -99,10 +100,84 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+        //metodo para buscar informes.
+        [HttpGet]
+        [Route("api/InformeMantenimiento/buscarInformes/{buscador?}")]
+        public IEnumerable<InformeMatenimientoAF> buscarInformes(string buscador = "")
+        {
+            List<InformeMatenimientoAF> listarInformeMantenimiento;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listarInformeMantenimiento = (from informemante in bd.InformeMantenimiento
+                                                  join tecnico in bd.Tecnicos
+                                           on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                                                  join bienmante in bd.BienMantenimiento
+                                                  on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                  join bienes in bd.ActivoFijo
+                                                  on bienmante.IdBien equals bienes.IdBien
+                                                  where informemante.Estado == 1
+
+
+                                                  select new InformeMatenimientoAF
+                                                  {
+                                                      fechacadena = informemante.Fecha.ToString(),
+
+                                                      //fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
+                                                      nombretecnico = tecnico.Nombre,
+                                                      descripcion = informemante.Descripcion,
+                                                      costomateriales = (double)informemante.CostoMateriales,
+                                                      costomo = (double)informemante.CostoMo,
+                                                      costototal = (double)informemante.CostoTotal,
+                                                      bienes = bienes.Desripcion
+
+                                                  }).ToList();
+                    return listarInformeMantenimiento;
+                }
+                else
+                {
+                    listarInformeMantenimiento = (from informemante in bd.InformeMantenimiento
+                                                  join tecnico in bd.Tecnicos
+                                           on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                                                  join bienmante in bd.BienMantenimiento
+                                                  on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                  join bienes in bd.ActivoFijo
+                                                  on bienmante.IdBien equals bienes.IdBien
+                                                  where informemante.Estado == 1
+
+                                      && ((informemante.Fecha).ToString().Contains(buscador.ToLower()) ||
+                                     (tecnico.Nombre).ToLower().Contains(buscador.ToLower()) ||
+                                     (bienes.Desripcion).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                     (informemante.CostoMateriales).ToString().Contains(buscador.ToLower()) ||
+                                     (informemante.CostoMo).ToString().Contains(buscador.ToLower()) ||
+                                     (informemante.CostoTotal).ToString().Contains(buscador.ToLower()) ||
+                                     (informemante.Descripcion).ToString().Contains(buscador.ToLower()))
+
+                                                  select new InformeMatenimientoAF
+                                                  {
+                                                      
+                                                      fechacadena = informemante.Fecha.ToString(),
+                                                     // fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
+                                                      nombretecnico = tecnico.Nombre,
+                                                      descripcion = informemante.Descripcion,
+                                                      costomateriales = (double)informemante.CostoMateriales,
+                                                      costomo = (double)informemante.CostoMo,
+                                                      costototal = (double)informemante.CostoTotal,
+                                                      bienes = bienes.Desripcion
+                                                  }).ToList();
+                    return listarInformeMantenimiento;
+                }
+            }
+        }
+
+
+
+
         //cambiar el estado de del informe para que desaparezca depues de que se aplicar la revalorización
         //quedara pendiente
         [HttpGet]
-        [Route("api/SolicitudMantenimiento/cambiarEstadoDenegado/{idBien}")]
+        [Route("api/InformeMantenimiento/cambiarEstadoDenegado/{idBien}")]
         public int cambiarEstadobien(int idBien)
         {
             int respuesta = 0;
