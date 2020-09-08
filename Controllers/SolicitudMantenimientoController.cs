@@ -477,6 +477,47 @@ namespace ASGARDAPI.Controllers
         }
 
 
+        //buscar activos por codigo (en la parte para enviarlos a mantenimiento)
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/buscarBienescodigo/{buscador?}")]
+        public IEnumerable<BienesSolicitadosMttoAF> buscarBienescodigo(string buscador = "")
+        {
+            List<BienesSolicitadosMttoAF> listaBienesCodigo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaBienesCodigo = (from activo in bd.ActivoFijo
+                                                where activo.EstadoActual == 1
+                                                select new BienesSolicitadosMttoAF
+                                                {
+
+                                                    Codigo = activo.CorrelativoBien,
+                                                    Descripcion = activo.Desripcion
+
+                                                }).ToList();
+                    return listaBienesCodigo;
+                }
+                else
+                {
+                    listaBienesCodigo = (from activo in bd.ActivoFijo
+                                         where activo.EstadoActual == 1
+
+
+                                                && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                                ||  (activo.Desripcion).ToLower().Contains(buscador.ToLower()))
+
+                                                select new BienesSolicitadosMttoAF
+                                                {
+                                                    Codigo = activo.CorrelativoBien,
+                                                    Descripcion = activo.Desripcion
+                                                }).ToList();
+                    return listaBienesCodigo;
+                }
+            }
+        }
+
+
 
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarTecnicoCombo")]
