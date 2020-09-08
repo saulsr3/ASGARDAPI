@@ -240,5 +240,30 @@ namespace ASGARDAPI.Controllers
             }
             return res;
         }
+        [HttpGet]
+        [Route("api/AreasNEgocios/validarAreaSucursal/{idArea}/{area}/{sucursal}")]
+        public int noRepetirSucursalUbicacion(int idArea, string area, int sucursal)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idArea == 0)
+                    {
+                        respuesta = bd.AreaDeNegocio.Where(p => p.Nombre.ToLower() == area.ToLower() && p.IdSucursal == sucursal && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.AreaDeNegocio.Where(p => p.Nombre.ToLower() == area.ToLower() && p.IdSucursal == sucursal && p.IdAreaNegocio != idArea && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+            }
+            return respuesta;
+        }
     }
 }

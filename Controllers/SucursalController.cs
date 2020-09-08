@@ -183,7 +183,7 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
         [HttpGet]
-        [Route("api/Sucursal/validarCorrelativo/{idSucursal}/{nombre}/{ubicacion}")]
+        [Route("api/Sucursal/validarSucursalUbicacion/{idSucursal}/{nombre}/{ubicacion}")]
         public int noRepetirSucursalUbicacion(int idSucursal, string nombre,string ubicacion)
         {
             int respuesta = 0;
