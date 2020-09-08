@@ -183,7 +183,7 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
         [HttpGet]
-        [Route("api/Sucursal/validarCorrelativo/{idSucursal}/{nombre}/{ubicacion}")]
+        [Route("api/Sucursal/validarSucursalUbicacion/{idSucursal}/{nombre}/{ubicacion}")]
         public int noRepetirSucursalUbicacion(int idSucursal, string nombre,string ubicacion)
         {
             int respuesta = 0;
@@ -218,6 +218,28 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdSucursal == idSucursal && p.Dhabilitado == 1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
+        //Valida si ya hay activos haciendo refencia
+        [HttpGet]
+        [Route("api/Sucursal/validarRefereciaActivo/{idSucursal}")]
+        public int validarRefereciaActivo(int idSucursal)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdSucursal == idSucursal && p.Dhabilitado == 1).First();
+                    Empleado Oempleado = bd.Empleado.Where(p => p.IdAreaDeNegocio == oArea.IdAreaNegocio && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdResponsable == Oempleado.IdEmpleado && p.EstadoActual != 0).First();
                     res = 1;
                 }
             }
