@@ -17,7 +17,6 @@ namespace ASGARDAPI.Controllers
         }
 
         //Metodo listar cuadro de control
-
         [HttpGet]
         [Route("api/CuadroControl/listarCuadroControl")]
         public IEnumerable<CuadroControlAF> listarCuadroControl()
@@ -67,12 +66,27 @@ namespace ASGARDAPI.Controllers
                 if (buscador == "")
                 {
                     listaCuadro = (from cuadro in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                   join tarjeta in bd.TarjetaDepreciacion
+                                   on cuadro.IdBien equals tarjeta.IdBien
+                                   join resposable in bd.Empleado
+                                   on cuadro.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                    where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
                                    select new CuadroControlAF
                                    {
-                                       idbien = cuadro.IdBien,
+                                      
                                        codigo = cuadro.CorrelativoBien,
                                        descripcion = cuadro.Desripcion,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                       depreciacion = (double)tarjeta.DepreciacionAnual,
+                                       depreciacionacumulada = (double)tarjeta.DepreciacionAcumulada,
+                                       valoractual = (double)tarjeta.ValorActual,
+                                       ubicacion = area.Nombre,
+                                       responsable = resposable.Nombres + " " + resposable.Apellidos
 
                                    }).ToList();
 
@@ -81,15 +95,30 @@ namespace ASGARDAPI.Controllers
                 else
                 {
                     listaCuadro = (from cuadro in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                   join tarjeta in bd.TarjetaDepreciacion
+                                   on cuadro.IdBien equals tarjeta.IdBien
+                                   join resposable in bd.Empleado
+                                   on cuadro.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                    where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
 
                                  && ((cuadro.IdBien).ToString().Contains(buscador) || (cuadro.CorrelativoBien).ToLower().Contains(buscador.ToLower()) || (cuadro.Desripcion).ToLower().Contains(buscador.ToLower()))
-                                  select new CuadroControlAF
-                                  {
-                                      idbien = cuadro.IdBien,
-                                      codigo = cuadro.CorrelativoBien,
-                                      descripcion = cuadro.Desripcion,
-                                  }).ToList();
+                                   select new CuadroControlAF
+                                   {
+                                       codigo = cuadro.CorrelativoBien,
+                                       descripcion = cuadro.Desripcion,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                       depreciacion = (double)tarjeta.DepreciacionAnual,
+                                       depreciacionacumulada = (double)tarjeta.DepreciacionAcumulada,
+                                       valoractual = (double)tarjeta.ValorActual,
+                                       ubicacion = area.Nombre,
+                                       responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                   }).ToList();
                     return listaCuadro;
                 }
             }
