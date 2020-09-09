@@ -175,10 +175,10 @@ namespace ASGARDAPI.Controllers
 
 
         //cambiar el estado de del informe para que desaparezca depues de que se aplicar la revalorización
-        //quedara pendiente
+      //falta llamar
         [HttpGet]
-        [Route("api/InformeMantenimiento/cambiarEstadoDenegado/{idBien}")]
-        public int cambiarEstadobien(int idBien)
+        [Route("api/InformeMantenimiento/estadoInformeRevalorizado/{idBien}")]
+        public int estadoInformeRevalorizado(int idinformeMantenimiento)
         {
             int respuesta = 0;
 
@@ -186,8 +186,8 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
-                    oActivo.EstadoActual = 1;
+                    InformeMantenimiento oInformeMantenimiento = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idinformeMantenimiento).First();
+                    oInformeMantenimiento.Estado = 1;
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -259,31 +259,32 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<InformeMatenimientoAF> listaInformeMante= (from informemante in bd.InformeMantenimiento
-                                                                       join tecnico in bd.Tecnicos
-                                                                on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
-                                                                join bienmante in bd.BienMantenimiento
-                                                                on informemante.IdMantenimiento equals bienmante.IdMantenimiento
-                                                                join bienes in bd.ActivoFijo 
-                                                                on bienmante.IdBien equals bienes.IdBien
+                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from informemante in bd.InformeMantenimiento
+                                                                        join tecnico in bd.Tecnicos
+                                                                 on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                                                                        join bienmante in bd.BienMantenimiento
+                                                                        on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                                        join bienes in bd.ActivoFijo
+                                                                        on bienmante.IdBien equals bienes.IdBien
+                                                                        where informemante.Estado == 1
 
-                                                                       //where empleado.Dhabilitado == 1
-                                                                       select new InformeMatenimientoAF
-                                                         {
-                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
-                                                             idmantenimiento = (int)informemante.IdMantenimiento,
-                                                             fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
-                                                             nombretecnico = tecnico.Nombre,
-                                                             descripcion=informemante.Descripcion,
-                                                             costomateriales= (double)informemante.CostoMateriales,
-                                                             costomo= (double)informemante.CostoMo,
-                                                             costototal= (double)informemante.CostoTotal,
-                                                             bienes = bienes.Desripcion
-                                                             
-                                                             
-                                                             
+                                                                        //where empleado.Dhabilitado == 1
+                                                                        select new InformeMatenimientoAF
+                                                                        {
+                                                                            idinformematenimiento = informemante.IdInformeMantenimiento,
+                                                                            idmantenimiento = (int)informemante.IdMantenimiento,
+                                                                            fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
+                                                                            nombretecnico = tecnico.Nombre,
+                                                                            descripcion = informemante.Descripcion,
+                                                                            costomateriales = (double)informemante.CostoMateriales,
+                                                                            costomo = (double)informemante.CostoMo,
+                                                                            costototal = (double)informemante.CostoTotal,
+                                                                            bienes = bienes.Desripcion
 
-                                                         }).ToList();
+
+
+
+                                                                        }).ToList();
                 return listaInformeMante;
             }
         }
