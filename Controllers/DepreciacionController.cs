@@ -29,14 +29,13 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
 
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien=activo.IdBien,
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
-                                                            
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
                                                                 
                                                               
@@ -60,7 +59,7 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
 
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && (activo.EstaAsignado == 0 || activo.EstaAsignado == 1)
+                                                            where (activo.EstadoActual !=0) && (activo.EstaAsignado == 0 || activo.EstaAsignado == 1)
 
                                                             select new DepreciacionAF
                                                             {
