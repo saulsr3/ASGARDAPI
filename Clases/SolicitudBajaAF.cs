@@ -18,7 +18,7 @@ namespace ASGARDAPI.Clases
         public string domicilio { get; set; }
         public string contacto { get; set; }
         public string telefono { get; set; }
-
+        public string acuerdo { get; set; }
         ///----------------------------------------------
         public string fechacadena { get; set; }
         public int idbien { get; set; }

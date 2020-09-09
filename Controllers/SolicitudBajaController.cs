@@ -133,7 +133,7 @@ namespace ASGARDAPI.Controllers
                     Console.WriteLine("IDBIEN" + oBaja.IdBien);
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBaja.IdBien).First();
                     oActivo.EstadoActual = 4;
-                    bd.ActivoFijo.Update(bien);
+                   // bd.ActivoFijo.Update(bien);
                     bd.SaveChanges();
                     respuesta = 1;             
                 }
@@ -161,6 +161,7 @@ namespace ASGARDAPI.Controllers
                     //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
                     //oActivo.EstadoActual = 0;
                     oSolicitud.Estado = 2;
+                   // oSolicitud.Acuerdo = ""; 
                     bd.SaveChanges();
                     rpta = 1;
                 }
@@ -198,6 +199,34 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+
+        [HttpPost]
+        [Route("api/SolicitudBaja/guardarAcuerdo")]
+        public int guardarAcuerdo([FromBody]SolicitudBajaAF oSolicitudBajaAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudBaja bien = new SolicitudBaja();
+                   
+                    Console.WriteLine("ACUERDO" + oSolicitudBajaAF.idsolicitud);
+                    SolicitudBaja osoli = bd.SolicitudBaja.Where(p => p.IdSolicitud == oSolicitudBajaAF.idsolicitud).First();
+                    osoli.Acuerdo = oSolicitudBajaAF.acuerdo;
+                   
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+
         //si la solicitud es aceptada cambiamos el estado del bien a 0
         [HttpGet]
         [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}")]
@@ -211,8 +240,8 @@ namespace ASGARDAPI.Controllers
                 {
                     Console.WriteLine("IDESTADO" + idbien);
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
-                    oActivo.EstadoActual = 0;
-                    oActivo.EstaAsignado = 0;
+                    oActivo.EstadoActual = 00;
+                    oActivo.EstaAsignado = 00;
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -302,6 +331,39 @@ namespace ASGARDAPI.Controllers
                     else
                     {
                         respuesta = bd.SolicitudBaja.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarAcuerdo/{idsolicitud}/{acuerdo}")]
+        public int validarAcuerdo(int idsolicitud, string acuerdo)
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idsolicitud == 0)
+                    {
+                        respuesta = bd.SolicitudBaja.Where(p => p.Acuerdo.ToLower() == acuerdo.ToLower()).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.SolicitudBaja.Where(p => p.Acuerdo.ToLower() == acuerdo.ToLower()).Count();
                     }
 
 
@@ -555,6 +617,39 @@ namespace ASGARDAPI.Controllers
                              }).ToList();
                     return lista;
                 }
+            }
+        }
+
+        //para filtro combos
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarActivosFiltro/{id}")]
+        public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                   join noFormulario in bd.FormularioIngreso
+                                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                                   join clasif in bd.Clasificacion
+                                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                                   join resposable in bd.Empleado
+                                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                                   join area in bd.AreaDeNegocio
+                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
+                                                   orderby activo.CorrelativoBien
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activo.IdBien,
+                                                       Codigo = activo.CorrelativoBien,
+                                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                       Desripcion = activo.Desripcion,
+                                                       Clasificacion = clasif.Clasificacion1,
+                                                       AreaDeNegocio = area.Nombre,
+                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                   }).ToList();
+                return lista;
+
             }
         }
 

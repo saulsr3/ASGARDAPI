@@ -328,11 +328,12 @@ namespace ASGARDAPI.Controllers
                                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                                    join clasif in bd.Clasificacion
                                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                                   join resposable in bd.Empleado
-                                                   on activo.IdResponsable equals resposable.IdEmpleado
-                                                   join area in bd.AreaDeNegocio
-                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   //join resposable in bd.Empleado
+                                                   //on activo.IdResponsable equals resposable.IdEmpleado
+                                                   //join area in bd.AreaDeNegocio
+                                                   //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                                    where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                                                   
                                                    orderby activo.CorrelativoBien
                                                    select new ActivoFijoAF
                                                    {
@@ -341,8 +342,8 @@ namespace ASGARDAPI.Controllers
                                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                        Desripcion = activo.Desripcion,
                                                        Clasificacion = clasif.Clasificacion1,
-                                                       AreaDeNegocio = area.Nombre,
-                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                       //AreaDeNegocio = area.Nombre,
+                                                       //Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                                    }).ToList();
                 return lista;
 
@@ -381,15 +382,15 @@ namespace ASGARDAPI.Controllers
                 odatos.idmarca = omarca.IdMarca;
                 odatos.modelo = oActivo.Modelo;
                 odatos.nofactura = oformu.NoFactura;
-                odatos.valoradquicicion = (double)oActivo.ValorAdquicicion;
-                odatos.prima = (double)oActivo.Prima;
+                odatos.valoradquicicion = oActivo.ValorAdquicicion;
+                odatos.prima = oActivo.Prima;
                 odatos.plazopago = oActivo.PlazoPago;
-                odatos.cuotaasignada = (double)oActivo.CuotaAsignanda;
+                odatos.cuotaasignada = oActivo.CuotaAsignanda;
                 odatos.personaentrega = oformu.PersonaEntrega;
                 odatos.personarecibe = oformu.PersonaRecibe;
                 odatos.observaciones = oformu.Observaciones;
                 odatos.foto = oActivo.Foto;
-                odatos.interes = (double)oActivo.Intereses;
+                odatos.interes = oActivo.Intereses;
                 odatos.noformulario = oformu.NoFormulario;
                 odatos.cantidad = 1;
                 
@@ -397,53 +398,6 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-
-
-        [HttpGet]
-        [Route("api/ActivoFijo/listarAreaCombo/{id}")]
-        public IEnumerable<AreasDeNegocioAF> listarAreaCombo(int id)
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<AreasDeNegocioAF> listarAreas = (from area in bd.AreaDeNegocio
-                                                             join sucur in bd.Sucursal
-                                                             on area.IdSucursal equals sucur.IdSucursal
-                                                             where area.IdAreaNegocio == id 
-                                                             && area.Dhabilitado==1
-                                                             select new AreasDeNegocioAF
-                                                             {
-                                                                 Nombre = area.Nombre,
-                                                                 IdAreaNegocio = area.IdAreaNegocio,
-                                                                 IdSucursal = sucur.IdSucursal
-
-                                                             }).ToList();
-        
-                return listarAreas;
-
-            }
-        }
-
-
-        [HttpGet]
-        [Route("api/ActivoFijo/listarSucursalCombo")]
-        public IEnumerable<ComboAnidadoAF> listarSucursalCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<ComboAnidadoAF> listarSucursal = (from sucursal in bd.Sucursal
-                                                              where sucursal.Dhabilitado == 1
-                                                              select new ComboAnidadoAF
-                                                              {
-                                                                  id = sucursal.IdSucursal,
-                                                                  nombre = sucursal.Nombre
-
-                                                              }).ToList();
-
-
-                return listarSucursal;
-
-            }
-        }
 
         [HttpPost]
         [Route("api/ActivoFijo/modificarActivos")]
@@ -577,21 +531,23 @@ namespace ASGARDAPI.Controllers
                 //Extraer los datos padres de la base
                 ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
                 //Utilizar los datos padres para extraer los datos
-                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
-                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
-                Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                //Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
+                //Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
                 FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
                 Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
                 Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
                 // si los datos son nulos
                 string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
                 string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
-                bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
-                bien.area = oArea.Nombre;
+                string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";
+                //bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
+                //bien.area = oArea.Nombre;
                 bien.marca = omarca.Marca;
                 bien.clasificacion = oclasi.Clasificacion1;
-                bien.destino = oArea.Nombre + " " + oSucursal.Nombre;
+                //bien.destino = oArea.Nombre + " " + oSucursal.Nombre;
                 bien.proveedor = oprov;
+                bien.responsable = oemple;
                 bien.donante = odona;
                 bien.fecha = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
 

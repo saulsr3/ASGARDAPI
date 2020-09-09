@@ -203,5 +203,147 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+
+        //Metodo para ver si el proveedor se esta utilizando en un activo
+        [HttpGet]
+        [Route("api/Proveedor/validarActivo/{idProveedor}")]
+        public int validarActivo(int idProveedor)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oArea = bd.ActivoFijo.Where(p => p.IdProveedor == idProveedor && p.EstadoActual == 1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
+
+        [HttpGet]
+        [Route("api/Proveedor/validarProveedor/{idproveedor}/{nombre}")]
+        public int validarProveedor(int idproveedor, string nombre)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idproveedor == 0)
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Nombre.ToLower() == nombre.ToLower()
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.IdProveedor != idproveedor
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
+            }
+            return rpta;
+        }
+
+        [HttpGet]
+        [Route("api/Proveedor/validarEncargado/{idproveedor}/{nombre}")]
+        public int validarEncargado(int idproveedor, string nombre)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idproveedor == 0)
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Encargado.ToLower() == nombre.ToLower()
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Encargado.ToLower() == nombre.ToLower() && p.IdProveedor != idproveedor
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
+            }
+            return rpta;
+        }
+
+        [HttpGet]
+        [Route("api/Proveedor/validarTelProveedor/{idproveedor}/{telefono}")]
+        public int validarTelProveedor(int idproveedor, string telefono)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idproveedor == 0)
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Telefono.ToLower() == telefono.ToLower()
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Proveedor.Where(p => p.Telefono.ToLower() == telefono.ToLower() && p.IdProveedor != idproveedor
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
+            }
+            return rpta;
+        }
+
+        [HttpGet]
+        [Route("api/Proveedor/validarTelEncargado/{idproveedor}/{telefono}")]
+        public int validarTelEncargado(int idproveedorr, string telefonoe)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idproveedorr == 0)
+                    {
+                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado.ToLower() == telefonoe.ToLower()
+                        && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado.ToLower() == telefonoe.ToLower() && p.IdProveedor != idproveedorr
+                        && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //si se cae
+                rpta = 0;
+
+            }
+            return rpta;
+        }
+
     }
 }
