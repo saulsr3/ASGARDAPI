@@ -207,6 +207,27 @@ namespace ASGARDAPI.Controllers
 
         }
 
+       //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
+        [HttpGet]
+        [Route("api/Clasificacion/validarActivo/{idclasificacion}")]
+        public int validarActivo(int idclasificacion)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == idclasificacion && p.EstadoActual == 1
+                     || p.EstadoActual == 2 || p.EstadoActual == 3 || p.EstadoActual == 4 || p.EstadoActual == 5).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
 
         [HttpGet]
         [Route("api/Clasificacion/buscarClasificacion/{buscador?}")]

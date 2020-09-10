@@ -296,11 +296,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<AreasDeNegocioAF> listarAreas = (from area in bd.AreaDeNegocio
-                                                     where area.Dhabilitado==1
-                                                     select new AreasDeNegocioAF
+                                                           //  join sucursal in bd.Sucursal
+                                                           //  on area.IdAreaNegocio equals sucursal.AreaDeNegocio
+                                                             where area.Dhabilitado == 1
+                                                             select new AreasDeNegocioAF
                                                      {
                                                          IdAreaNegocio= area.IdAreaNegocio,
-                                                         Nombre= area.Nombre
+                                                         Nombre= area.Nombre,
+                                                     //   nombreSucursal= sucursal.Nombre
 
                                                      }).ToList();
 
