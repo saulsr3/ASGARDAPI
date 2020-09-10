@@ -19,6 +19,8 @@ namespace ASGARDAPI.Clases
         public double costomateriales { get; set; }
         public double costomo { get; set; }
         public double costototal { get; set; }
+        
+        public string codigo { get; set; }
 
 
 

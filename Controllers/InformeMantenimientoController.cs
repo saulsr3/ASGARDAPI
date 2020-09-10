@@ -203,6 +203,43 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+        //LISTAR INFORMES (HISTORIAL)
+        [HttpGet]
+        [Route("api/InformeMantenimiento/historialInformes")]
+        public IEnumerable<InformeMatenimientoAF> historialInformes()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from informemante in bd.InformeMantenimiento
+                                                                        join tecnico in bd.Tecnicos
+                                                                 on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                                                                        join bienmante in bd.BienMantenimiento
+                                                                        on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                                        join bienes in bd.ActivoFijo
+                                                                        on bienmante.IdBien equals bienes.IdBien
+                                                                        where informemante.Estado == 1 || informemante.Estado==2 
+                                                                       // && bienmante.IdBien == bienes.IdBien
+
+                                                                        //where empleado.Dhabilitado == 1
+                                                                        select new InformeMatenimientoAF
+                                                                        {
+                                                                            idinformematenimiento = informemante.IdInformeMantenimiento,
+                                                                            idmantenimiento = (int)informemante.IdMantenimiento,
+                                                                            fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
+                                                                            nombretecnico = tecnico.Nombre,
+                                                                            codigo= bienes.CorrelativoBien,
+                                                                            descripcion = informemante.Descripcion,
+                                                                            costomateriales = (double)informemante.CostoMateriales,
+                                                                            costomo = (double)informemante.CostoMo,
+                                                                            costototal = (double)informemante.CostoTotal,
+                                                                            bienes = bienes.Desripcion
+
+                                                                        }).ToList();
+                return listaInformeMante;
+            }
+        }
+
+
 
         //LISTAR INFORMES DE MANTENIMIENTO (PARA DAR REVALORIZACIÓN)
         [HttpGet]
