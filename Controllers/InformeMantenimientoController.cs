@@ -177,7 +177,7 @@ namespace ASGARDAPI.Controllers
         //cambiar el estado de del informe para que desaparezca depues de que se aplicar la revalorización
       //falta llamar
         [HttpGet]
-        [Route("api/InformeMantenimiento/estadoInformeRevalorizado/{idBien}")]
+        [Route("api/InformeMantenimiento/estadoInformeRevalorizado/{idinformeMantenimiento}")]
         public int estadoInformeRevalorizado(int idinformeMantenimiento)
         {
             int respuesta = 0;
@@ -202,54 +202,6 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
-
-
-
-
-
-        public int transaccionDepreciacion([FromBody] DatosDepreciacionAF oActivoAF)
-        {
-            int rpta = 0;
-
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    //Transaccion a tarjeta
-
-                    TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
-                    TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien).Last();
-
-                    //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
-                    transaccion.IdBien = oActivoAF.idBien;
-                    transaccion.Fecha = oActivoAF.fecha;
-                    transaccion.Concepto = "Depreciación";
-                    transaccion.Valor = oUltimaTransaccion.Valor;
-                    transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
-                    double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; ;
-                    transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 2);
-                    double valor = (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
-                    double rounded = Math.Round(valor, 2);
-                    transaccion.ValorActual = rounded;
-                    transaccion.ValorMejora = 0.00;
-                    bd.TarjetaDepreciacion.Add(transaccion);
-                    bd.SaveChanges();
-                    //cambia ultimo anio de depreciación
-
-                    ActivoFijo activo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF.idBien).First();
-                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                    activo.UltimoAnioDepreciacion = anioActual.Anio;
-                    bd.SaveChanges();
-                    rpta = 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                rpta = 0;
-            }
-            return rpta;
-        }
-
 
 
         //LISTAR INFORMES DE MANTENIMIENTO (PARA DAR REVALORIZACIÓN)
@@ -280,9 +232,6 @@ namespace ASGARDAPI.Controllers
                                                                             costomo = (double)informemante.CostoMo,
                                                                             costototal = (double)informemante.CostoTotal,
                                                                             bienes = bienes.Desripcion
-
-
-
 
                                                                         }).ToList();
                 return listaInformeMante;
