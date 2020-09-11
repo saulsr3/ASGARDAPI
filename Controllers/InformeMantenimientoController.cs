@@ -224,6 +224,7 @@ namespace ASGARDAPI.Controllers
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
+                                                                           
                                                                             idmantenimiento = (int)informemante.IdMantenimiento,
                                                                             fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
                                                                             nombretecnico = tecnico.Nombre,
@@ -261,6 +262,7 @@ namespace ASGARDAPI.Controllers
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
+                                                                            idBien = bienes.IdBien,
                                                                             idmantenimiento = (int)informemante.IdMantenimiento,
                                                                             fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
                                                                             nombretecnico = tecnico.Nombre,

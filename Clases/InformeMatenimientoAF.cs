@@ -9,6 +9,8 @@ namespace ASGARDAPI.Clases
     {
 
         public int idinformematenimiento { get; set; }
+
+        public int idBien { get; set; }
         public int idmantenimiento { get; set; }
         public string bienes { get; set; }
         public string fechacadena { get; set; }
