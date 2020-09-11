@@ -265,5 +265,26 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+        [HttpGet]
+        [Route("api/AreaNegocios/validarRefereciaActivo/{idArea}")]
+        public int validarRefereciaActivo(int idArea)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                
+                    Empleado Oempleado = bd.Empleado.Where(p => p.IdAreaDeNegocio == idArea && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdResponsable == Oempleado.IdEmpleado && p.EstadoActual != 0).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
     }
 }
