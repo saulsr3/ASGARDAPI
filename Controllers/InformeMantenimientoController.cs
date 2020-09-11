@@ -75,6 +75,7 @@ namespace ASGARDAPI.Controllers
                     transaccion.Valor = oUltimaTransaccion.Valor + oActivoAF.valorRevalorizacion;
                     transaccion.DepreciacionAnual = 0.00;
                     transaccion.DepreciacionAcumulada = 0.00;
+
                 
 
                     // al valor actual tambien se le va a sumar el valor de la revalorización.
@@ -217,7 +218,7 @@ namespace ASGARDAPI.Controllers
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado == 1 || informemante.Estado==2 
+                                                                        where informemante.Estado == 1 || informemante.Estado==0 
                                                                        // && bienmante.IdBien == bienes.IdBien
 
                                                                         //where empleado.Dhabilitado == 1
