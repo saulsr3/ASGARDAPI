@@ -187,7 +187,7 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     InformeMantenimiento oInformeMantenimiento = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idinformeMantenimiento).First();
-                    oInformeMantenimiento.Estado = 1;
+                    oInformeMantenimiento.Estado = 0;
                     bd.SaveChanges();
                     respuesta = 1;
 

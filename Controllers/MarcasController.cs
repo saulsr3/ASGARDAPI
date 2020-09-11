@@ -149,5 +149,51 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+        [HttpGet]
+        [Route("api/Marca/validarMarca/{idMarca}/{marca}")]
+        public int validarMarca(int idMarca, string marca)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idMarca == 0)
+                    {
+                        respuesta = bd.Marcas.Where(p => p.Marca.ToLower() == marca.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.Marcas.Where(p => p.Marca.ToLower() == marca.ToLower() && p.IdMarca != idMarca && p.Dhabilitado == 1).Count();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+        //Metodo que hace referencia si la marca se esta utilizando en algun activo
+        [HttpGet]
+        [Route("api/Marca/validarRefereciaActivo/{idMarca}")]
+        public int validarRefereciaActivo(int idMarca)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                   
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdMarca == idMarca && p.EstadoActual != 0).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
     }
 }
