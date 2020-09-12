@@ -14,8 +14,10 @@ namespace ASGARDAPI.Models
         public string Clasificacion1 { get; set; }
         public string Correlativo { get; set; }
         public string Descripcion { get; set; }
+        public int? IdCategoria { get; set; }
         public int? Dhabilitado { get; set; }
 
+        public Categorias IdCategoriaNavigation { get; set; }
         public ICollection<ActivoFijo> ActivoFijo { get; set; }
     }
 }

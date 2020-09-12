@@ -9,7 +9,7 @@ namespace ASGARDAPI.Models
         public DateTime? Fecha { get; set; }
         public string Folio { get; set; }
         public string Observaciones { get; set; }
-        public int? Motivo { get; set; }
+        public int? IdTipoDescargo { get; set; }
         public int? IdBien { get; set; }
         public int? Estado { get; set; }
         public string EntidadBeneficiaria { get; set; }
@@ -19,5 +19,6 @@ namespace ASGARDAPI.Models
         public string Acuerdo { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
+        public TipoDescargo IdTipoDescargoNavigation { get; set; }
     }
 }
