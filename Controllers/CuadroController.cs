@@ -23,6 +23,8 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+                
+                
                 IEnumerable<CuadroControlAF> listacuadro = (from cuadro in bd.ActivoFijo
                                                             join noFormulario in bd.FormularioIngreso
                                                             on cuadro.NoFormulario equals noFormulario.NoFormulario
@@ -32,12 +34,19 @@ namespace ASGARDAPI.Controllers
                                                             on cuadro.IdResponsable equals resposable.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                            join tarjeta in bd.TarjetaDepreciacion
+                                                            //Aca probando con el order by
+                                                            join tarjeta in bd.TarjetaDepreciacion.OrderBy(valor=>valor.DepreciacionAnual)
                                                             on cuadro.IdBien equals tarjeta.IdBien
+                                              
                                                             where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
 
-                                                            select new CuadroControlAF
+                                                            //Así es como me da error...
+                                                        //    group tarjeta by v
+                                                            
+                                                            select new CuadroControlAF()
                                                             {
+                                                               
+
                                                                 idbien = cuadro.IdBien,
                                                                 codigo = cuadro.CorrelativoBien,
                                                                 descripcion = cuadro.Desripcion,
