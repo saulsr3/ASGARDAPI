@@ -23,39 +23,34 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                
-                
-                IEnumerable<CuadroControlAF> listacuadro = (from cuadro in bd.ActivoFijo
-                                                            join noFormulario in bd.FormularioIngreso
-                                                            on cuadro.NoFormulario equals noFormulario.NoFormulario
-                                                            join clasif in bd.Clasificacion
-                                                            on cuadro.IdClasificacion equals clasif.IdClasificacion
-                                                            join resposable in bd.Empleado
-                                                            on cuadro.IdResponsable equals resposable.IdEmpleado
-                                                            join area in bd.AreaDeNegocio
-                                                            on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                            //Aca probando con el order by
-                                                            join tarjeta in bd.TarjetaDepreciacion.OrderBy(valor=>valor.DepreciacionAnual)
-                                                            on cuadro.IdBien equals tarjeta.IdBien
-                                              
-                                                            where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
 
-                                                            //Así es como me da error...
-                                                        //    group tarjeta by v
-                                                            
-                                                            select new CuadroControlAF()
+
+                IEnumerable<CuadroControlAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              join resposable in bd.Empleado
+                                                              on cuadro.IdResponsable equals resposable.IdEmpleado
+                                                              join area in bd.AreaDeNegocio
+                                                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+
+                                                              //where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroControlAF()
                                                             {
-                                                               
-
                                                                 idbien = cuadro.IdBien,
                                                                 codigo = cuadro.CorrelativoBien,
                                                                 descripcion = cuadro.Desripcion,
                                                                 valoradquisicion = (double)cuadro.ValorAdquicicion,
-                                                                valoractual = (double)tarjeta.ValorActual,
-                                                                depreciacion = (double)tarjeta.DepreciacionAnual,
-                                                                ubicacion = area.Nombre,
-                                                                depreciacionacumulada =(double)tarjeta.DepreciacionAcumulada,
                                                                 fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                valoractual =  (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
+                                                                depreciacion = (double)bar.OrderByDescending(x=>x.IdTarjeta).First().DepreciacionAnual,
+                                                                depreciacionacumulada = (double)bar.Sum(x=>x.DepreciacionAnual),
+                                                                ubicacion = area.Nombre,
                                                                 responsable = resposable.Nombres + " " + resposable.Apellidos
 
                                                             }).ToList();
