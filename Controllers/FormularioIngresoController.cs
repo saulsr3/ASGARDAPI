@@ -125,29 +125,30 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+    
+
+
         [HttpPost]
-        [Route("api/FormularioIngreso/modificarActivosForm")]
-        public int modificarActivosForm([FromBody]FormularioIngresoAF oFormularioIngresoAF)
+        [Route("api/FormularioIngreso/modificarFormularioIngreso")]
+        public int modificarFormulario([FromBody]FormularioIngresoAF oformulario)
         {
             int rpta = 0;
             try
             {
-
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    //para editar tenemos que sacar la informacion
-                    FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oFormularioIngresoAF.noformulario).First();
-                    oFormularioIngreso.NoFormulario = oFormularioIngresoAF.noformulario;
-                    oFormularioIngreso.NoFactura = oFormularioIngresoAF.nofactura;
-                    oFormularioIngreso.PersonaEntrega = oFormularioIngresoAF.personaentrega;
-                    oFormularioIngreso.PersonaRecibe = oFormularioIngresoAF.personarecibe;
-                    oFormularioIngreso.FechaIngreso = oFormularioIngresoAF.fechaingreso;
-                    oFormularioIngreso.Observaciones = oFormularioIngresoAF.observaciones;
-
-                    //para guardar cambios
+                    Console.WriteLine("formulario" + oformulario.noformulario);
+                    FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oformulario.noformulario).First();
+                    oFormularioIngreso.NoFormulario = oformulario.noformulario;
+                    oFormularioIngreso.NoFactura = oformulario.nofactura;
+                    oFormularioIngreso.FechaIngreso = oformulario.fechaingreso;
+                    oFormularioIngreso.PersonaEntrega = oformulario.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oformulario.personarecibe;
+                    oFormularioIngreso.Observaciones = oformulario.observaciones;
                     bd.SaveChanges();
-                    //si todo esta bien
+
                     rpta = 1;
+
                 }
             }
             catch (Exception ex)
@@ -156,9 +157,66 @@ namespace ASGARDAPI.Controllers
                 //Console.WriteLine(rpta);
             }
             return rpta;
-
         }
 
+        [HttpPost]
+        [Route("api/FormularioIngreso/modificarActivoFijo")]
+        public int modificarActivoFijo([FromBody] ActivoAF oActivoAF2)
+        {
+            int rpta = 0;
+
+            try
+            {
+                Console.WriteLine("BIEN" + oActivoAF2.idbien);
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //Console.WriteLine("bien" + oActivoAF2.idbien);
+                    //ActivoFijo oActivoFijo = new ActivoFijo();
+                    ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF2.idbien).First();
+                    //Datos para la tabla activo fijo
+                        oActivoFijo.IdBien = oActivoAF2.idbien;
+                    FormularioIngreso oFormulario = bd.FormularioIngreso.First();
+                        oActivoFijo.NoFormulario = oFormulario.NoFormulario;
+                        oActivoFijo.Desripcion = oActivoAF2.descripcion;
+                        oActivoFijo.Modelo = oActivoAF2.modelo;
+                        oActivoFijo.TipoAdquicicion = oActivoAF2.tipoadquicicion;
+                        oActivoFijo.Color = oActivoAF2.color;
+                        oActivoFijo.IdMarca = oActivoAF2.idmarca;
+                        oActivoFijo.IdClasificacion = oActivoAF2.idclasificacion;
+                        if (oActivoAF2.tipoadquicicion == 3)
+                        {
+                            oActivoFijo.IdDonante = oActivoAF2.idproveedor;
+                        }
+                        else
+                        {
+                            oActivoFijo.IdProveedor = oActivoAF2.idproveedor;
+                            if (oActivoAF2.tipoadquicicion == 2)
+                            {
+                                oActivoFijo.PlazoPago = oActivoAF2.plazopago;
+                                oActivoFijo.Prima = oActivoAF2.prima;
+                                oActivoFijo.CuotaAsignanda = oActivoAF2.cuotaasignada;
+                                oActivoFijo.Intereses = oActivoAF2.interes;
+                            }
+                        }
+                        oActivoFijo.EstadoIngreso = oActivoAF2.estadoingreso;
+                        oActivoFijo.ValorAdquicicion = oActivoAF2.valoradquicicion;
+                        oActivoFijo.Foto = oActivoAF2.foto;
+                        oActivoFijo.ValorResidual = 0;
+                    //oActivoFijo.EstaAsignado = 0;
+                    //oActivoFijo.EstadoActual = 1;
+                    bd.SaveChanges();
+
+
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+                Console.WriteLine("prueba");
+            }
+            return rpta;
+        }
 
     }
 }

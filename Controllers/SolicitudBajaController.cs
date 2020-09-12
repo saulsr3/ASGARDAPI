@@ -200,37 +200,13 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        [HttpPost]
-        [Route("api/SolicitudBaja/guardarAcuerdo")]
-        public int guardarAcuerdo([FromBody]SolicitudBajaAF oSolicitudBajaAF)
-        {
-            int rpta = 0;
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    SolicitudBaja bien = new SolicitudBaja();
-                   
-                    Console.WriteLine("ACUERDO" + oSolicitudBajaAF.idsolicitud);
-                    SolicitudBaja osoli = bd.SolicitudBaja.Where(p => p.IdSolicitud == oSolicitudBajaAF.idsolicitud).First();
-                    osoli.Acuerdo = oSolicitudBajaAF.acuerdo;
-                   
-                    bd.SaveChanges();
-                    rpta = 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                rpta = 0;
-            }
-            return rpta;
-        }
+    
 
 
         //si la solicitud es aceptada cambiamos el estado del bien a 0
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}")]
-        public int cambiarEstado(int idbien)
+        [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}")] ///{acuerdo}
+        public int cambiarEstado(int idbien)//, string acuerdo
         {
             int rpta = 0;
 
@@ -240,8 +216,10 @@ namespace ASGARDAPI.Controllers
                 {
                     Console.WriteLine("IDESTADO" + idbien);
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
-                    oActivo.EstadoActual = 00;
-                    oActivo.EstaAsignado = 00;
+                    oActivo.EstadoActual = 0;
+                    oActivo.EstaAsignado = 0;
+                   // SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdBien ==idbien ).First();
+                   // oSolic.Acuerdo = acuerdo;
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -281,6 +259,31 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+        [HttpGet]
+        [Route("api/SolicitudBaja/listaBienesSolicitados/{idSolicitud}")]
+        public IEnumerable<SolicitadosABajaAF> listaBienesSolicitados(int idSolicitud)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SolicitadosABajaAF> lista = (from soli in bd.SolicitudBaja
+                                                              join activo in bd.ActivoFijo
+                                                              on soli.IdBien equals activo.IdBien
+                                                              where soli.IdSolicitud == idSolicitud
+                                                              select new SolicitadosABajaAF
+                                                              {
+                                                                  idbien = activo.IdBien,
+                                                                  //estado = (int)activo.EstadoActual,
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion
+                                                                 
+
+                                                              }).ToList();
+
+
+                return lista;
+            }
+
+        }
 
         [HttpGet]
         [Route("api/SolicitudBaja/verSolicitud/{idSolicitud}")]

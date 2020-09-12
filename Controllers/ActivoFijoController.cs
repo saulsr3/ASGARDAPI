@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
 using BarcodeLib;
+using Microsoft.AspNetCore.Cors;
 
 namespace ASGARDAPI.Controllers
 {
+    //[EnableCors("TCAPolicy")]
     public class ActivoFijoController : Controller
     {
         public IActionResult Index()
@@ -332,8 +334,8 @@ namespace ASGARDAPI.Controllers
                                                    //on activo.IdResponsable equals resposable.IdEmpleado
                                                    //join area in bd.AreaDeNegocio
                                                    //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                   where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-                                                   
+                                                   where activo.EstadoActual == 1 
+
                                                    orderby activo.CorrelativoBien
                                                    select new ActivoFijoAF
                                                    {
@@ -408,31 +410,38 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    //para editar tenemos que sacar la informacion
+                    Console.WriteLine("probando" + oActivoFijoAF.IdBien);
                     ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoFijoAF.IdBien).First();
-                    oActivoFijo.IdBien = oActivoFijoAF.IdBien;
-                    oActivoFijo.Desripcion = oActivoFijoAF.Desripcion;
-                    oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
-                    oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
-                    oActivoFijo.Modelo = oActivoFijoAF.Modelo;
-                    oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquicicion;
-                    oActivoFijo.Color = oActivoFijoAF.Color;
-                    oActivoFijo.VidaUtil = oActivoFijoAF.vidautil;
-                    oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
-                    oActivoFijo.ValorAdquicicion = oActivoFijoAF.valoradquicicion;
-                    oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
-                    oActivoFijo.Prima = oActivoFijoAF.prima;
-                    oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
-                    oActivoFijo.Intereses = oActivoFijoAF.interes;
-                    oActivoFijo.ValorResidual = oActivoFijoAF.valorresidual;
-                    oActivoFijo.Foto = oActivoFijoAF.foto;
-                    oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
-                    oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
- 
-                    //para guardar cambios
-                    bd.SaveChanges();
-                    //si todo esta bien
+                    FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivoFijoAF.NoFormulario).First();
+                    //oActivoFijo.NoFormulario = oFormularioIngreso.NoFormulario;
                     rpta = 1;
+
+                    ////para editar tenemos que sacar la informacion
+                    //ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoFijoAF.IdBien).First();
+                    //oActivoFijo.IdBien = oActivoFijoAF.IdBien;
+                    //oActivoFijo.Desripcion = oActivoFijoAF.Desripcion;
+                    //oActivoFijo.IdClasificacion = oActivoFijoAF.idclasificacion;
+                    //oActivoFijo.IdMarca = oActivoFijoAF.idmarca;
+                    //oActivoFijo.Modelo = oActivoFijoAF.Modelo;
+                    //oActivoFijo.TipoAdquicicion = oActivoFijoAF.tipoadquicicion;
+                    //oActivoFijo.Color = oActivoFijoAF.Color;
+                    //oActivoFijo.VidaUtil = oActivoFijoAF.vidautil;
+                    //oActivoFijo.EstadoIngreso = oActivoFijoAF.estadoingreso;
+                    //oActivoFijo.ValorAdquicicion = oActivoFijoAF.valoradquicicion;
+                    //oActivoFijo.PlazoPago = oActivoFijoAF.plazopago;
+                    //oActivoFijo.Prima = oActivoFijoAF.prima;
+                    //oActivoFijo.CuotaAsignanda = oActivoFijoAF.cuotaasignada;
+                    //oActivoFijo.Intereses = oActivoFijoAF.interes;
+                    //oActivoFijo.ValorResidual = oActivoFijoAF.valorresidual;
+                    //oActivoFijo.Foto = oActivoFijoAF.foto;
+                    //oActivoFijo.IdProveedor = oActivoFijoAF.idproveedor;
+                    //oActivoFijo.IdDonante = oActivoFijoAF.iddonante;
+
+                    ////para guardar cambios
+                    //bd.SaveChanges();
+                    ////si todo esta bien
+                    //rpta = 1;
+
                 }
             }
             catch (Exception ex)
@@ -443,7 +452,34 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
-        
+        [HttpPost]
+        [Route("api/ActivoFijo/modificarFormulario")]
+        public int modificarFormulario([FromBody]FormularioIngresoAF oformulario)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    
+                    FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oformulario.noformulario).First();
+                    oFormularioIngreso.NoFormulario = oformulario.noformulario;
+                    oFormularioIngreso.NoFactura = oformulario.nofactura;
+                    oFormularioIngreso.FechaIngreso = oformulario.fechaingreso;
+                    oFormularioIngreso.PersonaEntrega = oformulario.personaentrega;
+                    oFormularioIngreso.PersonaRecibe = oformulario.personarecibe;
+                    oFormularioIngreso.Observaciones = oformulario.observaciones;
+
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+                Console.WriteLine(rpta);
+            }
+            return rpta;
+        }
 
 
         [HttpGet]
@@ -460,10 +496,10 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   join resposable in bd.Empleado
-                                   on activo.IdResponsable equals resposable.IdEmpleado
-                                   join area in bd.AreaDeNegocio
-                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   //join resposable in bd.Empleado
+                                   //on activo.IdResponsable equals resposable.IdEmpleado
+                                   //join area in bd.AreaDeNegocio
+                                   //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                    where activo.EstadoActual == 1
 
                                    select new ActivoFijoAF
@@ -473,8 +509,8 @@ namespace ASGARDAPI.Controllers
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Desripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
-                                       AreaDeNegocio = area.Nombre,
-                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                       //AreaDeNegocio = area.Nombre,
+                                       //Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                    }).ToList();
 
                     return listaActivo;
@@ -486,10 +522,10 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   join resposable in bd.Empleado
-                                   on activo.IdResponsable equals resposable.IdEmpleado
-                                   join area in bd.AreaDeNegocio
-                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   //join resposable in bd.Empleado
+                                   //on activo.IdResponsable equals resposable.IdEmpleado
+                                   //join area in bd.AreaDeNegocio
+                                   //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                    where activo.EstadoActual == 1
 
 
@@ -498,9 +534,9 @@ namespace ASGARDAPI.Controllers
                                       || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
                                       || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
                                       || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
-                                      || (area.Nombre).ToLower().Contains(buscador.ToLower())
-                                      || (resposable.Nombres).ToLower().Contains(buscador.ToLower())
-                                      || (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+                                     // || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                      //|| (resposable.Nombres).ToLower().Contains(buscador.ToLower())
+                                      //|| (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
                                       )
 
                                    select new ActivoFijoAF
@@ -510,8 +546,8 @@ namespace ASGARDAPI.Controllers
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Desripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
-                                       AreaDeNegocio = area.Nombre,
-                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                      // AreaDeNegocio = area.Nombre,
+                                      // Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                    }).ToList();
 
                     return listaActivo;
@@ -541,7 +577,7 @@ namespace ASGARDAPI.Controllers
                 string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
                 string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
                 string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";
-                //bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
+               // bien.responsable = oemple + " " + oemple.Apellidos;
                 //bien.area = oArea.Nombre;
                 bien.marca = omarca.Marca;
                 bien.clasificacion = oclasi.Clasificacion1;
