@@ -69,26 +69,30 @@ namespace ASGARDAPI.Controllers
             {
                 if (buscador == "")
                 {
-                    listaCuadro = (from cuadro in bd.ActivoFijo
+                    listaCuadro = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join cuadro in bd.ActivoFijo
+                                   on bar.FirstOrDefault().IdBien equals cuadro.IdBien
                                    join noFormulario in bd.FormularioIngreso
                                    on cuadro.NoFormulario equals noFormulario.NoFormulario
-                                   join tarjeta in bd.TarjetaDepreciacion
-                                   on cuadro.IdBien equals tarjeta.IdBien
+                                   join clasif in bd.Clasificacion
+                                   on cuadro.IdClasificacion equals clasif.IdClasificacion
                                    join resposable in bd.Empleado
                                    on cuadro.IdResponsable equals resposable.IdEmpleado
                                    join area in bd.AreaDeNegocio
                                    on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                   where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+
                                    select new CuadroControlAF
                                    {
-                                      
+
+                                       idbien = cuadro.IdBien,
                                        codigo = cuadro.CorrelativoBien,
                                        descripcion = cuadro.Desripcion,
-                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        valoradquisicion = (double)cuadro.ValorAdquicicion,
-                                       depreciacion = (double)tarjeta.DepreciacionAnual,
-                                       depreciacionacumulada = (double)tarjeta.DepreciacionAcumulada,
-                                       valoractual = (double)tarjeta.ValorActual,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoractual = (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
+                                       depreciacion = (double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual,
+                                       depreciacionacumulada = (double)bar.Sum(x => x.DepreciacionAnual),
                                        ubicacion = area.Nombre,
                                        responsable = resposable.Nombres + " " + resposable.Apellidos
 
@@ -98,27 +102,32 @@ namespace ASGARDAPI.Controllers
                 }
                 else
                 {
-                    listaCuadro = (from cuadro in bd.ActivoFijo
+                    listaCuadro = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join cuadro in bd.ActivoFijo
+                                   on bar.FirstOrDefault().IdBien equals cuadro.IdBien
                                    join noFormulario in bd.FormularioIngreso
                                    on cuadro.NoFormulario equals noFormulario.NoFormulario
-                                   join tarjeta in bd.TarjetaDepreciacion
-                                   on cuadro.IdBien equals tarjeta.IdBien
+                                   join clasif in bd.Clasificacion
+                                   on cuadro.IdClasificacion equals clasif.IdClasificacion
                                    join resposable in bd.Empleado
                                    on cuadro.IdResponsable equals resposable.IdEmpleado
                                    join area in bd.AreaDeNegocio
                                    on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                   where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
 
-                                 && ((cuadro.IdBien).ToString().Contains(buscador) || (cuadro.CorrelativoBien).ToLower().Contains(buscador.ToLower()) || (cuadro.Desripcion).ToLower().Contains(buscador.ToLower()))
+                                   where cuadro.IdBien.ToString().Contains(buscador) || (cuadro.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    cuadro.Desripcion.ToLower().Contains(buscador.ToLower())
+
                                    select new CuadroControlAF
                                    {
+                                       idbien = cuadro.IdBien,
                                        codigo = cuadro.CorrelativoBien,
                                        descripcion = cuadro.Desripcion,
-                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        valoradquisicion = (double)cuadro.ValorAdquicicion,
-                                       depreciacion = (double)tarjeta.DepreciacionAnual,
-                                       depreciacionacumulada = (double)tarjeta.DepreciacionAcumulada,
-                                       valoractual = (double)tarjeta.ValorActual,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoractual = (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
+                                       depreciacion = (double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual,
+                                       depreciacionacumulada = (double)bar.Sum(x => x.DepreciacionAnual),
                                        ubicacion = area.Nombre,
                                        responsable = resposable.Nombres + " " + resposable.Apellidos
 
