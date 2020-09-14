@@ -143,8 +143,8 @@ namespace ASGARDAPI.Controllers
 
         //esta validacion la dejaré para despues
         [HttpGet]
-        [Route("api/Categorias/validarClasificacion/{idclasificacion}/{clasificacion}")]
-        public int validarClasificacion(int idclasificacion, string clasificacion)
+        [Route("api/Categorias/validarCategoria/{idcategoria}/{categoria}")]
+        public int validarCategoria(int idcategoria, string categoria)
         {
             int respuesta = 0;
             try
@@ -153,13 +153,13 @@ namespace ASGARDAPI.Controllers
 
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    if (idclasificacion == 0)
+                    if (idcategoria == 0)
                     {
-                        respuesta = bd.Clasificacion.Where(p => p.Clasificacion1.ToLower() == clasificacion.ToLower() && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Categorias.Where(p => p.Categoria.ToLower() == categoria.ToLower() && p.Dhabilitado == 1).Count();
                     }
                     else
                     {
-                        respuesta = bd.Clasificacion.Where(p => p.Clasificacion1.ToLower() == clasificacion.ToLower() && p.IdClasificacion != idclasificacion && p.Dhabilitado == 1).Count();
+                        respuesta = bd.Categorias.Where(p => p.Categoria.ToLower() == categoria.ToLower() && p.IdCategoria != idcategoria && p.Dhabilitado == 1).Count();
                     }
 
 
@@ -176,7 +176,6 @@ namespace ASGARDAPI.Controllers
         }
 
         //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
-        //tambien quedará para dspues
         [HttpGet]
         [Route("api/Categorias/validarActivoc/{idcategorias}")]
         public int validarActivoc(int idcategorias)
@@ -186,9 +185,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                   // Categorias oCategorias = bd.Clasificacion.Where(p=> p.IdCategoria == idcategorias);
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == idcategorias && p.EstadoActual == 1
-                     || p.EstadoActual == 2 || p.EstadoActual == 3 || p.EstadoActual == 4 || p.EstadoActual == 5).First();
+                    Clasificacion oCategoria = bd.Clasificacion.Where(p => p.IdCategoria == idcategorias && p.Dhabilitado==1).First();
                     res = 1;
                 }
             }
@@ -198,6 +195,7 @@ namespace ASGARDAPI.Controllers
             }
             return res;
         }
+
 
 
         [HttpGet]
