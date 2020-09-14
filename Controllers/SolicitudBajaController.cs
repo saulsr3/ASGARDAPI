@@ -64,7 +64,7 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
                     oSolicitud.Observaciones = oSolicitudAF.observaciones;
-                    oSolicitud.Motivo = oSolicitudAF.motivo;
+                    oSolicitud.IdTipoDescargo = oSolicitudAF.motivo;
                     oSolicitud.Estado = 1;
                    
                     if (oSolicitudAF.motivo == 4)
@@ -106,7 +106,7 @@ namespace ASGARDAPI.Controllers
                                                        folio = solicitud.Folio,
                                                        fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                                        observaciones = solicitud.Observaciones,
-                                                       motivo = (int) solicitud.Motivo,
+                                                       motivo = (int) solicitud.IdTipoDescargo,
                                                        entidadbeneficiaria = solicitud.EntidadBeneficiaria,
                                                        domicilio = solicitud.Domicilio,
                                                        contacto = solicitud.Contacto,
@@ -302,7 +302,7 @@ namespace ASGARDAPI.Controllers
                 odatos.NoSolicitud =  osolicitud.IdSolicitud;
                 odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
                 odatos.Codigo = obien.CorrelativoBien;
-                odatos.motivo =(int) osolicitud.Motivo;
+                odatos.motivo =(int) osolicitud.IdTipoDescargo;
                 odatos.folio = osolicitud.Folio;
                 odatos.idbien = (int) osolicitud.IdBien;
                 odatos.Codigo = obien.CorrelativoBien;
@@ -493,7 +493,7 @@ namespace ASGARDAPI.Controllers
                                  folio = solicitud.Folio,
                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                  observaciones = solicitud.Observaciones,
-                                 motivo = (int)solicitud.Motivo,
+                                 motivo = (int)solicitud.IdTipoDescargo,
 
                              }).ToList();
 
@@ -508,7 +508,7 @@ namespace ASGARDAPI.Controllers
 
                                  && ((solicitud.Folio).ToLower().Contains(buscador.ToLower()) ||
                                     (solicitud.Fecha).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                    (solicitud.Motivo).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.IdTipoDescargo).ToString().ToLower().Contains(buscador.ToLower()) ||
                                     (solicitud.Observaciones).ToLower().Contains(buscador.ToLower())
                                     
                                     )
@@ -520,7 +520,7 @@ namespace ASGARDAPI.Controllers
                                  folio = solicitud.Folio,
                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                  observaciones = solicitud.Observaciones,
-                                 motivo = (int)solicitud.Motivo,
+                                 motivo = (int)solicitud.IdTipoDescargo,
 
                              }).ToList();
                     return lista;
