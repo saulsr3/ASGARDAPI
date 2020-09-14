@@ -35,11 +35,6 @@ namespace ASGARDAPI.Controllers
                     bd.SaveChanges();
                     respuesta = 1;
 
-
-
-
-
-
                 }
 
             }
