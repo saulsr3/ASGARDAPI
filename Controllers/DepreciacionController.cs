@@ -21,15 +21,20 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                IEnumerable<DepreciacionAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
+                                                            group tarjeta by tarjeta.IdBien into bar
+                                                            join activo in bd.ActivoFijo
+                                                           on bar.FirstOrDefault().IdBien equals activo.IdBien
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
+                                                          
+                                                  
 
-                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&&(bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual>0)
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien=activo.IdBien,
@@ -82,21 +87,29 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                IEnumerable<DepreciacionAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
+                                                            group tarjeta by tarjeta.IdBien into bar
+                                                            join activo in bd.ActivoFijo
+                                                           on bar.FirstOrDefault().IdBien equals activo.IdBien
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
                                                             join area in bd.AreaDeNegocio
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
-                                                           on area.IdSucursal equals sucursal.IdSucursal
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && area.IdAreaNegocio==id
+                                                            on area.IdSucursal equals sucursal.IdSucursal
+
+
+
+                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)&&area.IdAreaNegocio==id
                                                             select new DepreciacionAF
                                                             {
+                                                                idBien = activo.IdBien,
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
-                                                                sucursal=sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
+
+
                                                             }).ToList();
                 return listaActivos;
             }
@@ -204,8 +217,8 @@ namespace ASGARDAPI.Controllers
                                                                 fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
                                                                 concepto = tarjeta.Concepto,
                                                                  montoTransaccion = tarjeta.Valor.ToString(),
-                                                               depreciacionAnual=tarjeta.DepreciacionAnual.ToString(),
-                                                                depreciacionAcumulada=tarjeta.DepreciacionAcumulada.ToString(),
+                                                               depreciacionAnual=tarjeta.DepreciacionAnual.ToString(),       
+                                                                depreciacionAcumulada = tarjeta.DepreciacionAcumulada.ToString(),
                                                                  valorActual=tarjeta.ValorActual.ToString(),
                                                                 valorMejora=tarjeta.ValorMejora.ToString()
                                                                          }).ToList();
@@ -233,10 +246,11 @@ namespace ASGARDAPI.Controllers
                         transaccion.Concepto = "Depreciación";
                         transaccion.Valor = oUltimaTransaccion.Valor;
                         transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
-                        double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; ;
-                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 2);
+                        double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; 
+                    transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado,3);
+                    //transaccion.DepreciacionAcumulada = valorAcumulado;
                         double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
-                        double rounded = Math.Round(valor,2);
+                        double rounded = Math.Round(valor,3);
                         transaccion.ValorActual = rounded;
                         transaccion.ValorMejora = 0.00;
                         bd.TarjetaDepreciacion.Add(transaccion);
