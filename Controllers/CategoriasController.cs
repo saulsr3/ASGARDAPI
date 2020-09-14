@@ -85,8 +85,8 @@ namespace ASGARDAPI.Controllers
                                                                    select new CategoriasAF
 
                                                                    { 
-                                                                       IdCategoria = categorias.IdCategoria,
-                                                                    
+                                                                      IdCategoria = categorias.IdCategoria,
+                                                                       VidaUtil =  categorias.VidaUtil,
                                                                        Categoria = categorias.Categoria,
                                                                        Descripcion = categorias.Descripcion
 
@@ -131,7 +131,7 @@ namespace ASGARDAPI.Controllers
                 CategoriasAF oCategoriasAF = new CategoriasAF();
                 Categorias oCategorias = bd.Categorias.Where(p => p.IdCategoria == id).First();
                 oCategoriasAF.IdCategoria = oCategorias.IdCategoria;
-                oCategoriasAF.VidaUtil = (int) oCategorias.VidaUtil;
+                oCategoriasAF.VidaUtil = oCategorias.VidaUtil;
                 oCategoriasAF.Categoria = oCategorias.Categoria;
                 oCategoriasAF.Descripcion = oCategorias.Descripcion;
         
@@ -215,7 +215,7 @@ namespace ASGARDAPI.Controllers
                                           {
 
                                               IdCategoria = categorias.IdCategoria,
-                                              VidaUtil = (int)categorias.VidaUtil,
+                                              VidaUtil = categorias.VidaUtil,
                                               Categoria = categorias.Categoria,
                                               Descripcion = categorias.Descripcion
                                           }).ToList();
@@ -226,14 +226,13 @@ namespace ASGARDAPI.Controllers
                     listaCategorias = (from categorias in bd.Categorias
                                           where categorias.Dhabilitado == 1
 
-                                          && ((categorias.IdCategoria).ToString().Contains(buscador) ||
-                                          (categorias.VidaUtil).ToString().Contains(buscador.ToLower()) ||
+                                          && ((categorias.VidaUtil).ToString().Contains(buscador.ToLower()) ||
                                           (categorias.Categoria).ToLower().Contains(buscador.ToLower()) ||
                                           (categorias.Descripcion).ToLower().Contains(buscador.ToLower()))
                                           select new CategoriasAF
                                           {
                                               IdCategoria = categorias.IdCategoria,
-                                              VidaUtil = (int)categorias.VidaUtil,
+                                              VidaUtil = categorias.VidaUtil,
                                               Categoria = categorias.Categoria,
                                               Descripcion = categorias.Descripcion
                                           }).ToList();
