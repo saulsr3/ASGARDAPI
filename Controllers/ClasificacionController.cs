@@ -140,6 +140,30 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+
+        //para no poder editar el correlativo
+        [HttpGet]
+        [Route("api/Clasificacion/noEditCorrelativoClasificacion/{idClasificacion}")]
+        public int noEditCorrelativoClasificacion(int idClasificacion)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+
+                    Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == idClasificacion && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == oClasificacion.IdClasificacion && p.EstadoActual != 0).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
+
         [HttpGet]
         [Route("api/Clasificacion/validarCorrelativo/{idclasificacion}/{correlativo}")]
         public int validarCorrelativo(int idclasificacion, string correlativo)

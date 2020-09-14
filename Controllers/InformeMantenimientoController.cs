@@ -218,7 +218,8 @@ namespace ASGARDAPI.Controllers
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado == 1 || informemante.Estado==0 
+                                                                        where bienmante.IdBien== bienes.IdBien
+                                                                       || informemante.Estado == 1 || informemante.Estado==0 
                                                                        // && bienmante.IdBien == bienes.IdBien
 
                                                                         //where empleado.Dhabilitado == 1
