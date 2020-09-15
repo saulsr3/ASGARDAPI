@@ -270,7 +270,42 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
-
+        [HttpGet]
+        [Route("api/Depreciacion/DatosCierre")]
+        public CierreAF DatosCierre()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CierreAF odatos = new CierreAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                Periodo oPeriodo = bd.Periodo.Where(p => p.Estado == 1).First();
+                odatos.anio =oPeriodo.Anio.ToString();
+                odatos.cooperativa = oCooperativa.Nombre;
+                odatos.idPeriodo = oPeriodo.IdPeriodo;
+                return odatos;
+            }
+        }
+        [HttpPost]
+        [Route("api/Depreciacion/EjecutarCierre")]
+        public int EjecutarCierre([FromBody]CierreAF oCierreAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Periodo oPeriodo = bd.Periodo.Where(p => p.IdPeriodo == oCierreAF.idPeriodo).First();
+                    oPeriodo.Anio = oPeriodo.Anio+1;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
 
     }
 }
