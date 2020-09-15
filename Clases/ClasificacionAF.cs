@@ -12,5 +12,8 @@ namespace ASGARDAPI.Clases
         public string correlativo { get; set; }
         public string descripcion { get; set; }
         public int dhabilitado { get; set; }
+        public int idcategoria { get; set; }
+        public string categoria { get; set; }
+
     }
 }

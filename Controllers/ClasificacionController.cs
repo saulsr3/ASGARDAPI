@@ -30,6 +30,7 @@ namespace ASGARDAPI.Controllers
                     oClasificacion.Correlativo = oClasificacionAF.correlativo;
                     oClasificacion.Clasificacion1 = oClasificacionAF.clasificacion;
                     oClasificacion.Descripcion = oClasificacionAF.descripcion;
+                    oClasificacion.IdCategoria = oClasificacionAF.idcategoria;
                     oClasificacion.Dhabilitado = 1;
                     bd.Clasificacion.Add(oClasificacion);
                     bd.SaveChanges();
@@ -58,6 +59,7 @@ namespace ASGARDAPI.Controllers
                     Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oClasificacionAF.idclasificacion).First();
                     oClasificacion.IdClasificacion = oClasificacionAF.idclasificacion;
                     oClasificacion.Clasificacion1 = oClasificacionAF.clasificacion;
+                    oClasificacion.IdCategoria = oClasificacionAF.idcategoria;
                     oClasificacion.Correlativo = oClasificacionAF.correlativo;
                     oClasificacion.Descripcion = oClasificacionAF.descripcion;
                     bd.SaveChanges();
@@ -78,11 +80,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<ClasificacionAF> listaClasificacion = (from clasificacion in bd.Clasificacion
+                                                                   join categorias in bd.Categorias
+                                                                   on clasificacion.IdCategoria equals categorias.IdCategoria
                                                                    where clasificacion.Dhabilitado == 1
                                                                    select new ClasificacionAF
                                                                    {
                                                                        idclasificacion = clasificacion.IdClasificacion,
                                                                        correlativo = clasificacion.Correlativo,
+                                                                       categoria = categorias.Categoria,
                                                                        clasificacion = clasificacion.Clasificacion1,
                                                                        descripcion = clasificacion.Descripcion
 
@@ -128,10 +133,32 @@ namespace ASGARDAPI.Controllers
                 Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == id).First();
                 oClasificacionAF.idclasificacion = oClasificacion.IdClasificacion;
                 oClasificacionAF.correlativo = oClasificacion.Correlativo;
+                oClasificacionAF.idcategoria = (int) oClasificacion.IdCategoria;
                 oClasificacionAF.clasificacion = oClasificacion.Clasificacion1;
                 oClasificacionAF.descripcion = oClasificacion.Descripcion;
 
                 return oClasificacionAF;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Clasificacion/listarCategoriaCombo")]
+        public IEnumerable<CategoriasAF> listarCategoriaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CategoriasAF> listarCategorias = (from categoria in bd.Categorias
+                                                         where categoria.Dhabilitado == 1
+                                                         select new CategoriasAF
+                                                         {
+                                                             IdCategoria = categoria.IdCategoria,
+                                                             Categoria = categoria.Categoria
+                                                         }).ToList();
+
+
+
+                return listarCategorias;
+
             }
         }
 
@@ -236,7 +263,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == idclasificacion && p.EstadoActual == 1
+                    ActivoFijo oClasificacion = bd.ActivoFijo.Where(p => p.IdClasificacion == idclasificacion && p.EstadoActual == 1
                      || p.EstadoActual == 2 || p.EstadoActual == 3 || p.EstadoActual == 4 || p.EstadoActual == 5).First();
                     res = 1;
                 }
@@ -258,11 +285,14 @@ namespace ASGARDAPI.Controllers
                 if (buscador == "")
                 {
                     listaClasificacion = (from clasificacion in bd.Clasificacion
+                                          join categoria in bd.Categorias
+                                          on clasificacion.IdCategoria equals categoria.IdCategoria
                                           where clasificacion.Dhabilitado == 1
                                           select new ClasificacionAF
                                           {
                                               idclasificacion = clasificacion.IdClasificacion,
                                               correlativo = clasificacion.Correlativo,
+                                              categoria= categoria.Categoria,
                                               clasificacion = clasificacion.Clasificacion1,
                                               descripcion = clasificacion.Descripcion
                                           }).ToList();
@@ -271,16 +301,20 @@ namespace ASGARDAPI.Controllers
                 else
                 {
                     listaClasificacion = (from clasificacion in bd.Clasificacion
+                                          join categoria in bd.Categorias
+                                          on clasificacion.IdCategoria equals categoria.IdCategoria
                                           where clasificacion.Dhabilitado == 1
 
                                           && ((clasificacion.IdClasificacion).ToString().Contains(buscador) ||
                                           (clasificacion.Correlativo).ToLower().Contains(buscador.ToLower()) ||
+                                          (categoria.Categoria).ToLower().Contains(buscador.ToLower()) ||
                                           (clasificacion.Descripcion).ToLower().Contains(buscador.ToLower()) ||
                                           (clasificacion.Clasificacion1).ToLower().Contains(buscador.ToLower()))
                                           select new ClasificacionAF
                                           {
                                               idclasificacion = clasificacion.IdClasificacion,
                                               correlativo = clasificacion.Correlativo,
+                                              categoria = categoria.Categoria,
                                               clasificacion = clasificacion.Clasificacion1,
                                               descripcion = clasificacion.Descripcion
                                           }).ToList();
