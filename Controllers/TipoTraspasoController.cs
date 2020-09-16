@@ -112,5 +112,97 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+
+        //Método eliminar tipo de traspaso
+        [HttpGet]
+        [Route("api/TipoTraspaso/eliminarTipoTraspaso/{idTipoTraspaso}")]
+        public int eliminarTipoTraspaso(int idTipoTraspaso)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    TipoTraspaso oTipoTraspaso = bd.TipoTraspaso.Where(p => p.IdTipo == idTipoTraspaso).First();
+                    oTipoTraspaso.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+
+        }
+
+        //Método buscar tipo de traspaso
+        [HttpGet]
+        [Route("api/TipoTraspaso/buscarTipoTraspaso/{buscador?}")]
+        public IEnumerable<TipoTraspasoAF> buscarTipoTraspaso(string buscador = "")
+        {
+            List<TipoTraspasoAF> listaTipoTraspaso;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaTipoTraspaso = (from tipotraspaso in bd.TipoTraspaso
+                                  where tipotraspaso.Dhabilitado == 1
+                                  select new TipoTraspasoAF
+                                  {
+                                      idtipo=tipotraspaso.IdTipo,
+                                      nombre=tipotraspaso.Nombre,
+                                      descripcion=tipotraspaso.Descripcion
+                                  }).ToList();
+
+                    return listaTipoTraspaso;
+                }
+                else
+                {
+                    listaTipoTraspaso = (from tipotraspaso in bd.TipoTraspaso
+                                         where tipotraspaso.Dhabilitado == 1
+
+                                  && ((tipotraspaso.IdTipo).ToString().Contains(buscador) || (tipotraspaso.Nombre).ToLower().Contains(buscador.ToLower()) || (tipotraspaso.Descripcion).ToLower().Contains(buscador.ToLower()))
+                                  select new TipoTraspasoAF
+                                  {
+                                      idtipo = tipotraspaso.IdTipo,
+                                      nombre = tipotraspaso.Nombre,
+                                      descripcion = tipotraspaso.Descripcion
+                                  }).ToList();
+                    return listaTipoTraspaso;
+                }
+            }
+        }
+
+        //Método validar tipo de traspaso
+        [HttpGet]
+        [Route("api/TipoTraspaso/validarTipoTraspaso/{idTipoTraspaso}/{nombre}")]
+        public int validarTipoTraspaso(int idTipoTraspaso, string nombre)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idTipoTraspaso == 0)
+                    {
+                        rpta = bd.TipoTraspaso.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.TipoTraspaso.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.IdTipo != idTipoTraspaso && p.Dhabilitado == 1).Count();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return rpta = 0;
+            }
+
+            return rpta;
+        }
     }
 }
