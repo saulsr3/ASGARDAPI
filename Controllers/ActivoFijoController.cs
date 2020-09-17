@@ -318,35 +318,73 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+
+        /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         //Medotos para modulo de control mayra
         [HttpGet]
         [Route("api/ActivoFIjo/listarActivos")]
-        public IEnumerable<ActivoFijoAF> listarActivos()
+        public List<ActivoFijoAF> listarActivos()
         {
+
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
-                                                   join noFormulario in bd.FormularioIngreso
-                                                   on activo.NoFormulario equals noFormulario.NoFormulario
-                                                   join clasif in bd.Clasificacion
-                                                   on activo.IdClasificacion equals clasif.IdClasificacion
-                                                   //join resposable in bd.Empleado
-                                                   //on activo.IdResponsable equals resposable.IdEmpleado
-                                                   //join area in bd.AreaDeNegocio
-                                                   //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                   where activo.EstadoActual == 1 
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join clasif in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                            where (activo.EstadoActual == 1 && activo.IdResponsable == null)
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                Clasificacion = clasif.Clasificacion1,
+                                                //AreaDeNegocio = area.Nombre,
+                                                //Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                            }).ToList();
+                foreach (var i in listarActivosAsignados())
+                {
+                    lista.Add(i);
+                }
 
-                                                   orderby activo.CorrelativoBien
-                                                   select new ActivoFijoAF
-                                                   {
-                                                       IdBien = activo.IdBien,
-                                                       Codigo = activo.CorrelativoBien,
-                                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                       Desripcion = activo.Desripcion,
-                                                       Clasificacion = clasif.Clasificacion1,
-                                                       //AreaDeNegocio = area.Nombre,
-                                                       //Resposnsable = resposable.Nombres + " " + resposable.Apellidos
-                                                   }).ToList();
+
+                return lista;
+
+            }
+        }
+
+
+        public List<ActivoFijoAF> listarActivosAsignados()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join clasif in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                            join resposable in bd.Empleado
+                                            on activo.IdResponsable equals resposable.IdEmpleado
+                                            join area in bd.AreaDeNegocio
+                                            on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                            where activo.EstadoActual == 1
+
+                                            orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                Clasificacion = clasif.Clasificacion1,
+                                                AreaDeNegocio = area.Nombre,
+                                                Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                            }).ToList();
                 return lista;
 
             }
@@ -394,8 +432,13 @@ namespace ASGARDAPI.Controllers
                 odatos.foto = oActivo.Foto;
                 odatos.interes = oActivo.Intereses;
                 odatos.noformulario = oformu.NoFormulario;
-                odatos.cantidad = 1;
-                
+                odatos.cantidad = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   where activo.NoFormulario == oActivo.NoFormulario
+                                   select activo).ToList().Count();
+
+
                 return Json(odatos);
             }
         }
@@ -461,7 +504,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    
+
                     FormularioIngreso oFormularioIngreso = bd.FormularioIngreso.Where(p => p.NoFormulario == oformulario.noformulario).First();
                     oFormularioIngreso.NoFormulario = oformulario.noformulario;
                     oFormularioIngreso.NoFactura = oformulario.nofactura;
@@ -522,10 +565,10 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   //join resposable in bd.Empleado
-                                   //on activo.IdResponsable equals resposable.IdEmpleado
-                                   //join area in bd.AreaDeNegocio
-                                   //on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join resposable in bd.Empleado
+                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                    where activo.EstadoActual == 1
 
 
@@ -534,9 +577,9 @@ namespace ASGARDAPI.Controllers
                                       || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
                                       || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
                                       || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
-                                     // || (area.Nombre).ToLower().Contains(buscador.ToLower())
-                                      //|| (resposable.Nombres).ToLower().Contains(buscador.ToLower())
-                                      //|| (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+                                      || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (resposable.Nombres).ToLower().Contains(buscador.ToLower())
+                                      || (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
                                       )
 
                                    select new ActivoFijoAF
@@ -546,8 +589,8 @@ namespace ASGARDAPI.Controllers
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Desripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
-                                      // AreaDeNegocio = area.Nombre,
-                                      // Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                       AreaDeNegocio = area.Nombre,
+                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                    }).ToList();
 
                     return listaActivo;
@@ -577,7 +620,7 @@ namespace ASGARDAPI.Controllers
                 string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
                 string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
                 string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";
-               // bien.responsable = oemple + " " + oemple.Apellidos;
+                // bien.responsable = oemple + " " + oemple.Apellidos;
                 //bien.area = oArea.Nombre;
                 bien.marca = omarca.Marca;
                 bien.clasificacion = oclasi.Clasificacion1;
@@ -587,15 +630,38 @@ namespace ASGARDAPI.Controllers
                 bien.donante = odona;
                 bien.fecha = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
 
-                bien.noformulario = oActivo.NoFormulario; 
+                bien.noformulario = oActivo.NoFormulario;
                 bien.Codigo = oActivo.CorrelativoBien;
                 bien.Desripcion = oActivo.Desripcion;
                 bien.Modelo = oActivo.Modelo;
-                bien.tipoadquicicion = oActivo.TipoAdquicicion;
+                if (oActivo.TipoAdquicicion == 1)
+                {
+                    bien.tipoadquicicion = "Contado";
+                }
+                else if (oActivo.TipoAdquicicion == 2)
+                {
+                    bien.tipoadquicicion = "Crédito";
+                }
+                else
+                {
+                    bien.tipoadquicicion = "Donado";
+                }
                 bien.Color = oActivo.Color;
                 bien.numserie = oActivo.NoSerie;
                 bien.vidautil = oActivo.VidaUtil;
-                bien.estadoingreso = oActivo.EstadoIngreso;
+                if (oActivo.EstadoIngreso == "1")
+                {
+                    bien.estadoingreso = "Nuevo";
+                }
+                else if (oActivo.EstadoIngreso == "1")
+                {
+                    bien.estadoingreso = "Usado";
+                }
+                else
+                {
+                    bien.estadoingreso = "Usado mal estado";
+                }
+
                 bien.valoradquicicion = oActivo.ValorAdquicicion;
                 bien.plazopago = oActivo.PlazoPago;
                 bien.prima = oActivo.Prima;
@@ -642,6 +708,8 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+
 
 
 
