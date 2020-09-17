@@ -21,9 +21,11 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<EmpleadoAF> listaEmpleado = (from empleado in bd.Empleado
+                IEnumerable<EmpleadoAF> listaEmpleado = (from sucursal in bd.Sucursal
                                                          join area in bd.AreaDeNegocio
-                                                         on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                         on sucursal.IdSucursal equals area.IdSucursal
+                                                         join empleado in bd.Empleado
+                                                         on  area.IdAreaNegocio equals empleado.IdAreaDeNegocio
                                                          join cargos in bd.Cargos
                                                          on empleado.IdCargo equals cargos.IdCargo
                                                          where empleado.Dhabilitado == 1
@@ -37,6 +39,7 @@ namespace ASGARDAPI.Controllers
                                                                        telefono=empleado.Telefono,
                                                                        telefonopersonal=empleado.TelefonoPersonal,
                                                                        nombrearea = area.Nombre,
+                                                                       nombresucursal= sucursal.Nombre,
                                                                        cargo= cargos.Cargo
                                
                                                                    }).ToList();
@@ -295,15 +298,16 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<AreasDeNegocioAF> listarAreas = (from area in bd.AreaDeNegocio
-                                                           //  join sucursal in bd.Sucursal
-                                                           //  on area.IdAreaNegocio equals sucursal.AreaDeNegocio
+                IEnumerable<AreasDeNegocioAF> listarAreas = (from sucursal in bd.Sucursal
+                                                             join area in bd.AreaDeNegocio
+                                                             on sucursal.IdSucursal equals area.IdSucursal
                                                              where area.Dhabilitado == 1
                                                              select new AreasDeNegocioAF
                                                      {
-                                                         IdAreaNegocio= area.IdAreaNegocio,
-                                                         Nombre= area.Nombre,
-                                                     //   nombreSucursal= sucursal.Nombre
+                                                          IdAreaNegocio= area.IdAreaNegocio,
+                                                          Nombre= area.Nombre,
+                                                          IdSucursal= sucursal.IdSucursal,
+                                                          nombreSucursal= sucursal.Nombre
 
                                                      }).ToList();
 

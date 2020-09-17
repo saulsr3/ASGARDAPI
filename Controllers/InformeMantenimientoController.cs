@@ -147,12 +147,12 @@ namespace ASGARDAPI.Controllers
                                                   on bienmante.IdBien equals bienes.IdBien
                                                   where informemante.Estado == 1
 
-                                      && ((informemante.Fecha).ToString().Contains(buscador.ToLower()) ||
+                                      && ((informemante.Fecha).ToString().Contains(buscador.ToString()) ||
                                      (tecnico.Nombre).ToLower().Contains(buscador.ToLower()) ||
                                      (bienes.Desripcion).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                     (informemante.CostoMateriales).ToString().Contains(buscador.ToLower()) ||
-                                     (informemante.CostoMo).ToString().Contains(buscador.ToLower()) ||
-                                     (informemante.CostoTotal).ToString().Contains(buscador.ToLower()) ||
+                                     (informemante.CostoMateriales).ToString().Contains(buscador.ToString()) ||
+                                     (informemante.CostoMo).ToString().Contains(buscador.ToString()) ||
+                                     (informemante.CostoTotal).ToString().Contains(buscador.ToString()) ||
                                      (informemante.Descripcion).ToString().Contains(buscador.ToLower()))
 
                                                   select new InformeMatenimientoAF
@@ -176,7 +176,6 @@ namespace ASGARDAPI.Controllers
 
 
         //cambiar el estado de del informe para que desaparezca depues de que se aplicar la revalorización
-      //falta llamar
         [HttpGet]
         [Route("api/InformeMantenimiento/estadoInformeRevalorizado/{idinformeMantenimiento}")]
         public int estadoInformeRevalorizado(int idinformeMantenimiento)
@@ -188,7 +187,35 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     InformeMantenimiento oInformeMantenimiento = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idinformeMantenimiento).First();
-                    oInformeMantenimiento.Estado = 0;
+                    oInformeMantenimiento.Estado = 2;// significa que aplicó revalorización 
+                    bd.SaveChanges();
+                    respuesta = 1;
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+        //cambiar el estado de del informe para que desaparezca cuando no aplique revalorización
+        [HttpGet]
+        [Route("api/InformeMantenimiento/estadosinrevalorizar/{idinformeMantenimiento}")]
+        public int estadosinrevalorizar(int idinformeMantenimiento)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    InformeMantenimiento oInformeMantenimiento = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idinformeMantenimiento).First();
+                    oInformeMantenimiento.Estado = 0; // significa que no aplicó revalorización
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -206,31 +233,31 @@ namespace ASGARDAPI.Controllers
 
         //LISTAR INFORMES (HISTORIAL)
         [HttpGet]
-        [Route("api/InformeMantenimiento/historialInformes")]
-        public IEnumerable<InformeMatenimientoAF> historialInformes()
+        [Route("api/InformeMantenimiento/historialInformes/{idbien}")]
+        public IEnumerable<InformeMatenimientoAF> historialInformes(int idbien)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<InformeMatenimientoAF> listaInformeMante = (from informemante in bd.InformeMantenimiento
                                                                         join tecnico in bd.Tecnicos
-                                                                 on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                                                                        on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
                                                                         join bienmante in bd.BienMantenimiento
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where bienmante.IdBien== bienes.IdBien
-                                                                       || informemante.Estado == 1 || informemante.Estado==0 
-                                                                       // && bienmante.IdBien == bienes.IdBien
+                                                                       // where informemante.IdMantenimiento == idbien
+                                                                         where informemante.Estado == 1 || informemante.Estado == 0 || informemante.Estado == 2
+                                                                        // && bienmante.IdBien == bienes.IdBien
 
                                                                         //where empleado.Dhabilitado == 1
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
-                                                                           
+                                                                            idBien = bienes.IdBien,
                                                                             idmantenimiento = (int)informemante.IdMantenimiento,
                                                                             fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
                                                                             nombretecnico = tecnico.Nombre,
-                                                                            codigo= bienes.CorrelativoBien,
+                                                                            codigo = bienes.CorrelativoBien,
                                                                             descripcion = informemante.Descripcion,
                                                                             costomateriales = (double)informemante.CostoMateriales,
                                                                             costomo = (double)informemante.CostoMo,
@@ -241,6 +268,8 @@ namespace ASGARDAPI.Controllers
                 return listaInformeMante;
             }
         }
+
+    
 
 
 

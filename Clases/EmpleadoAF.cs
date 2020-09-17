@@ -21,8 +21,9 @@ namespace ASGARDAPI.Clases
         public int dhabilitado { get; set; }
         public string cargo { get; set; }
         public string nombrearea { get; set; }
+        public string nombresucursal { get; set; }
 
 
 
-        }
+    }
 }
