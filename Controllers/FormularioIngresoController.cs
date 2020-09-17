@@ -74,8 +74,11 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.Modelo = oActivoAF.modelo;
                         oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
                         oActivoFijo.Color = oActivoAF.color;
-                        oActivoFijo.IdMarca = oActivoAF.idmarca;
                         oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                        if (oActivoAF.idmarca != 0)
+                        {
+                            oActivoFijo.IdMarca = oActivoAF.idmarca;
+                        }
                         if (oActivoAF.tipoadquicicion == 3)
                         {
                             oActivoFijo.IdDonante = oActivoAF.idproveedor;
