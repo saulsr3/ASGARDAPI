@@ -196,6 +196,7 @@ namespace ASGARDAPI.Controllers
                 odatos.direccion = oProveedor.Direccion;
                 odatos.telefono = oProveedor.Telefono;
                 Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
+                
                 odatos.marca = oMarcas.Marca;
                 return odatos;
 

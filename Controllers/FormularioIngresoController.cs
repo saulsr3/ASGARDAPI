@@ -79,6 +79,9 @@ namespace ASGARDAPI.Controllers
                         {
                             oActivoFijo.IdMarca = oActivoAF.idmarca;
                         }
+                        else {
+                            oActivoFijo.IdMarca = null;
+                        }
                         if (oActivoAF.tipoadquicicion == 3)
                         {
                             oActivoFijo.IdDonante = oActivoAF.idproveedor;

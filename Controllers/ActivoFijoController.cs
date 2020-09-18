@@ -30,8 +30,8 @@ namespace ASGARDAPI.Controllers
                                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                                    join clasif in bd.Clasificacion
                                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                                   join marca in bd.Marcas
-                                                   on activo.IdMarca equals marca.IdMarca
+                                                   //join marca in bd.Marcas
+                                                   //on activo.IdMarca equals marca.IdMarca
                                                     where activo.EstadoActual == 1 && activo.EstaAsignado == 0
                                                     //orderby noFormulario.NoFormulario
                                                     select new NoAsignadosAF
@@ -40,8 +40,8 @@ namespace ASGARDAPI.Controllers
                                                        NoFormulario = noFormulario.NoFormulario,
                                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                        Desripcion = activo.Desripcion,
-                                                       Clasificacion = clasif.Clasificacion1,
-                                                       Marca = marca.Marca
+                                                       Clasificacion = clasif.Clasificacion1
+                                                     
                                                    }).ToList();
                 return lista;
             }
