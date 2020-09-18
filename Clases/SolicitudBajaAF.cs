@@ -20,6 +20,7 @@ namespace ASGARDAPI.Clases
         public string telefono { get; set; }
         public string acuerdo { get; set; }
         ///----------------------------------------------
+        public int idtipodescargo { get; set; }
         public string fechacadena { get; set; }
         public int idbien { get; set; }
         public string Codigo { get; set; }

@@ -231,7 +231,7 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
-        //LISTAR INFORMES (HISTORIAL)
+        //LISTAR INFORMES (HISTORIAL) vamos a cancelar este metodo por el momento
         [HttpGet]
         [Route("api/InformeMantenimiento/historialInformes/{idbien}")]
         public IEnumerable<InformeMatenimientoAF> historialInformes(int idbien)
@@ -245,8 +245,8 @@ namespace ASGARDAPI.Controllers
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                       // where informemante.IdMantenimiento == idbien
-                                                                         where informemante.Estado == 1 || informemante.Estado == 0 || informemante.Estado == 2
+                                                                        where bienes.IdBien == idbien 
+                                                                      //   where informemante.Estado == 1 || informemante.Estado == 0 || informemante.Estado == 2
                                                                         // && bienmante.IdBien == bienes.IdBien
 
                                                                         //where empleado.Dhabilitado == 1
@@ -269,8 +269,30 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-    
 
+        //METODOS PARA INTENTAS LISTAR EL MANTENIMIENTO.
+        
+        // METODO DOS PARA INTENTAR LISTAR EL MANTENIMIENTO.
+
+        [HttpGet]
+        [Route("api/InformeMantenimiento/datosHistorial/{idbien}")]
+        public InformeMatenimientoAF datosHistorial(int idbien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                InformeMatenimientoAF odatos = new InformeMatenimientoAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+
+                odatos.descripcion = oActivo.Desripcion;
+                odatos.codigo = oActivo.CorrelativoBien;
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
+                odatos.encargado = oempleado.Nombres + " " + oempleado.Apellidos;
+                odatos.areadenegocio = oArea.Nombre;
+                return odatos;
+
+            }
+        }
 
 
         //LISTAR INFORMES DE MANTENIMIENTO (PARA DAR REVALORIZACIÓN)
