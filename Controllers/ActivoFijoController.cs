@@ -21,20 +21,20 @@ namespace ASGARDAPI.Controllers
         //Metodos para modulo de asignacion
         [HttpGet]
         [Route("api/ActivoFIjo/listarActivosNoAsignados")]
-        public IEnumerable<ActivoFijoAF> listarActivosNoAsignados()
+        public IEnumerable<NoAsignadosAF> listarActivosNoAsignados()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo
                                                    join noFormulario in bd.FormularioIngreso
                                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                                    join clasif in bd.Clasificacion
                                                    on activo.IdClasificacion equals clasif.IdClasificacion
                                                    join marca in bd.Marcas
                                                    on activo.IdMarca equals marca.IdMarca
-                                                   where activo.EstadoActual == 1 && activo.EstaAsignado == 0
-                                                   orderby noFormulario.NoFormulario
-                                                   select new ActivoFijoAF
+                                                    where activo.EstadoActual == 1 && activo.EstaAsignado == 0
+                                                    //orderby noFormulario.NoFormulario
+                                                    select new NoAsignadosAF
                                                    {
                                                        IdBien = activo.IdBien,
                                                        NoFormulario = noFormulario.NoFormulario,
