@@ -182,5 +182,34 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Método validar técnico
+        [HttpGet]
+        [Route("api/Tecnico/validarTecnico/{idTecnico}/{nombre}")]
+        public int validarTecnico(int idTecnico, string nombre)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idTecnico == 0)
+                    {
+                        rpta = bd.Tecnicos.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.Dhabilitado == 1).Count();
+                    }
+                    else
+                    {
+                        rpta = bd.Tecnicos.Where(p => p.Nombre.ToLower() == nombre.ToLower() && p.IdTecnico != idTecnico && p.Dhabilitado == 1).Count();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return rpta = 0;
+            }
+
+            return rpta;
+        }
+
     }
 }
