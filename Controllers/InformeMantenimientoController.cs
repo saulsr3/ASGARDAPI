@@ -39,6 +39,7 @@ namespace ASGARDAPI.Controllers
                     oInformeMantenimiento.CostoTotal = oInformeMantenimientoAF.costomateriales + oInformeMantenimientoAF.costomo;
                     bd.InformeMantenimiento.Add(oInformeMantenimiento);
                     oInformeMantenimiento.Estado = 1;
+                    
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -216,6 +217,7 @@ namespace ASGARDAPI.Controllers
                 {
                     InformeMantenimiento oInformeMantenimiento = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idinformeMantenimiento).First();
                     oInformeMantenimiento.Estado = 0; // significa que no aplicó revalorización
+
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -309,9 +311,9 @@ namespace ASGARDAPI.Controllers
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado == 1
+                                                                        where informemante.Estado == 1 
 
-                                                                        //where empleado.Dhabilitado == 1
+                                                                       
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
