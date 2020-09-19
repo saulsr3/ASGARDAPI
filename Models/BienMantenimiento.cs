@@ -15,6 +15,7 @@ namespace ASGARDAPI.Models
         public int? IdBien { get; set; }
         public string RazonMantenimiento { get; set; }
         public string PeriodoMantenimiento { get; set; }
+        public int? Estado { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
         public SolicitudMantenimiento IdSolicitudNavigation { get; set; }
