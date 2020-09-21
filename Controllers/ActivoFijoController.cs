@@ -398,7 +398,7 @@ namespace ASGARDAPI.Controllers
                 odatos.personaentrega = oformu.PersonaEntrega;
                 odatos.personarecibe = oformu.PersonaRecibe;
                 odatos.observaciones = oformu.Observaciones;
-                
+                odatos.valorresidual = oActivo.ValorResidual;
                 odatos.foto = oActivo.Foto;
                 
                  odatos.interes = oActivo.Intereses;
@@ -620,7 +620,14 @@ namespace ASGARDAPI.Controllers
                 string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";
                 bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
                 bien.area = oArea.Nombre;
-                bien.marca = omarca.Marca;
+                if (omarca == null)
+                {
+                    bien.marca = "";
+                }
+                else
+                {
+                    bien.marca = omarca.Marca;
+                }
                 bien.clasificacion = oclasi.Clasificacion1;
                 bien.destino = oArea.Nombre + " " + oSucursal.Nombre;
                 bien.proveedor = oprov;
