@@ -27,6 +27,7 @@ namespace ASGARDAPI.Clases
         public string Descripcion { get; set; }    
         public string areanegocio { get; set; }
         public string jefe { get; set; }
+        public string nombredescargo { get; set; }
 
     }
 }

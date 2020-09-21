@@ -132,8 +132,6 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         [HttpPost]
         [Route("api/FormularioIngreso/modificarFormularioIngreso")]
         public int modificarFormulario([FromBody]FormularioIngresoAF oformulario)
@@ -170,29 +168,26 @@ namespace ASGARDAPI.Controllers
         public int modificarActivoFijo([FromBody] ActivoAF oActivoAF2)
         {
             int rpta = 0;
-            //int cantidad = 0;
-
+            
             try
             {
-                Console.WriteLine("BIEN" + oActivoAF2.idbien);
+               // Console.WriteLine("BIEN" + oActivoAF2.idbien);
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     ActivoFijo oActivoFijoo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF2.idbien).First();
 
-
                     //Datos para la tabla activo fijo
                     oActivoFijoo.IdBien = oActivoAF2.idbien;
                     FormularioIngreso oFormulario = bd.FormularioIngreso.First();
-                    //oActivoFijoo.NoFormulario = oFormulario.NoFormulario;
                     List<ActivoFijo> laf = (from activo in bd.ActivoFijo
                                             join noFormulario in bd.FormularioIngreso
                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                             where activo.NoFormulario == oActivoFijoo.NoFormulario
                                             select activo).ToList();
-                    //cantidad = laf.Count();
+                 
                     if (oActivoAF2.tipoadquicicion == 1 || oActivoAF2.tipoadquicicion == 3)
                     {
-                        oActivoAF2.plazopago = "inhabilitado";
+                        oActivoAF2.plazopago = "";
                         oActivoAF2.prima = 0;
                         oActivoAF2.interes = 0;
                         oActivoAF2.cuotaasignada = 0;
@@ -206,7 +201,15 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.Modelo = oActivoAF2.modelo;
                         oActivoFijo.TipoAdquicicion = oActivoAF2.tipoadquicicion;
                         oActivoFijo.Color = oActivoAF2.color;
-                        oActivoFijo.IdMarca = oActivoAF2.idmarca;
+                        //oActivoFijo.IdMarca = oActivoAF2.idmarca;
+                        if(oActivoAF2.idmarca != 0) { 
+                            oActivoFijo.IdMarca = oActivoAF2.idmarca;
+                        }
+                        else
+                        {
+                            oActivoFijo.IdMarca = null;
+                        }
+
                         oActivoFijo.IdClasificacion = oActivoAF2.idclasificacion;
                         if (oActivoAF2.tipoadquicicion == 3)
                         {
@@ -217,7 +220,6 @@ namespace ASGARDAPI.Controllers
                         {
                             oActivoFijo.IdProveedor = oActivoAF2.idproveedor;
                             oActivoFijo.IdDonante = null;
-
 
                         }
                         oActivoFijo.PlazoPago = oActivoAF2.plazopago;
@@ -230,10 +232,6 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.ValorResidual = oActivoAF2.valorresidual;
                         bd.SaveChanges();
                     }
-                    //oActivoFijo.EstaAsignado = 0;
-                    //oActivoFijo.EstadoActual = 1;
-
-
 
                     rpta = 1;
                 }
@@ -247,6 +245,7 @@ namespace ASGARDAPI.Controllers
         }
 
     }
+
 }
     
 
