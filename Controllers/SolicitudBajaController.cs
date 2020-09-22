@@ -540,6 +540,8 @@ namespace ASGARDAPI.Controllers
                     lista = (from activo in bd.ActivoFijo
                              join solicitud in bd.SolicitudBaja
                              on activo.IdBien equals solicitud.IdBien
+                             join descargo in bd.TipoDescargo
+                             on solicitud.IdTipoDescargo equals descargo.IdTipo
                              where solicitud.Estado == 1
                              select new SolicitudBajaAF
                              {
@@ -548,7 +550,8 @@ namespace ASGARDAPI.Controllers
                                  folio = solicitud.Folio,
                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                  observaciones = solicitud.Observaciones,
-                                 idtipodescargo = (int)solicitud.IdTipoDescargo,
+                                 nombredescargo = descargo.Nombre ,
+                                 
 
                              }).ToList();
 
@@ -559,11 +562,13 @@ namespace ASGARDAPI.Controllers
                     lista = (from activo in bd.ActivoFijo
                              join solicitud in bd.SolicitudBaja
                              on activo.IdBien equals solicitud.IdBien
+                             join descargo in bd.TipoDescargo
+                             on solicitud.IdTipoDescargo equals descargo.IdTipo
                              where solicitud.Estado == 1
 
                                  && ((solicitud.Folio).ToLower().Contains(buscador.ToLower()) ||
                                     (solicitud.Fecha).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                    (solicitud.IdTipoDescargo).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (descargo.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
                                     (solicitud.Observaciones).ToLower().Contains(buscador.ToLower())
                                     
                                     )
@@ -575,7 +580,7 @@ namespace ASGARDAPI.Controllers
                                  folio = solicitud.Folio,
                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                  observaciones = solicitud.Observaciones,
-                                 idtipodescargo = (int)solicitud.IdTipoDescargo,
+                                 nombredescargo = descargo.Nombre,
 
                              }).ToList();
                     return lista;
