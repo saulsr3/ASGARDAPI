@@ -252,8 +252,8 @@ namespace ASGARDAPI.Controllers
             return respuesta;
 
         }
-
-       //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
+     
+        //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
         [HttpGet]
         [Route("api/Clasificacion/validarActivo/{idclasificacion}")]
         public int validarActivo(int idclasificacion)
@@ -263,8 +263,9 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oClasificacion = bd.ActivoFijo.Where(p => p.IdClasificacion == idclasificacion && p.EstadoActual == 1
-                     || p.EstadoActual == 2 || p.EstadoActual == 3 || p.EstadoActual == 4 || p.EstadoActual == 5).First();
+             
+                    Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == idclasificacion && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == oClasificacion.IdClasificacion && p.EstadoActual != 0).First();
                     res = 1;
                 }
             }

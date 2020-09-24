@@ -11,7 +11,6 @@ namespace ASGARDAPI.Clases
         public DateTime fecha { get; set; }
         public double valorDepreciacion { get; set; }
         public double valorRevalorizacion { get; set; }
-
         public int vidaUtil { get; set; }
     }
 }

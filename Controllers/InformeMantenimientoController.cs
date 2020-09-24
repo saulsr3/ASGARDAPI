@@ -325,7 +325,9 @@ namespace ASGARDAPI.Controllers
                                                                             costomateriales = (double)informemante.CostoMateriales,
                                                                             costomo = (double)informemante.CostoMo,
                                                                             costototal = (double)informemante.CostoTotal,
+                                                                            vidautil= bienes.VidaUtil,
                                                                             bienes = bienes.Desripcion
+                                                                            
 
                                                                         }).ToList();
                 return listaInformeMante;

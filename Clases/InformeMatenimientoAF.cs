@@ -21,6 +21,8 @@ namespace ASGARDAPI.Clases
         public double costomo { get; set; }
         public double costototal { get; set; }
 
+        public int? vidautil { get; set; }
+
 
         //para los datos de arriba de la tabla:
         public string codigo { get; set; }

@@ -141,7 +141,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        //esta validacion la dejaré para despues
+        //para que no se repita el nombre de la categoría
         [HttpGet]
         [Route("api/Categorias/validarCategoria/{idcategoria}/{categoria}")]
         public int validarCategoria(int idcategoria, string categoria)
@@ -175,6 +175,7 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        
         //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
         [HttpGet]
         [Route("api/Categorias/validarActivoc/{idcategorias}")]
@@ -186,6 +187,8 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     Clasificacion oCategoria = bd.Clasificacion.Where(p => p.IdCategoria == idcategorias && p.Dhabilitado==1).First();
+                    Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oCategoria.IdClasificacion && p.Dhabilitado == 1).First();
+                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == oClasificacion.IdClasificacion && p.EstadoActual != 0).First(); //esta es para que solo los activos que tienen esta categoria no se puedan eliminar
                     res = 1;
                 }
             }
@@ -195,7 +198,29 @@ namespace ASGARDAPI.Controllers
             }
             return res;
         }
-
+        //Metodo para no permitir editar una clasificacion de activo cuando ya hay activos con esa clasificación
+        //en este caso incluyo que solo se edite cuando los bienes adquieran la clasificacion y la categoria porque de lo contrario no habria problema en editarlo.
+        [HttpGet]
+        [Route("api/Categorias/noEditarCategoria/{idcategorias}")]
+        public int noEditarCategoria(int idcategorias)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Clasificacion oCategoria = bd.Clasificacion.Where(p => p.IdCategoria == idcategorias && p.Dhabilitado == 1).First();
+                    Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oCategoria.IdClasificacion && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdClasificacion == oClasificacion.IdClasificacion && p.EstadoActual != 0).First(); //esta es para que solo los activos que tienen esta categoria no se puedan eliminar
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
 
 
         [HttpGet]
