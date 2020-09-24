@@ -40,6 +40,7 @@ namespace ASGARDAPI.Controllers
                                                                        telefonopersonal=empleado.TelefonoPersonal,
                                                                        nombrearea = area.Nombre,
                                                                        nombresucursal= sucursal.Nombre,
+                                                                       ubicacion = sucursal.Ubicacion,
                                                                        cargo= cargos.Cargo
                                
                                                                    }).ToList();
@@ -149,9 +150,11 @@ namespace ASGARDAPI.Controllers
             {
                 if (buscador == "")
                 {
-                    listaEmpleado = (from empleado in bd.Empleado
+                    listaEmpleado = (from sucursal in bd.Sucursal
                                      join area in bd.AreaDeNegocio
-                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     on sucursal.IdSucursal equals area.IdSucursal
+                                     join empleado in bd.Empleado
+                                     on area.IdAreaNegocio equals empleado.IdAreaDeNegocio
                                      join cargos in bd.Cargos
                                      on empleado.IdCargo equals cargos.IdCargo
                                      where empleado.Dhabilitado == 1
@@ -166,19 +169,26 @@ namespace ASGARDAPI.Controllers
                                          telefono = empleado.Telefono,
                                          telefonopersonal = empleado.TelefonoPersonal,
                                          nombrearea = area.Nombre,
+                                         nombresucursal= sucursal.Nombre,
+                                         ubicacion= sucursal.Ubicacion,
                                          cargo = cargos.Cargo
+                                         
+
 
                                      }).ToList();
                     return listaEmpleado;
                 }
                 else
                 {
-                    listaEmpleado = (from empleado in bd.Empleado
+                    listaEmpleado = (from sucursal in bd.Sucursal
                                      join area in bd.AreaDeNegocio
-                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                     on sucursal.IdSucursal equals area.IdSucursal
+                                     join empleado in bd.Empleado
+                                     on area.IdAreaNegocio equals empleado.IdAreaDeNegocio
                                      join cargos in bd.Cargos
                                      on empleado.IdCargo equals cargos.IdCargo
                                      where empleado.Dhabilitado == 1
+                                  
 
                                      &&((empleado.IdEmpleado).ToString().Contains(buscador.ToLower()) ||
                                      (empleado.Dui).ToLower().Contains(buscador.ToLower()) ||
@@ -200,11 +210,57 @@ namespace ASGARDAPI.Controllers
                                           telefono = empleado.Telefono,
                                           telefonopersonal = empleado.TelefonoPersonal,
                                           nombrearea = area.Nombre,
+                                          nombresucursal = sucursal.Nombre,
+                                          ubicacion = sucursal.Ubicacion,
                                           cargo = cargos.Cargo
                                       }).ToList();
                     return listaEmpleado;
                 }
             }
+        }
+
+
+        //para no poder editar el carea de un empleado.
+        [HttpGet]
+        [Route("api/Empleado/noModificarArea/{idempleado}")]
+        public int noModificarArea(int idempleado)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado && p.Dhabilitado == 1).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdResponsable == oEmpleado.IdEmpleado && p.EstadoActual != 0).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
+        //Metodo para no permitir elimiar un empleado cuando ya hay activos referenciados al empleado
+        [HttpGet]
+        [Route("api/Empleado/noEliminarEmpleado/{idempleado}")]
+        public int noEliminarEmpleado(int idempleado)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oEmpleado = bd.ActivoFijo.Where(p => p.IdResponsable == idempleado && p.EstaAsignado==1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
         }
 
         [HttpGet]
@@ -307,7 +363,9 @@ namespace ASGARDAPI.Controllers
                                                           IdAreaNegocio= area.IdAreaNegocio,
                                                           Nombre= area.Nombre,
                                                           IdSucursal= sucursal.IdSucursal,
-                                                          nombreSucursal= sucursal.Nombre
+                                                          nombreSucursal= sucursal.Nombre,
+                                                          ubicacion= sucursal.Ubicacion
+
 
                                                      }).ToList();
 

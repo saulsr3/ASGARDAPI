@@ -22,6 +22,7 @@ namespace ASGARDAPI.Clases
         public string cargo { get; set; }
         public string nombrearea { get; set; }
         public string nombresucursal { get; set; }
+        public string ubicacion { get; set; }
 
 
 
