@@ -41,6 +41,7 @@ namespace ASGARDAPI.Controllers
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
+                                                                sucursal=sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
                                                                 
                                                               
@@ -107,6 +108,7 @@ namespace ASGARDAPI.Controllers
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
                                                                 areanegocio = area.Nombre,
+                                                                sucursal = sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
 
 
@@ -139,6 +141,78 @@ namespace ASGARDAPI.Controllers
                 return listaActivos;
             }
         }
+        [HttpGet]
+        [Route("api/Depreciacion/buscarActivos/{buscador?}")]
+        public IEnumerable<DepreciacionAF> buscarActivos(string buscador = "")
+        {
+            List<DepreciacionAF> listaActivo;
+    
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                if (buscador == "")
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+                                   where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                   select new DepreciacionAF
+                                   {
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                   on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+                                   where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                   &&
+                                      ((activo.CorrelativoBien).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (sucursal.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (empleado.Nombres).ToLower().Contains(buscador.ToLower())
+                                      ||(empleado.Apellidos).ToLower().Contains(buscador.ToLower())
+                                      )
+                                   select new DepreciacionAF
+                                   {
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+
         [HttpGet]
         [Route("api/Depreciacion/DatosDepreciacion/{idBien}")]
         public BienesDepreciacionAF DatosDepreciacion(int idBien)
@@ -189,15 +263,23 @@ namespace ASGARDAPI.Controllers
                 odatos.color = oactivo.Color;
                 odatos.modelo = oactivo.Modelo;
                 odatos.noSerie = oactivo.NoSerie;
+                int tasa=(int)(100 / oactivo.VidaUtil);
+                odatos.tasaAnual = tasa.ToString();
                 odatos.vidaUtil = oactivo.VidaUtil.ToString();
                 odatos.valorResidual = oactivo.ValorResidual.ToString();
                 Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
                 odatos.proveedor = oProveedor.Nombre;
                 odatos.direccion = oProveedor.Direccion;
                 odatos.telefono = oProveedor.Telefono;
-                Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
-                
-                odatos.marca = oMarcas.Marca;
+                if (oactivo.IdMarca != null)
+                {
+                    Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
+                    odatos.marca = oMarcas.Marca;
+                }
+                else
+                {
+                    odatos.marca = " ";
+                }
                 return odatos;
 
             }
