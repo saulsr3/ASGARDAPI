@@ -199,5 +199,26 @@ namespace ASGARDAPI.Controllers
 
             return rpta;
         }
+
+        [HttpGet]
+        [Route("api/Cargo/validarCargos/{idCargo}")]
+        public int validarCargos(int idCargo)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Empleado oCargo = bd.Empleado.Where(p => p.IdCargo == idCargo && p.Dhabilitado == 1).First();
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oCargo.IdCargo && p.Dhabilitado == 1).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
     }
 }
