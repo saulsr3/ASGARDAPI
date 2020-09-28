@@ -173,6 +173,80 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Para buscar los activos en el historial.
+        [HttpGet]
+        [Route("api/InformeMantenimiento/buscarActivoHistorial/{buscador?}")]
+        public IEnumerable<DepreciacionAF> buscarActivoHistorial(string buscador = "")
+        {
+            List<DepreciacionAF> listaActivo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+                                   where activo.EstaAsignado == 1
+
+                                   select new DepreciacionAF
+                                   {
+
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+
+                                   where activo.EstaAsignado == 1
+
+                                   && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                    || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                    || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                    || (empleado.Nombres).ToLower().Contains(buscador.ToLower())
+                                    || (empleado.Apellidos).ToLower().Contains(buscador.ToLower()))
+
+                                   select new DepreciacionAF
+                                   {
+
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+
 
 
 
