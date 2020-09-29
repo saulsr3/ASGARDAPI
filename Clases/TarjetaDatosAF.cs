@@ -27,5 +27,6 @@ namespace ASGARDAPI.Clases
         public string tasaAnual { get; set; }
         public string valorResidual { get; set; }
         public string Observaciones { get; set; }
+        public int isProvDon { get; set; }
     }
 }
