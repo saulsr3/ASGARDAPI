@@ -377,6 +377,7 @@ namespace ASGARDAPI.Controllers
                 Marcas omarca = (oActivo.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First() : null;
                 Proveedor oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First() : null;
                 Donantes odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First() : null;
+                Empleado oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First() : null;
 
                 //llenado
                 odatos.idbien = oActivo.IdBien;
@@ -389,6 +390,7 @@ namespace ASGARDAPI.Controllers
                 odatos.descripcion = oActivo.Desripcion;
                 odatos.color = oActivo.Color;
                 odatos.idmarca= (omarca == null) ? 0 :omarca.IdMarca;
+                odatos.idresponsable = (oemple == null) ? 0 : oemple.IdEmpleado;
                 odatos.modelo = oActivo.Modelo;
                 odatos.nofactura = oformu.NoFactura;
                 odatos.valoradquicicion = oActivo.ValorAdquicicion;
@@ -401,12 +403,12 @@ namespace ASGARDAPI.Controllers
                 odatos.valorresidual = oActivo.ValorResidual;
                 odatos.foto = oActivo.Foto;
                 
-                 odatos.interes = oActivo.Intereses;
+                odatos.interes = oActivo.Intereses;
                 odatos.noformulario = oformu.NoFormulario;
                 odatos.cantidad = (from activo in bd.ActivoFijo
                                    join noFormulario in bd.FormularioIngreso
                                    on activo.NoFormulario equals noFormulario.NoFormulario
-                                   where activo.NoFormulario == oActivo.NoFormulario
+                                   where activo.NoFormulario == oActivo.NoFormulario && activo.EstadoActual != 0
                                    select activo).ToList().Count();
 
 

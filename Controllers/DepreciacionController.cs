@@ -14,6 +14,7 @@ namespace ASGARDAPI.Controllers
         {
             return View();
         }
+        //Metodo que lista los bienes en la tabla depreciación, validados si estan ya depreciados en el periodo actual.
         [HttpGet]
         [Route("api/Depreciacion/listarActivosDepreciacion")]
         public IEnumerable<DepreciacionAF> listarActivosDepreciacion()
@@ -81,6 +82,7 @@ namespace ASGARDAPI.Controllers
                 return listaActivos;
             }
         }
+        //Metodo que sirve para filtrar los datos en la tabla depreciacion, con respecto a lo seleccionado en el combo.
         [HttpGet]
         [Route("api/Depreciacion/listarActivosDepreciacionFiltro/{id}")]
         public IEnumerable<DepreciacionAF> listarActivosDepreciacionFiltro(int id)
@@ -116,6 +118,7 @@ namespace ASGARDAPI.Controllers
                 return listaActivos;
             }
         }
+        //Metodo de filtro para la tabla tarjeta
         [HttpGet]
         [Route("api/Depreciacion/listarActivosTarjetaFiltro/{id}")]
         public IEnumerable<DepreciacionAF> listarActivosTarjetaFiltro(int id)
@@ -141,6 +144,7 @@ namespace ASGARDAPI.Controllers
                 return listaActivos;
             }
         }
+        //Metodo para bscar en la tabla tarjeta, resibe una cade de texto que compara con todos los datos de la tabla,
         [HttpGet]
         [Route("api/Depreciacion/buscarActivos/{buscador?}")]
         public IEnumerable<DepreciacionAF> buscarActivos(string buscador = "")
@@ -212,7 +216,71 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+        //Metodo para buscar en la tabla tarjet, muy similar al anterior pero este no valida si ya se le realizó depreciacion en el periodo actual.
+        [HttpGet]
+        [Route("api/Depreciacion/buscarActivosTarjeta/{buscador?}")]
+        public IEnumerable<DepreciacionAF> buscarActivosTarjeta(string buscador = "")
+        {
+            List<DepreciacionAF> listaActivo;
 
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+
+                                   where (activo.EstadoActual != 0) && (activo.EstaAsignado == 0 || activo.EstaAsignado == 1)
+
+                                   select new DepreciacionAF
+                                   {
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+                                   where (activo.EstadoActual != 0) && (activo.EstaAsignado == 0 || activo.EstaAsignado == 1) &&
+                                      ((activo.CorrelativoBien).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (sucursal.Nombre).ToLower().Contains(buscador.ToLower())
+                                      || (empleado.Nombres).ToLower().Contains(buscador.ToLower())
+                                      || (empleado.Apellidos).ToLower().Contains(buscador.ToLower())
+                                      )
+                                   select new DepreciacionAF
+                                   {
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+        //Metodo para mostrar un Object con los datos del activo en en el modal para aplicar depreciación
         [HttpGet]
         [Route("api/Depreciacion/DatosDepreciacion/{idBien}")]
         public BienesDepreciacionAF DatosDepreciacion(int idBien)
@@ -242,6 +310,7 @@ namespace ASGARDAPI.Controllers
                 return odatos;
             }
         }
+        //Metodo que devuelve un objeto con los datos generales en la tajeta de depecioacion.
         [HttpGet]
         [Route("api/Depreciacion/TarjetaDatos/{idBien}")]
         public TarjetaDatosAF TarjetaDatos(int idBien)
@@ -267,10 +336,23 @@ namespace ASGARDAPI.Controllers
                 odatos.tasaAnual = tasa.ToString();
                 odatos.vidaUtil = oactivo.VidaUtil.ToString();
                 odatos.valorResidual = oactivo.ValorResidual.ToString();
-                Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
-                odatos.proveedor = oProveedor.Nombre;
-                odatos.direccion = oProveedor.Direccion;
-                odatos.telefono = oProveedor.Telefono;
+
+                if (oactivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
+                    odatos.proveedor = oProveedor.Nombre;
+                    odatos.direccion = oProveedor.Direccion;
+                    odatos.telefono = oProveedor.Telefono;
+                    odatos.isProvDon = 1;
+                }
+                else {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oactivo.IdDonante).First();
+                    odatos.proveedor = oDonante.Nombre;
+                    odatos.direccion = oDonante.Direccion;
+                    odatos.telefono = oDonante.Telefono;
+                    odatos.isProvDon = 2;
+                }
+              
                 if (oactivo.IdMarca != null)
                 {
                     Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
@@ -284,6 +366,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+        //Metodo que lista las transacciones por cada activo y lo muestra en la tarjeta.
         [HttpGet]
         [Route("api/Depreciacion/TarjetaListaTrasacciones/{id}")]
         public IEnumerable<TarjetaTransaccionesAF> TarjetaListaTrasacciones(int id)
@@ -308,6 +391,7 @@ namespace ASGARDAPI.Controllers
                 return ListaTransacciones;
             }
         }
+        //Metodo con el que se guarda la transaccion de la depreciacion que se realiza.
         [HttpPost]
         [Route("api/Depreciacion/transaccionDepreciacion")]
         public int transaccionDepreciacion([FromBody] DatosDepreciacionAF oActivoAF)
@@ -353,6 +437,7 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+        //Metodo que recupera losdatos necesarios para el cierre de periodo.
         [HttpGet]
         [Route("api/Depreciacion/DatosCierre")]
         public CierreAF DatosCierre()
@@ -368,6 +453,7 @@ namespace ASGARDAPI.Controllers
                 return odatos;
             }
         }
+        //Metodo que ejecuta el cierre del año actual.
         [HttpPost]
         [Route("api/Depreciacion/EjecutarCierre")]
         public int EjecutarCierre([FromBody]CierreAF oCierreAF)
@@ -388,6 +474,20 @@ namespace ASGARDAPI.Controllers
                 rpta = 0;
             }
             return rpta;
+        }
+        [HttpGet]
+        [Route("api/Depreciacion/recuperarFoto/{id}")]
+        public ActivoAF recuperarFoto(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoAF oActivoAF = new ActivoAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                oActivoAF.foto = oActivo.Foto;
+                return oActivoAF;
+            }
+
         }
 
     }
