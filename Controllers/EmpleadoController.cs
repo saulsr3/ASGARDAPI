@@ -242,6 +242,10 @@ namespace ASGARDAPI.Controllers
             }
             return res;
         }
+
+
+      
+
         //Metodo para no permitir elimiar un empleado cuando ya hay activos referenciados al empleado
         [HttpGet]
         [Route("api/Empleado/noEliminarEmpleado/{idempleado}")]
@@ -328,14 +332,15 @@ namespace ASGARDAPI.Controllers
        
 
         [HttpGet]
-        [Route("api/Empleado/listarCargoCombo")]
-        public IEnumerable<CargoAF> listarCargoCombo()
+        [Route("api/Empleado/listarCargoCombo/{id}")]
+        public IEnumerable<CargoAF> listarCargoCombo(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<CargoAF> listarCargos = (from cargo in bd.Cargos
-                                                         where cargo.Dhabilitado==1
-                                                         select new CargoAF
+                IEnumerable<CargoAF> listarCargos = (from cargo in bd.Cargos                                  
+                                                         where cargo.Dhabilitado==1 && cargo.IdCargo == id
+                                                     orderby cargo.Cargo
+                                                     select new CargoAF
                                                          {
                                                              idcargo=cargo.IdCargo,
                                                              cargo=cargo.Cargo
@@ -347,6 +352,31 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+   
+
+
+        [HttpGet]
+        [Route("api/Empleado/listarCargoCombosinJ/{id}")]
+        public IEnumerable<CargoAF> listarCargoCombosinJ(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CargoAF> listarCargos = (from cargo in bd.Cargos
+                                                     where cargo.Dhabilitado == 1 && cargo.IdCargo== id && cargo.Cargo != "Jefe"
+                                                     orderby cargo.Cargo
+                                                     select new CargoAF
+                                                     {
+                                                         idcargo = cargo.IdCargo,
+                                                         cargo = cargo.Cargo
+                                                     }).ToList();
+
+
+
+                return listarCargos;
+
+            }
+        }
+
 
         [HttpGet]
         [Route("api/Empleado/listarAreaCombo")]
