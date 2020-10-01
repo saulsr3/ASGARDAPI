@@ -335,6 +335,7 @@ namespace ASGARDAPI.Controllers
 
 
 
+
         [HttpGet]
         [Route("api/SolicitudMantenimiento/DatosSolicitud/{idSolicitud}")]
         public BienesSolicitadosMttoAF DatosSolicitud(int idSolicitud)

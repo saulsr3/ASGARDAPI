@@ -246,6 +246,66 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+        //listar bienes en manteniento
+        [HttpGet]
+        [Route("api/InformeMantenimiento/listarBienesMantenimientoInforme")]
+        public IEnumerable<BienesSolicitadosMttoAF> listarBienesMantenimientoInforme()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
+                                                              join activo in bd.ActivoFijo
+                                                              on bienMtto.IdBien equals activo.IdBien
+                                                              //  join informe in bd.InformeMantenimiento
+                                                              // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
+                                                              where activo.EstadoActual == 3 && bienMtto.Estado == 1 //ELEMENTO 2 LISTA
+                                                              select new BienesSolicitadosMttoAF
+                                                              {
+                                                                  idBien = activo.IdBien,
+                                                                  idmantenimiento = bienMtto.IdMantenimiento,
+                                                                  estadoActual = (int)activo.EstadoActual,
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion,
+                                                                  Periodo = bienMtto.PeriodoMantenimiento,
+                                                                  Razon = bienMtto.RazonMantenimiento
+
+                                                              }).ToList();
+
+
+                return lista;
+            }
+
+        }
+
+        //cambia el estado una vez que el bien se le realizó el informe (luego lo paso a informeController primero veremos si sirve)
+        [HttpGet]
+        [Route("api/InformeMantenimiento/cambiarEstadoActivoMantenimiento/{idBien}")]
+        public int cambiarEstadoActivoMantenimiento(int idBien)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                    BienMantenimiento obienmantenimiento = bd.BienMantenimiento.Where(p => p.IdBien == idBien).Last();                   
+                    obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
+                    oActivo.EstadoActual = 1;
+                    bd.SaveChanges();
+                    respuesta = 1;
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
 
 
 
@@ -367,6 +427,37 @@ namespace ASGARDAPI.Controllers
                 odatos.areadenegocio = oArea.Nombre;
                 return odatos;
 
+            }
+        }
+        //Metodo que lista los bienes en la tabla depreciación, validados si estan ya depreciados en el periodo actual.
+        [HttpGet]
+        [Route("api/InformeMantenimiento/listarActivosHistorial")]
+        public IEnumerable<DepreciacionAF> listarActivosHistorial()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                                                            join empleado in bd.Empleado
+                                                            on activo.IdResponsable equals empleado.IdEmpleado
+                                                            join area in bd.AreaDeNegocio
+                                                            on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                            on area.IdSucursal equals sucursal.IdSucursal
+
+                                                            where activo.EstaAsignado==1
+                                                            select new DepreciacionAF
+                                                            {
+                                                                idBien = activo.IdBien,
+                                                                codigo = activo.CorrelativoBien,
+                                                                descripcion = activo.Desripcion,
+                                                                areanegocio = area.Nombre,
+                                                                sucursal = sucursal.Nombre,
+                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
+
+
+                                                            }).ToList();
+                return listaActivos;
             }
         }
 
