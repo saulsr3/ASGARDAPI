@@ -182,7 +182,8 @@ namespace ASGARDAPI.Controllers
                     List<ActivoFijo> laf = (from activo in bd.ActivoFijo
                                             join noFormulario in bd.FormularioIngreso
                                             on activo.NoFormulario equals noFormulario.NoFormulario
-                                            where activo.NoFormulario == oActivoFijoo.NoFormulario && activo.EstadoActual !=0
+                                            where activo.NoFormulario == oActivoFijoo.NoFormulario 
+                                            && activo.EstadoActual ==1 && activo.EstaAsignado == 0
                                             select activo).ToList();
                  
                     if (oActivoAF2.tipoadquicicion == 1 || oActivoAF2.tipoadquicicion == 3)
@@ -233,58 +234,14 @@ namespace ASGARDAPI.Controllers
                         
                         bd.SaveChanges();
                     }
-                    if (oActivoAF2.idresponsable != 0)
-                    {
-                        ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF2.idbien).First();
-
-                         oActivoFijo.IdResponsable = oActivoAF2.idresponsable;
-
-                        //objeto de la clase codigo que contiene los elementos
-                        CodigoAF oCodigo = new CodigoAF();
-                        //Extraer los datos padres de la base
-                       // oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoFijoo.IdBien).First();
-                        Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oActivoAF2.idresponsable).First();
-                        //Utilizar los datos padres para extraer loc correlativos
-                        AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
-                        Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oarea.IdSucursal).First();
-                        Clasificacion oclasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivoFijo.IdClasificacion).First();
-
-                        //LLenado de objeto
-                        oCodigo.CorrelativoSucursal = osucursal.Correlativo;
-                        oCodigo.CorrelativoArea = oarea.Correlativo;
-                        oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
-                        //selccionar cuantos hay de esa clasificacion
-                        int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado == 1 && p.IdClasificacion == oclasificacion.IdClasificacion).Count();
-
-                        //comparar para la concatenacion correspondiente 
-                        if (oActivoC >= 0 && oActivoC <= 9)
-                        {
-                            oActivoC = oActivoC + 1;
-                            oCodigo.Correlativo = "00" + oActivoC.ToString();
-                        }
-                        else if (oActivoC >= 10 && oActivoC <= 99)
-                        {
-                            oActivoC = oActivoC + 1;
-                            oCodigo.Correlativo = "0" + oActivoC.ToString();
-                        }
-                        else
-                        {
-                            oActivoC = oActivoC + 1;
-                            oCodigo.Correlativo = oActivoC.ToString();
-                        }
-
-                        oActivoFijo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion+ "-" + oCodigo.Correlativo;
-                        // return oCodigo;
-
-                        bd.SaveChanges();
-                    }
+                    
                     rpta = 1;
                 }
             }
             catch (Exception ex)
             {
                 rpta = 0;
-                Console.WriteLine("prueba");
+               // Console.WriteLine("prueba");
             }
             return rpta;
         }

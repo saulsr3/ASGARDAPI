@@ -192,36 +192,7 @@ namespace ASGARDAPI.Controllers
 
         }
 
-        //listar bienes en manteniento
-        [HttpGet]
-        [Route("api/SolicitudMantenimiento/listarBienesMantenimiento")]
-        public IEnumerable<BienesSolicitadosMttoAF> listarBienesMantenimiento()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
-                                                              join activo in bd.ActivoFijo
-                                                              on bienMtto.IdBien equals activo.IdBien
-                                                            //  join informe in bd.InformeMantenimiento
-                                                             // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
-                                                              where activo.EstadoActual == 3 &&  bienMtto.Estado==1 //ELEMENTO 2 LISTA
-                                                              select new BienesSolicitadosMttoAF
-                                                              {
-                                                                  idBien = activo.IdBien,
-                                                                  idmantenimiento = bienMtto.IdMantenimiento,
-                                                                  estadoActual = (int)activo.EstadoActual,
-                                                                  Codigo = activo.CorrelativoBien,
-                                                                  Descripcion = activo.Desripcion,
-                                                                  Periodo = bienMtto.PeriodoMantenimiento,
-                                                                  Razon = bienMtto.RazonMantenimiento
-
-                                                              }).ToList();
-
-
-                return lista;
-            }
-
-        }
+        
 
 
 
@@ -304,9 +275,10 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
-        //cambia el estado una vez que el bien se le realizó el informe (luego lo paso a informeController primero veremos si sirve)
+
+        //cambia el estado una vez que el bien se le realizó el informe
         [HttpGet]
-        [Route("api/SolicitudMantenimiento/cambiarEstadoDenegado/{idBien}")]
+        [Route("api/InformeMantenimiento/cambiarEstadoDenegado/{idBien}")]
         public int cambiarEstadoDenegado(int idBien)
         {
             int respuesta = 0;
@@ -315,10 +287,10 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).Last();
                     BienMantenimiento obienmantenimiento = bd.BienMantenimiento.Where(p => p.IdBien == idBien).Last();
+                  //  obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
                     oActivo.EstadoActual = 1;
-                    obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -333,7 +305,6 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
-
 
 
 

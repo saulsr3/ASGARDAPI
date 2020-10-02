@@ -296,13 +296,15 @@ namespace ASGARDAPI.Controllers
                 {
                     if (idproveedor == 0)
                     {
-                        rpta = bd.Proveedor.Where(p => p.Telefono.ToLower() == telefono.ToLower()
-                        && p.Dhabilitado == 1).Count();
+                        rpta = bd.Proveedor.Where(p => p.Telefono == telefono 
+                        && p.Dhabilitado == 1 || p.TelefonoEncargado == telefono).Count();
+                       
                     }
                     else
                     {
-                        rpta = bd.Proveedor.Where(p => p.Telefono.ToLower() == telefono.ToLower() && p.IdProveedor != idproveedor
-                        && p.Dhabilitado == 1).Count();
+                        rpta = bd.Proveedor.Where(p => p.Telefono == telefono && p.IdProveedor != idproveedor
+                        && p.Dhabilitado == 1 ||p.TelefonoEncargado == telefono).Count();
+                      
                     }
                 }
             }
@@ -316,7 +318,7 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/Proveedor/validarTelEncargado/{idproveedor}/{telefono}")]
+        [Route("api/Proveedor/validarTelEncargado/{idproveedorr}/{telefonoe}")]
         public int validarTelEncargado(int idproveedorr, string telefonoe)
         {
             int rpta = 0;
@@ -326,13 +328,13 @@ namespace ASGARDAPI.Controllers
                 {
                     if (idproveedorr == 0)
                     {
-                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado.ToLower() == telefonoe.ToLower()
-                        && p.Dhabilitado == 1).Count();
+                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado == telefonoe
+                        && p.Dhabilitado == 1 || p.Telefono == telefonoe).Count();
                     }
                     else
                     {
-                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado.ToLower() == telefonoe.ToLower() && p.IdProveedor != idproveedorr
-                        && p.Dhabilitado == 1).Count();
+                        rpta = bd.Proveedor.Where(p => p.TelefonoEncargado == telefonoe && p.IdProveedor != idproveedorr
+                        && p.Dhabilitado == 1 || p.Telefono == telefonoe).Count();
                     }
                 }
             }

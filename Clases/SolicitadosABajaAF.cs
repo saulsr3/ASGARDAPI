@@ -22,7 +22,19 @@ namespace ASGARDAPI.Clases
         public string nombredescargo { get; set; }
         public int estado { get; set; }
         public string entidadbeneficiaria { get; set; }
-        
+        public string acuerdo { get; set; }
+        public int idresponsable { get; set; }
+        public int idproveedor { get; set; }
+        public int iddonante { get; set; }
+        public string fechacadena2 { get; set; }
+        public string marca { get; set; }
+        public string color { get; set; }
+        public string clasificacion { get; set; }
+        public string prove { get; set; }
+        public string dona { get; set; }
+        public double valor { get; set; }
+
+
 
         //public string domicilio { get; set; }
         //public string contacto { get; set; }

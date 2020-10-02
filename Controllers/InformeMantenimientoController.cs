@@ -277,7 +277,7 @@ namespace ASGARDAPI.Controllers
 
         }
 
-        //cambia el estado una vez que el bien se le realizó el informe (luego lo paso a informeController primero veremos si sirve)
+        //cambia el estado una vez que el bien se le realizó el informe
         [HttpGet]
         [Route("api/InformeMantenimiento/cambiarEstadoActivoMantenimiento/{idBien}")]
         public int cambiarEstadoActivoMantenimiento(int idBien)
@@ -288,7 +288,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).Last();
                     BienMantenimiento obienmantenimiento = bd.BienMantenimiento.Where(p => p.IdBien == idBien).Last();                   
                     obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
                     oActivo.EstadoActual = 1;
@@ -374,18 +374,15 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from informemante in bd.InformeMantenimiento
-                                                                        join tecnico in bd.Tecnicos
-                                                                        on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from tecnico in bd.Tecnicos
+                                                                        join informemante in bd.InformeMantenimiento
+                                                                        on tecnico.IdTecnico equals informemante.IdTecnico
                                                                         join bienmante in bd.BienMantenimiento
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
                                                                         where bienes.IdBien == idbien 
-                                                                      //   where informemante.Estado == 1 || informemante.Estado == 0 || informemante.Estado == 2
-                                                                        // && bienmante.IdBien == bienes.IdBien
-
-                                                                        //where empleado.Dhabilitado == 1
+                                                                 
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
@@ -406,7 +403,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        //METODOS PARA INTENTAS LISTAR EL MANTENIMIENTO.
+     
         
         // METODO DOS PARA INTENTAR LISTAR EL MANTENIMIENTO.
 
@@ -429,7 +426,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-        //Metodo que lista los bienes en la tabla depreciación, validados si estan ya depreciados en el periodo actual.
+        //Metodo que lista los activos en el historial de mantenimiento
         [HttpGet]
         [Route("api/InformeMantenimiento/listarActivosHistorial")]
         public IEnumerable<DepreciacionAF> listarActivosHistorial()
@@ -469,14 +466,14 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from informemante in bd.InformeMantenimiento
-                                                                        join tecnico in bd.Tecnicos
-                                                                 on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                IEnumerable<InformeMatenimientoAF> listaInformeMante = (from tecnico in bd.Tecnicos
+                                                                        join informemante in bd.InformeMantenimiento 
+                                                                        on tecnico.IdTecnico equals informemante.IdTecnico
                                                                         join bienmante in bd.BienMantenimiento
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado == 1 
+                                                                        where informemante.Estado == 1
 
                                                                        
                                                                         select new InformeMatenimientoAF

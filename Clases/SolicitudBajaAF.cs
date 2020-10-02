@@ -11,6 +11,7 @@ namespace ASGARDAPI.Clases
         public int idsolicitud { get; set; }
         public string folio { get; set; }
         public DateTime? fechasolicitud { get; set; }
+        public DateTime? fechabaja { get; set; }
         public string observaciones { get; set; }
         public int motivo { get; set; }
         public int estado { get; set; }
@@ -22,6 +23,7 @@ namespace ASGARDAPI.Clases
         ///----------------------------------------------
         public int idtipodescargo { get; set; }
         public string fechacadena { get; set; }
+        public string fechacadenaa { get; set; }
         public int idbien { get; set; }
         public string Codigo { get; set; }
         public string Descripcion { get; set; }    

@@ -61,7 +61,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 1 && activo.EstaAsignado ==1
+                                            where activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
@@ -236,8 +236,8 @@ namespace ASGARDAPI.Controllers
 
         //si la solicitud es aceptada cambiamos el estado del bien a 0
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}/{acuerdo}")] //
-        public int cambiarEstado(int idbien, string acuerdo)//, string acuerdo
+        [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}/{acuerdo}/{fecha2}")] // 
+        public int cambiarEstado(int idbien, string acuerdo, string fecha2)// 
         {
             int rpta = 0;
 
@@ -245,13 +245,14 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    Console.WriteLine("IDESTADO" + idbien);
+                   // Console.WriteLine("IDESTADO" + idbien);
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
                     oActivo.EstaAsignado = 0;
                    
                    oSolic.Acuerdo = acuerdo;
+                   oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -267,8 +268,8 @@ namespace ASGARDAPI.Controllers
 
         //si la solicitud es rechazada vuelve al estado normal que es 1
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoRechazado/{idbien}/{acuerdo}")]
-        public int cambiarEstadoDenegado(int idbien , string acuerdo )
+        [Route("api/SolicitudBaja/cambiarEstadoRechazado/{idbien}/{acuerdo}/{fecha2}")] //  
+        public int cambiarEstadoDenegado(int idbien , string acuerdo, string fecha2)//
         {
             int rpta = 0;
 
@@ -281,6 +282,7 @@ namespace ASGARDAPI.Controllers
                     oActivo.EstadoActual = 1;
                     
                     oSolic.Acuerdo = acuerdo;
+                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -307,13 +309,9 @@ namespace ASGARDAPI.Controllers
 
                 ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == osolicitud.IdBien).First();
                 
-                //Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == obien.IdResponsable).First();
-                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
-                
-                //odatos.areanegocio = oArea.Nombre;
                 odatos.NoSolicitud =  osolicitud.IdSolicitud;
                 odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
-                odatos.Codigo = obien.CorrelativoBien;
+                
                 TipoDescargo odescargo = bd.TipoDescargo.Where(p => p.IdTipo == osolicitud.IdTipoDescargo).First();
                 //odatos.motivo = osolicitud.;
                 odatos.nombredescargo = odescargo.Nombre; 
@@ -322,10 +320,81 @@ namespace ASGARDAPI.Controllers
                 odatos.Codigo = obien.CorrelativoBien;
                 odatos.Descripcion = obien.Desripcion;
                 odatos.observaciones = osolicitud.Observaciones;
-               // odatos.Resposnsable = oempleado.Nombres + "" + oempleado.Apellidos;
 
                 return odatos;
+            }
+        }
 
+        [HttpGet]
+        [Route("api/SolicitudBaja/verDescargos/{id}")]
+        public SolicitadosABajaAF verDescargos(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                SolicitadosABajaAF odatos = new SolicitadosABajaAF();
+
+                ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == obien.IdClasificacion).First();
+                Empleado oemple = (obien.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == obien.IdResponsable).First() : null;
+                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdBien == obien.IdBien).First();
+                TipoDescargo odescargo = bd.TipoDescargo.Where(p => p.IdTipo == osolicitud.IdTipoDescargo).First();
+                Marcas omarca = (obien.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == obien.IdMarca).First() : null;
+                Proveedor oprov = (obien.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == obien.IdProveedor).First() : null;
+                Donantes odona = (obien.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == obien.IdDonante).First() : null;
+                if (omarca == null)
+                {
+                    odatos.marca = "";
+                }
+                else
+                {
+                    odatos.marca = omarca.Marca;
+                }
+                odatos.NoSolicitud = osolicitud.IdSolicitud;
+                odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
+                odatos.folio = osolicitud.Folio;
+                odatos.idbien = (int)osolicitud.IdBien;
+                odatos.Codigo = obien.CorrelativoBien;
+                odatos.Descripcion = obien.Desripcion;
+                odatos.observaciones = osolicitud.Observaciones;
+                /////////////////////////////////////////////////
+                odatos.acuerdo = osolicitud.Acuerdo;
+                odatos.Codigo = obien.CorrelativoBien;
+                odatos.responsable = (oemple == null) ? "" : oemple.Nombres + " " + oemple.Apellidos;
+                odatos.idproveedor = (oprov != null) ? oprov.IdProveedor : odona.IdDonante;
+                odatos.valor = (double)obien.ValorAdquicicion;
+                odatos.nombredescargo = odescargo.Nombre;
+                odatos.fechacadena2 = osolicitud.Fechabaja == null ? " " : ((DateTime)osolicitud.Fechabaja).ToString("dd-MM-yyyy");
+                odatos.color = obien.Color;
+                odatos.clasificacion = oclasi.Clasificacion1;
+                return odatos;
+
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarBajas")]
+        public List<ActivoFijoAF> listarBajas()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join formulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals formulario.NoFormulario
+                                            join clasi in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasi.IdClasificacion
+                                            join solicitud in bd.SolicitudBaja
+                                            on activo.IdBien equals solicitud.IdBien
+                                            where activo.EstadoActual == 0
+                                            //orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Desripcion = activo.Desripcion,
+                                                fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                                Clasificacion = clasi.Clasificacion1
+                                            }).ToList();
+                return lista;
 
             }
         }
@@ -588,36 +657,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("api/SolicitudBaja/listarBajas")]
-        public List<ActivoFijoAF> listarBajas()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
-                                                   join formulario in bd.FormularioIngreso
-                                                   on activo.NoFormulario equals formulario.NoFormulario
-                                                   join clasi in bd.Clasificacion 
-                                                   on activo.IdClasificacion equals clasi.IdClasificacion
-                                                   join solicitud in bd.SolicitudBaja
-                                                   on activo.IdBien equals solicitud.IdBien
-                                                   where activo.EstadoActual == 0
-                                                   orderby activo.CorrelativoBien
-                                                   select new ActivoFijoAF
-                                                   {
-                                                       IdBien = activo.IdBien,
-                                                       Desripcion = activo.Desripcion,
-                                                       fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
-                                                       Clasificacion = clasi.Clasificacion1
-                                                   }).ToList();
-                return lista;
-
-            }
-        }
-
-      
-        
-
+       
         [HttpGet]
         [Route("api/SolicitudBaja/buscarBaja/{buscador?}")]
         public IEnumerable<ActivoFijoAF> buscarBaja(string buscador = "")
