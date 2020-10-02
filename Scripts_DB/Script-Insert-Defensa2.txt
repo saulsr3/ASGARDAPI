@@ -1,0 +1,150 @@
+USE BDAcaassAF
+GO
+
+SET IDENTITY_INSERT Cooperativa ON
+INSERT INTO [Cooperativa] ([IdCooperativa],[Nombre],[Logo],[Descripcion],[Dhabilitado])VALUES(1,'ACAASS de R.L.',null,'Asociacion Cooperativa de aprovicionamiento agropecurio','1')
+SET IDENTITY_INSERT Cooperativa OFF
+
+SET IDENTITY_INSERT Periodo ON
+INSERT INTO [Periodo] ([IdPeriodo],[Anio],[IdCooperativa],[Estado])VALUES(1,2010,1,'1')
+SET IDENTITY_INSERT Periodo OFF
+
+SET IDENTITY_INSERT Sucursal ON
+INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(1,'Unidad Central','San Sebastian','AC01',1,'1')
+INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(2,'Despensa','San Sebastian','AC02',1,'1')
+INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(3,'Centro de Negocios','Santo Domingo','AC03',1,'1')
+SET IDENTITY_INSERT Sucursal OFF
+
+SET IDENTITY_INSERT AreaDeNegocio  ON
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(1,'Contabilidad',1,'001','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(2,'Financiero',1,'002','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(3,'Informatica',1,'003','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(4,'Auditoria',1,'004','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(5,'Cobros',1,'005','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(6,'Ventas',1,'006','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(7,'Asesoria',1,'007','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(8,'Auditoria',1,'008','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(9,'Servicios Generales',1,'009','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(10,'Caja',2,'010','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(11,'Servicios Generales',2,'011','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(12,'Seguridad',2,'012','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(13,'Produccion',3,'013','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(14,'Trasporte',3,'014','1')
+INSERT INTO [AreaDeNegocio] ([IdAreaNegocio],[Nombre],[IdSucursal],[Correlativo],[Dhabilitado])VALUES(15,'Seguridad',3,'015','1')
+SET IDENTITY_INSERT AreaDeNegocio OFF
+
+SET IDENTITY_INSERT Categorias ON
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(1,'Edificios',20,'Categoria de edificios',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(2,'Maquinaria',5,'Categoria de Maquinaria',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(3,'Bienes muebles',2,'Bienes muebles para administrar el quipo',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(4,'Intagibles',2,'Bienes intangibles de PPYEQ',1)
+SET IDENTITY_INSERT Categorias OFF
+
+SET IDENTITY_INSERT Clasificacion  ON
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(1,'Instalaciones','101','Instalaciones de cooperativa',1,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(2,'Maquinaria y equipo de agricola','102','Maquinaria para centro de negocios',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(3,'Mobiliario y equipo de oficina','103','Mobiliario para la oficina',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(4,'Mobiliario y equipo de ventas','104','Mobiliario para la administracion de la ventas',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(5,'Equipo Informatico','105','Equipo para la gestion informatica',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(6,'Equipo de refrigeracion','106','Incluye aire acondicionado y otros sistemas de refrigeracion',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(7,'Equipo de seguridad','107','Equipo de seguridad, camaras, y sensores',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(8,'Equipo de Trasporte','108','Equipo de trasporte de la cooperativa',2,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(9,'Mobiliario y equipo indrustrial','109','Equipo de produccion en area de negocios',3,1)
+SET IDENTITY_INSERT Clasificacion OFF
+
+SET IDENTITY_INSERT Marcas  ON
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(1,'Dell Computer','Marca de computadoras',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(2,'Samnsung','Marca de computadoras',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(3,'Epsom','Marca de impresoras y lectores de barra',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(4,'HP','Marca de pc y laptop',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(5,'Kingston','Marca de pendrive y dispositivos',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(6,'Bronco','Marca de muebles y equipo de ocficina',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(7,'Mastertech','Marca de equipo de refrigeracion',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(8,'Cisco','Marca de equipo de seguridad y cofiguracion de red',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(9,'Vencia','Marca de estantes',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(10,'Apple','Marca de sillas',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(11,'Asus','Marca de sillas',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(12,'Safari','Marca de estantes',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(13,'carlastor','Marca de muebles',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(14,'Toyota','Marca de equipo de trasporte',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(15,'Nissan','Marca de equipo de trasporte',1)
+SET IDENTITY_INSERT Marcas OFF
+
+SET IDENTITY_INSERT Tecnicos  ON
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(1,'Chepito','Sersaprosa',1)
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(2,'Toñito de la niña flor','Todotec',1)
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(3,'Juan mundo','Sersaprosa',1)
+SET IDENTITY_INSERT Tecnicos OFF
+
+SET IDENTITY_INSERT Donantes  ON
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(1,'Donaciones Cooperativa','2333-9877','col escalon #4',1)
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(2,'Bill Gates','2333-8877','USA, val #45 new york',1)
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(3,'Emma Watson','2333-6753','Howarts 44, callejon diagon',1)
+SET IDENTITY_INSERT Donantes OFF
+
+SET IDENTITY_INSERT Cargos  ON
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(1,'Jefe','Jefe de areas de negocio',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(2,'Gerente','Gerente general',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(3,'Contador','administrador de la contaduria',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(4,'Seguridad','vigilante',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(5,'Oficios varios','aseo de areas',1)
+SET IDENTITY_INSERT Cargos OFF
+
+SET IDENTITY_INSERT Empleado  ON
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(1,'11111111-1','Lionel Andres','Messi Cuchitini','Col los cocos','2333-4453','7864-8373',1,1,1,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(2,'22222222-1','Cristiano Arnoldo','Ronaldo Vieira','Col los masones #13','2333-4453','7864-8373',1,3,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(3,'33333333-1','Alan Brito ','Delgado Hierro','col el paisnal #434','2333-4453','7864-8373',2,1,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(4,'44444444-1','Emilia Melva','Franco Vargas','col santa cruz','2333-4453','7864-8373',5,1,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(5,'55555555-1','Jose Oscar','Peraza','Soya, calle al matasano','2333-4453','7864-8373',4,1,1,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(6,'66666666-1','Filipe','Coutinho','san vicente #345','2333-4453','7864-8373',6,1,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(7,'77777777-1','Elba ','Laso Rivas','Col santa apaste','2333-4453','7864-8373',7,3,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(8,'88888888-1','Debora Dora','de Cabezas','Urbanizacion los cedros','2333-4453','7864-8373',3,1,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(9,'99999999-1','Saul Alfredo','Reyes Alvarado','cl santa maria','2333-4453','7864-8373',3,2,0,1)
+INSERT INTO [Empleado] ([IdEmpleado],[DUI],[Nombres],[Apellidos],[Direccion],[Telefono],[TelefonoPersonal],[IdAreaDeNegocio],[IdCargo],[BTieneUsuario],[Dhabilitado])VALUES(10,'10101010-1','Kevin Reinaldo','Montano Orantes','San Cayetano Iztepeque','2333-4453','7864-8373',9,1,0,1)
+SET IDENTITY_INSERT Empleado OFF
+
+SET IDENTITY_INSERT Proveedor  ON
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(1,'La comercial el espino','Col escalon #34','2333-4453','Venta de equipo','Jose siguenza','7867-3647',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(2,'Tecno Tech','Col escalon #34','2333-4454','Venta de equipo','Pedro Rivas','6267-3647',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(3,'Tropigas','Col escalon #34','2333-4353','Venta de equipo','Jose Arias','7937-3447',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(4,'Bajamesa','Col escalon #34','2333-2353','Venta de equipo','Julio Perez','7347-3657',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(5,'Sombol','Col escalon #34','2333-4783','Venta de equipo','Jorge Chacon','7677-3787',1)
+SET IDENTITY_INSERT Proveedor OFF
+
+SET IDENTITY_INSERT TipoUsuario  ON
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(1,'Admin','Administrador',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(2,'Jefe de area','Administrador',1)
+SET IDENTITY_INSERT TipoUsuario OFF
+
+SET IDENTITY_INSERT Usuario  ON
+INSERT INTO [Usuario] ([IdUsuario],[Contra],[IdEmpleado],[IdTipoUsuario],[Dhabilitado])VALUES(1,'Tiene que ir encriptada',1,1,1)
+INSERT INTO [Usuario] ([IdUsuario],[Contra],[IdEmpleado],[IdTipoUsuario],[Dhabilitado])VALUES(2,'Tiene que ir encriptada',5,2,1)
+SET IDENTITY_INSERT Usuario OFF
+
+--SET IDENTITY_INSERT FormularioIngreso  ON
+--INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(1,'F-8967','05/01/2020','Julio Moran',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
+--INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(2,'F-8968','03/23/2020','Pedro Alvarado',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
+--INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(3,'F-8969','05/02/2020','Sonia Moran',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
+--SET IDENTITY_INSERT FormularioIngreso OFF
+
+--SET IDENTITY_INSERT ActivoFijo  ON
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(1,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(2,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(3,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
+
+--Aqui esta el ejemplo de como se van a insertar los activos si se fijan hacen referencia a un formulario en particular
+--El siguiente hará referencia a otro y pueden ser los que el ususario ingrese
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(4,'00-11-22',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','123',6,3,1,null,null,1,1,199.99,'',0,0,0.0,0,null,1,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(5,'01-02-03',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','032',6,3,null,2,null,4,2,199.99,'',0,0,0.0,0,null,1,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(6,'11-01-11',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','351',6,3,5,null,null,5,3,199.99,'',0,0,0.0,0,null,1,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(7,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(8,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(9,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
+--EN el caso que solo se meta 1 hace referencia a alformulario 3
+--INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(10,null,3,'Impresora Lacer','wallet 3432',1,'Gris',null,3,1,2,null,null,null,'Nuevo',1599.99,'12 meses',70,125,0.2,0,null,0,'',1)
+--SET IDENTITY_INSERT ActivoFijo OFF
+
+
+--SET IDENTITY_INSERT SolicitudBaja  ON
+--INSERT INTO [SolicitudBaja] ([IdSolicitud],[Fecha],[Folio],[Observaciones],[motivo],[IdBien],[Estado],[EntidadBeneficiaria],[Domicilio],[Contacto],[Telefono])VALUES(1,'07/02/2020','05','ninguna',4,1,1,'isss','sanvi','Luis','2356-8914')
+--SET IDENTITY_INSERT SolicitudBaja OFF
