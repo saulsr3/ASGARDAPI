@@ -328,18 +328,38 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        [HttpGet]
+        [Route("api/Empleado/validarExisteCargo/{area}")]
+        public int validarExisteCargo(int area)
+        {
+            int respuesta = 0;
 
-       
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdAreaDeNegocio == area && p.IdCargo==1).First();
+                    respuesta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
 
         [HttpGet]
-        [Route("api/Empleado/listarCargoCombo/{id}")]
-        public IEnumerable<CargoAF> listarCargoCombo(int id)
+        [Route("api/Empleado/listarCargoCombo")]
+        public IEnumerable<CargoAF> listarCargoCombo()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<CargoAF> listarCargos = (from cargo in bd.Cargos                                  
-                                                         where cargo.Dhabilitado==1 && cargo.IdCargo == id
-                                                     orderby cargo.Cargo
+                                                    where cargo.Dhabilitado==1
+                                                 
                                                      select new CargoAF
                                                          {
                                                              idcargo=cargo.IdCargo,
@@ -356,14 +376,14 @@ namespace ASGARDAPI.Controllers
 
 
         [HttpGet]
-        [Route("api/Empleado/listarCargoCombosinJ/{id}")]
-        public IEnumerable<CargoAF> listarCargoCombosinJ(int id)
+        [Route("api/Empleado/listarCargoCombosinJ")]
+        public IEnumerable<CargoAF> listarCargoCombosinJ()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<CargoAF> listarCargos = (from cargo in bd.Cargos
-                                                     where cargo.Dhabilitado == 1 && cargo.IdCargo== id && cargo.Cargo != "Jefe"
-                                                     orderby cargo.Cargo
+                                                     where cargo.Dhabilitado == 1 && cargo.IdCargo!=1
+                                               
                                                      select new CargoAF
                                                      {
                                                          idcargo = cargo.IdCargo,

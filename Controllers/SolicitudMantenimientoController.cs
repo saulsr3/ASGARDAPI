@@ -118,6 +118,7 @@ namespace ASGARDAPI.Controllers
                     bienMtto.IdMantenimiento = oArray.idMantenimiento;
                     bienMtto.IdSolicitud = idSolicitud.IdSolicitud;
                     bienMtto.IdBien = oArray.idBien;
+               
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oArray.idBien).First();
                     oActivo.EstadoActual = 2;
                     bienMtto.Estado = 1; //estado uno para que se liste en bienes en mantenimiento.  ELEMENTO 1.
