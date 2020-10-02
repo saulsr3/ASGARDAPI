@@ -49,6 +49,7 @@ namespace ASGARDAPI.Clases
         public string Proveedor { get; set; }
         public string Donante { get; set; }
         public string cargo { get; set; }
+        public string fechacadena2 { get; set; }
 
     }
 }

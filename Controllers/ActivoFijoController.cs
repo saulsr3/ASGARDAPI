@@ -340,7 +340,7 @@ namespace ASGARDAPI.Controllers
                                             on activo.IdResponsable equals resposable.IdEmpleado
                                             join area in bd.AreaDeNegocio
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                            where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                                            where activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3 && activo.EstaAsignado == 1
 
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
@@ -408,7 +408,7 @@ namespace ASGARDAPI.Controllers
                 odatos.cantidad = (from activo in bd.ActivoFijo
                                    join noFormulario in bd.FormularioIngreso
                                    on activo.NoFormulario equals noFormulario.NoFormulario
-                                   where activo.NoFormulario == oActivo.NoFormulario && activo.EstadoActual != 0
+                                   where activo.NoFormulario == oActivo.NoFormulario && activo.EstadoActual ==1 && activo.EstaAsignado == 0
                                    select activo).ToList().Count();
 
 
