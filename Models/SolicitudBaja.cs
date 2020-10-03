@@ -8,16 +8,16 @@ namespace ASGARDAPI.Models
         public int IdSolicitud { get; set; }
         public DateTime? Fecha { get; set; }
         public string Folio { get; set; }
-        public int? IdBien { get; set; }
+        public string Observaciones { get; set; }
         public int? IdTipoDescargo { get; set; }
+        public int? IdBien { get; set; }
+        public int? Estado { get; set; }
         public string EntidadBeneficiaria { get; set; }
         public string Domicilio { get; set; }
         public string Contacto { get; set; }
         public string Telefono { get; set; }
-        public string Observaciones { get; set; }
         public string Acuerdo { get; set; }
         public DateTime? Fechabaja { get; set; }
-        public int? Estado { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
         public TipoDescargo IdTipoDescargoNavigation { get; set; }

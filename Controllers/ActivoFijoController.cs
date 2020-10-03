@@ -45,38 +45,7 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
-        //Prueba cambio de estado
-        [HttpGet]
-        [Route("api/ActivoFIjo/CambiarEstado")]
-        public IEnumerable<NoAsignadosAF> CambiarEstado()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo
-
-                                                        //join marca in bd.Marcas
-                                                        //on activo.IdMarca equals marca.IdMarca
-                                                    where activo.EstadoActual == 1 &&activo.IdMarca==7
-                                                    //orderby noFormulario.NoFormulario
-
-                                                    select new NoAsignadosAF
-                                                    {
-                                                        IdBien = activo.IdBien,
-                                                        solicitud=(int)activo.IdMarca
-
-                                                    }).ToList();
-              
-
-                foreach (var item in lista)
-                {
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == item.IdBien).First();
-                    oActivo.IdMarca = 10;
-                    bd.SaveChanges();
-                }
-             
-                return lista;
-            }
-        }
+      
 
         [HttpGet]
         [Route("api/ActivoFijo/listarEmpleadosCombo")]

@@ -25,7 +25,7 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
                                                                    //join bienmante in bd.BienMantenimiento
                                                                    //on activo.IdBien equals bienmante.IdBien
-                                                               where activo.EstaAsignado == 1 && activo.EstadoActual == 1 && activo.EstadoActual != 2 
+                                                               where activo.EstaAsignado == 1 && activo.EstadoActual == 1 && activo.EstadoActual != 2 &&activo.EnSolicitud==0
 
                                                                select new SolicitudMantenimientoAF
                                                                {
@@ -519,6 +519,66 @@ namespace ASGARDAPI.Controllers
                                                        }).ToList();
                 return lista;
             }
+
+        }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/CambiarEstadoSolicitud/{idActivo}")]
+        public int CambiarEstadoSolicitud(int idActivo)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idActivo).First();
+                    oActivo.EnSolicitud = 1;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+        //Prueba cambio de estado
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/CambiarEstadoActivosSolicitud")]
+        public int CambiarEstadoActivosSolicitud()
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo
+                                                        where activo.EstadoActual == 1 && activo.EnSolicitud == 1
+                                                        select new NoAsignadosAF
+                                                        {
+                                                            IdBien = activo.IdBien
+                                                        }).ToList();
+                    foreach (var item in lista)
+                    {
+                        ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == item.IdBien).First();
+                        oActivo.EnSolicitud = 0;
+                        bd.SaveChanges();
+                        respuesta = 1;
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
 
         }
     }

@@ -101,6 +101,8 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
                         oActivoFijo.Foto = oActivoAF.foto;
                         oActivoFijo.ValorResidual = oActivoAF.valorresidual;
+                        //Linea de prueba en rama solicitud
+                        oActivoFijo.EnSolicitud = 0;
                         oActivoFijo.EstaAsignado = 0;
                         oActivoFijo.EstadoActual = 1;
                         

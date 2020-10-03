@@ -35,6 +35,7 @@ namespace ASGARDAPI.Models
         public double? ValorResidual { get; set; }
         public string Foto { get; set; }
         public int? EstaAsignado { get; set; }
+        public int? EnSolicitud { get; set; }
         public string DestinoInicial { get; set; }
         public int? UltimoAnioDepreciacion { get; set; }
         public int? EstadoActual { get; set; }
