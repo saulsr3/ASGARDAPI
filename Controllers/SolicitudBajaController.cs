@@ -335,8 +335,9 @@ namespace ASGARDAPI.Controllers
 
                 ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == id).First();
                 Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == obien.IdClasificacion).First();
+                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == obien.NoFormulario).First();
                 Empleado oemple = (obien.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == obien.IdResponsable).First() : null;
-                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdBien == obien.IdBien).First();
+                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdBien == obien.IdBien).Last();
                 TipoDescargo odescargo = bd.TipoDescargo.Where(p => p.IdTipo == osolicitud.IdTipoDescargo).First();
                 Marcas omarca = (obien.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == obien.IdMarca).First() : null;
                 Proveedor oprov = (obien.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == obien.IdProveedor).First() : null;
@@ -350,7 +351,7 @@ namespace ASGARDAPI.Controllers
                     odatos.marca = omarca.Marca;
                 }
                 odatos.NoSolicitud = osolicitud.IdSolicitud;
-                odatos.fechacadena = osolicitud.Fecha == null ? " " : ((DateTime)osolicitud.Fecha).ToString("dd-MM-yyyy");
+                odatos.fechacadena = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
                 odatos.folio = osolicitud.Folio;
                 odatos.idbien = (int)osolicitud.IdBien;
                 odatos.Codigo = obien.CorrelativoBien;
@@ -383,15 +384,14 @@ namespace ASGARDAPI.Controllers
                                             on activo.NoFormulario equals formulario.NoFormulario
                                             join clasi in bd.Clasificacion
                                             on activo.IdClasificacion equals clasi.IdClasificacion
-                                            join solicitud in bd.SolicitudBaja
-                                            on activo.IdBien equals solicitud.IdBien
+                                            
                                             where activo.EstadoActual == 0
                                             //orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
                                                 IdBien = activo.IdBien,
                                                 Desripcion = activo.Desripcion,
-                                                fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                                fechacadena = formulario.FechaIngreso == null ? " " : ((DateTime)formulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Clasificacion = clasi.Clasificacion1
                                             }).ToList();
                 return lista;
