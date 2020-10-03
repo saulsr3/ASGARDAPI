@@ -196,6 +196,7 @@ Intereses float,
 ValorResidual float,
 Foto varchar(max),
 EstaAsignado int,
+EnSolicitud int,
 DestinoInicial varchar(50),
 UltimoAnioDepreciacion int,
 EstadoActual int

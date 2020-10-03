@@ -12,7 +12,7 @@ namespace ASGARDAPI.Clases
         public string fechacadena { get; set; }
         public string Desripcion { get; set; }
         public string Clasificacion { get; set; }
-
+        public int solicitud { get; set; }
         public string Marca { get; set; }
       
     }
