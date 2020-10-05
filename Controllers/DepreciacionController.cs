@@ -414,8 +414,8 @@ namespace ASGARDAPI.Controllers
                         transaccion.Valor = oUltimaTransaccion.Valor;
                         transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
                         double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; 
-                    transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado,3);
-                    //transaccion.DepreciacionAcumulada = valorAcumulado;
+                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado,3);
+                        //transaccion.DepreciacionAcumulada = valorAcumulado;
                         double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
                         double rounded = Math.Round(valor,3);
                         transaccion.ValorActual = rounded;
@@ -489,6 +489,7 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+       
 
     }
 }
