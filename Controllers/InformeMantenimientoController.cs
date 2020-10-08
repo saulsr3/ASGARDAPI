@@ -112,9 +112,9 @@ namespace ASGARDAPI.Controllers
             {
                 if (buscador == "")
                 {
-                    listarInformeMantenimiento = (from informemante in bd.InformeMantenimiento
-                                                  join tecnico in bd.Tecnicos
-                                           on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                    listarInformeMantenimiento = (from tecnico in bd.Tecnicos
+                                                  join informemante in bd.InformeMantenimiento
+                                                  on tecnico.IdTecnico equals informemante.IdTecnico
                                                   join bienmante in bd.BienMantenimiento
                                                   on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                   join bienes in bd.ActivoFijo
@@ -139,9 +139,9 @@ namespace ASGARDAPI.Controllers
                 }
                 else
                 {
-                    listarInformeMantenimiento = (from informemante in bd.InformeMantenimiento
-                                                  join tecnico in bd.Tecnicos
-                                           on informemante.IdInformeMantenimiento equals tecnico.IdTecnico
+                    listarInformeMantenimiento = (from tecnico in bd.Tecnicos
+                                                  join informemante in bd.InformeMantenimiento
+                                                  on tecnico.IdTecnico equals informemante.IdTecnico
                                                   join bienmante in bd.BienMantenimiento
                                                   on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                   join bienes in bd.ActivoFijo
