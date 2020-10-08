@@ -368,31 +368,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        //Metodo para notificar que no hay mantenimientos en un activo (historial de mantenimiento) () creo no será necesario(no lo uso)
-        [HttpGet]
-        [Route("api/InformeMantenimiento/noHayHistorial/{idbien}")]
-        public int noHayHistorial(int idbien)
-        {
-            int res = 0;
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-
-                    //InformeMantenimiento oInforme = bd.InformeMantenimiento.Where(p => p.IdInformeMantenimiento == idActivo).First();
-                    //BienMantenimiento oBien = bd.BienMantenimiento.Where(p => p.IdMantenimiento == oInforme.IdMantenimiento).First();
-                   // ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBien.IdBien).First();
-
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
-                    res = 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                res = 0;
-            }
-            return res;
-        }
+       
 
         //LISTAR INFORMES (HISTORIAL)
         [HttpGet]
