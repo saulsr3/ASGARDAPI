@@ -194,6 +194,7 @@ namespace ASGARDAPI.Controllers
                         oActivoAF2.prima = 0;
                         oActivoAF2.interes = 0;
                         oActivoAF2.cuotaasignada = 0;
+
                     }
                     
                     foreach (var res in laf)
@@ -213,17 +214,23 @@ namespace ASGARDAPI.Controllers
                             oActivoFijo.IdMarca = null;
                         }
 
-                        oActivoFijo.IdClasificacion = oActivoAF2.idclasificacion;
+                      oActivoFijo.IdClasificacion = oActivoAF2.idclasificacion;
+                        
                         if (oActivoAF2.tipoadquicicion == 3)
                         {
-                            oActivoFijo.IdDonante = oActivoAF2.idproveedor;
-                            oActivoFijo.IdProveedor = null;
+                           
+                                oActivoFijo.IdDonante = oActivoAF2.idproveedor;
+                                oActivoFijo.IdProveedor = null;
+                                   
+                            
                         }
                         else
                         {
-                            oActivoFijo.IdProveedor = oActivoAF2.idproveedor;
-                            oActivoFijo.IdDonante = null;
-
+                           
+                                oActivoFijo.IdProveedor = oActivoAF2.idproveedor;
+                                oActivoFijo.IdDonante = null;
+                            
+                        
                         }
                         oActivoFijo.PlazoPago = oActivoAF2.plazopago;
                         oActivoFijo.Prima = oActivoAF2.prima;

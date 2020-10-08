@@ -61,7 +61,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3 && activo.EstaAsignado ==1
+                                            where activo.EstadoActual == 1 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
