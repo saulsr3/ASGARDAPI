@@ -253,7 +253,7 @@ namespace ASGARDAPI.Controllers
 
         }
      
-        //Metodo para no permitir elimiar una clasificacion de activo cuando ya hay activos con esa clasificación
+        //Metodo para no permitir eliminar una clasificacion de activo cuando ya hay activos con esa clasificación
         [HttpGet]
         [Route("api/Clasificacion/validarActivo/{idclasificacion}")]
         public int validarActivo(int idclasificacion)
