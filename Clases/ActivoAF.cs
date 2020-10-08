@@ -27,5 +27,7 @@ namespace ASGARDAPI.Clases
         public int cantidad { get; set; }
         //////////////////////////////////////////
         public string Codigo { get; set; }
+        // Nueva variable
+        public string tipoestado { get; set; }
     }
 }

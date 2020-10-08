@@ -199,7 +199,8 @@ EstaAsignado int,
 EnSolicitud int,
 DestinoInicial varchar(50),
 UltimoAnioDepreciacion int,
-EstadoActual int
+EstadoActual int,
+TipoActivo int
 )
 go
 use BDAcaassAF

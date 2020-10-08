@@ -45,7 +45,21 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
-      
+        [HttpGet]
+        [Route("api/ActivoFIjo/RecuperarVidaUtil/{idbien}")]
+        public AsignacionAF RecuperarVidaUtil(int idbien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                AsignacionAF oVidaUtil = new AsignacionAF();
+                ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                Clasificacion oClas = bd.Clasificacion.Where(p => p.IdClasificacion == oactivo.IdClasificacion).First();
+                Categorias oCategoria  = bd.Categorias.Where(p => p.IdCategoria == oClas.IdCategoria).First();
+                oVidaUtil.vidaUtil =(int) oCategoria.VidaUtil;
+                return oVidaUtil;
+            }
+        }
+
 
         [HttpGet]
         [Route("api/ActivoFijo/listarEmpleadosCombo")]
@@ -744,7 +758,7 @@ namespace ASGARDAPI.Controllers
                 {
                     bien.estadoingreso = "Usado mal estado";
                 }
-
+              
                 bien.valoradquicicion = oActivo.ValorAdquicicion;
                 bien.plazopago = oActivo.PlazoPago;
                 bien.prima = oActivo.Prima;

@@ -39,6 +39,7 @@ namespace ASGARDAPI.Models
         public string DestinoInicial { get; set; }
         public int? UltimoAnioDepreciacion { get; set; }
         public int? EstadoActual { get; set; }
+        public int? TipoActivo { get; set; }
 
         public Clasificacion IdClasificacionNavigation { get; set; }
         public Donantes IdDonanteNavigation { get; set; }
