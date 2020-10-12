@@ -276,9 +276,9 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
-        //cambia el estado una vez que el bien se le realizó el informe
+        //cambia el estado una vez que el bien se denego 
         [HttpGet]
-        [Route("api/InformeMantenimiento/cambiarEstadoDenegado/{idBien}")]
+        [Route("api/SolicitudMantenimiento/cambiarEstadoDenegado/{idBien}")]
         public int cambiarEstadoDenegado(int idBien)
         {
             int respuesta = 0;
@@ -289,7 +289,7 @@ namespace ASGARDAPI.Controllers
                 {
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).Last();
                     BienMantenimiento obienmantenimiento = bd.BienMantenimiento.Where(p => p.IdBien == idBien).Last();
-                  //  obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
+                    obienmantenimiento.Estado = 5; //cambiamos el estado a 2 para que ya no liste en bienes en mantenimeitno// ELEMENTO 3 SIRVE
                     oActivo.EstadoActual = 1;
                     bd.SaveChanges();
                     respuesta = 1;
