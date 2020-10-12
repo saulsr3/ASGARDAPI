@@ -76,6 +76,7 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.Desripcion = oActivoAF.descripcion;
                         oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
                         oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                        oActivoFijo.VidaUtil = oActivoAF.vidautil;
                         if (oActivoAF.tipoadquicicion == 3)
                         {
                             oActivoFijo.IdDonante = oActivoAF.idproveedor;

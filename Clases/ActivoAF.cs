@@ -25,6 +25,7 @@ namespace ASGARDAPI.Clases
         public double valorresidual { get; set; }
         public string foto { get; set; }
         public int cantidad { get; set; }
+        public int vidautil { get; set; }
         //////////////////////////////////////////
         public string Codigo { get; set; }
         // Nueva variable

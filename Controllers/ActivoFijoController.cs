@@ -284,7 +284,7 @@ namespace ASGARDAPI.Controllers
             {
 
                 IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
-                                                      where clasificacion.Dhabilitado == 1 & clasificacion.IdClasificacion==1
+                                                      where clasificacion.Dhabilitado == 1 & clasificacion.IdCategoria==1
                                                       select new ClasificacionAF
                                                       {
                                                           idclasificacion = clasificacion.IdClasificacion,
