@@ -28,6 +28,6 @@ namespace ASGARDAPI.Clases
         //////////////////////////////////////////
         public string Codigo { get; set; }
         // Nueva variable
-        public string tipoestado { get; set; }
+        public int tipoactivo { get; set; }
     }
 }

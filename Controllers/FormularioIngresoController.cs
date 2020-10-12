@@ -63,25 +63,19 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    for (int i = 0; i < oActivoAF.cantidad; i++)
+
+                    //If para clasificar el tipo de activo
+                    if (oActivoAF.tipoactivo == 1)
                     {
                         ActivoFijo oActivoFijo = new ActivoFijo();
                         //Datos para la tabla activo fijo
                         oActivoFijo.IdBien = oActivoAF.idbien;
+                        oActivoFijo.TipoActivo = oActivoAF.tipoactivo;
                         FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
                         oActivoFijo.NoFormulario = oFormulario.NoFormulario;
                         oActivoFijo.Desripcion = oActivoAF.descripcion;
-                        oActivoFijo.Modelo = oActivoAF.modelo;
                         oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
-                        oActivoFijo.Color = oActivoAF.color;
                         oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
-                        if (oActivoAF.idmarca != 0)
-                        {
-                            oActivoFijo.IdMarca = oActivoAF.idmarca;
-                        }
-                        else {
-                            oActivoFijo.IdMarca = null;
-                        }
                         if (oActivoAF.tipoadquicicion == 3)
                         {
                             oActivoFijo.IdDonante = oActivoAF.idproveedor;
@@ -97,18 +91,19 @@ namespace ASGARDAPI.Controllers
                                 oActivoFijo.Intereses = oActivoAF.interes;
                             }
                         }
+
                         oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
                         oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
                         oActivoFijo.Foto = oActivoAF.foto;
                         oActivoFijo.ValorResidual = oActivoAF.valorresidual;
-                        //Linea de prueba en rama solicitud
+
                         oActivoFijo.EnSolicitud = 0;
                         oActivoFijo.EstaAsignado = 0;
                         oActivoFijo.EstadoActual = 1;
-                        
-                        
+                        //Guardamos en la tabla activo fijo
                         bd.ActivoFijo.Add(oActivoFijo);
                         bd.SaveChanges();
+
                         //Transaccion a tarjeta
                         TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
                         ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
@@ -122,7 +117,80 @@ namespace ASGARDAPI.Controllers
                         transaccion.ValorMejora = 0.00;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
+
+
+
                     }
+                    if(oActivoAF.tipoactivo == 2)
+                    {
+
+                        for (int i = 0; i < oActivoAF.cantidad; i++)
+                        {
+                            ActivoFijo oActivoFijo = new ActivoFijo();
+                            //Datos para la tabla activo fijo
+                            oActivoFijo.IdBien = oActivoAF.idbien;
+                            oActivoFijo.TipoActivo = oActivoAF.tipoactivo;
+                            FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
+                            oActivoFijo.NoFormulario = oFormulario.NoFormulario;
+                            oActivoFijo.Desripcion = oActivoAF.descripcion;
+                            oActivoFijo.Modelo = oActivoAF.modelo;
+                            oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
+                            oActivoFijo.Color = oActivoAF.color;
+                            oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                            if (oActivoAF.idmarca != 0)
+                            {
+                                oActivoFijo.IdMarca = oActivoAF.idmarca;
+                            }
+                            else
+                            {
+                                oActivoFijo.IdMarca = null;
+                            }
+                            if (oActivoAF.tipoadquicicion == 3)
+                            {
+                                oActivoFijo.IdDonante = oActivoAF.idproveedor;
+                            }
+                            else
+                            {
+                                oActivoFijo.IdProveedor = oActivoAF.idproveedor;
+                                if (oActivoAF.tipoadquicicion == 2)
+                                {
+                                    oActivoFijo.PlazoPago = oActivoAF.plazopago;
+                                    oActivoFijo.Prima = oActivoAF.prima;
+                                    oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
+                                    oActivoFijo.Intereses = oActivoAF.interes;
+                                }
+                            }
+                            oActivoFijo.EstadoIngreso = oActivoAF.estadoingreso;
+                            oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
+                            oActivoFijo.Foto = oActivoAF.foto;
+                            oActivoFijo.ValorResidual = oActivoAF.valorresidual;
+                            //Linea de prueba en rama solicitud
+                            oActivoFijo.EnSolicitud = 0;
+                            oActivoFijo.EstaAsignado = 0;
+                            oActivoFijo.EstadoActual = 1;
+
+
+                            bd.ActivoFijo.Add(oActivoFijo);
+                            bd.SaveChanges();
+                            //Transaccion a tarjeta
+                            TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
+                            ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                            transaccion.IdBien = oActivoFijoTransaccion.IdBien;
+                            transaccion.Fecha = oFormulario.FechaIngreso;
+                            transaccion.Concepto = "Compra";
+                            transaccion.Valor = oActivoFijoTransaccion.ValorAdquicicion;
+                            transaccion.DepreciacionAnual = 0.00;
+                            transaccion.DepreciacionAcumulada = 0.00;
+                            transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
+                            transaccion.ValorMejora = 0.00;
+                            bd.TarjetaDepreciacion.Add(transaccion);
+                            bd.SaveChanges();
+                        }
+
+
+
+                    }
+
                     rpta = 1;
                 }
             }

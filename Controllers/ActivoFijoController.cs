@@ -275,6 +275,47 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Listar clasificación sólo de categoría instalaciones
+        [HttpGet]
+        [Route("api/ActivoFijo/listarClasificacionComboEdi")]
+        public IEnumerable<ClasificacionAF> listarClasificacionComboEdi()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
+                                                      where clasificacion.Dhabilitado == 1 & clasificacion.IdClasificacion==1
+                                                      select new ClasificacionAF
+                                                      {
+                                                          idclasificacion = clasificacion.IdClasificacion,
+                                                          clasificacion = clasificacion.Clasificacion1,
+
+                                                      }).ToList();
+                return lista;
+            }
+        }
+
+        //Listar combo sucursal
+        [HttpGet]
+        [Route("api/ActivoFijo/comboSucursal")]
+        public IEnumerable<SucursalAF> comboSucursal()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SucursalAF> lista = (from sucursal in bd.Sucursal
+                                                 where sucursal.Dhabilitado == 1
+                                                 orderby sucursal.Ubicacion
+                                                 select new SucursalAF
+                                                 {
+                                                     IdSucursal = sucursal.IdSucursal,
+                                                     Nombre = sucursal.Nombre,
+                                                     Ubicacion = sucursal.Ubicacion
+
+                                                 }).ToList();
+                return lista;
+            }
+        }
+
         [HttpGet]
         [Route("api/ActivoFijo/listarProveedoresCombo")]
         public IEnumerable<ComboAnidadoAF> listarProveedoresCombo()
