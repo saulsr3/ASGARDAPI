@@ -75,6 +75,7 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.NoFormulario = oFormulario.NoFormulario;
                         oActivoFijo.Desripcion = oActivoAF.descripcion;
                         oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
+                        
                         oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
                         oActivoFijo.VidaUtil = oActivoAF.vidautil;
                         if (oActivoAF.tipoadquicicion == 3)
@@ -97,13 +98,46 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
                         oActivoFijo.Foto = oActivoAF.foto;
                         oActivoFijo.ValorResidual = oActivoAF.valorresidual;
-
                         oActivoFijo.EnSolicitud = 0;
-                        oActivoFijo.EstaAsignado = 0;
                         oActivoFijo.EstadoActual = 1;
-                        //Guardamos en la tabla activo fijo
+                        oActivoFijo.EstaAsignado = 0;
                         bd.ActivoFijo.Add(oActivoFijo);
                         bd.SaveChanges();
+                        //Generar codigo
+                        //objeto de la clase codigo que contiene los elementos
+                        CodigoAF oCodigo = new CodigoAF();
+                        //Extraer los datos padres de la base
+                        ActivoFijo oActivo = bd.ActivoFijo.Last();
+                        Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oActivoAF.idsucursal).First();
+                        Clasificacion oclasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                        //LLenado de objeto
+                        oCodigo.CorrelativoSucursal = osucursal.Correlativo;
+                        oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
+                        //selccionar cuantos hay de esa clasificacion
+                        int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado == 1 && p.IdClasificacion == oclasificacion.IdClasificacion).Count();
+
+                        //comparar para la concatenacion correspondiente 
+                        if (oActivoC >= 0 && oActivoC <= 9)
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = "00" + oActivoC.ToString();
+                        }
+                        else if (oActivoC >= 10 && oActivoC <= 99)
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = "0" + oActivoC.ToString();
+                        }
+                        else
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = oActivoC.ToString();
+                        }
+                        oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
+                        //Guardamos en la tabla activo fijo
+                        oActivo.DestinoInicial = osucursal.Nombre;
+                        oActivo.EstaAsignado = 1;
+                        bd.SaveChanges();
+
 
                         //Transaccion a tarjeta
                         TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
@@ -118,8 +152,7 @@ namespace ASGARDAPI.Controllers
                         transaccion.ValorMejora = 0.00;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
-
-
+                        //Generar codigo
 
                     }
                     if(oActivoAF.tipoactivo == 2)
