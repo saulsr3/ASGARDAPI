@@ -47,9 +47,9 @@ namespace ASGARDAPI.Controllers
                                                                 descripcion = cuadro.Desripcion,
                                                                 valoradquisicion = (double)cuadro.ValorAdquicicion,
                                                                 fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                                valoractual =  (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
-                                                                depreciacion = (double)bar.OrderByDescending(x=>x.IdTarjeta).First().DepreciacionAnual,
-                                                                depreciacionacumulada = (double)bar.Sum(x=>x.DepreciacionAnual),
+                                                                valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual),2),
+                                                                depreciacion =Math.Round(((double)bar.OrderByDescending(x=>x.IdTarjeta).First().DepreciacionAnual),2),
+                                                                depreciacionacumulada = Math.Round(((double)bar.Sum(x=>x.DepreciacionAnual)),2),
                                                                 ubicacion = area.Nombre,
                                                                 responsable = resposable.Nombres + " " + resposable.Apellidos
 

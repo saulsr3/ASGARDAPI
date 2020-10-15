@@ -11,10 +11,10 @@ namespace ASGARDAPI.Clases
         public int idBien { get; set; }
         public string fecha { get; set; }
         public string concepto { get; set; }
-        public string montoTransaccion { get; set; }
-        public string depreciacionAnual { get; set; }
-        public string depreciacionAcumulada { get; set; }
-        public string valorActual { get; set; }
-        public string valorMejora { get; set; }
+        public double montoTransaccion { get; set; }
+        public double depreciacionAnual { get; set; }
+        public double depreciacionAcumulada { get; set; }
+        public double valorActual { get; set; }
+        public double valorMejora { get; set; }
     }
 }

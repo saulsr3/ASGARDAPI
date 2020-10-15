@@ -382,11 +382,11 @@ namespace ASGARDAPI.Controllers
                                                                 idBien = (int)tarjeta.IdBien,
                                                                 fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
                                                                 concepto = tarjeta.Concepto,
-                                                                 montoTransaccion = tarjeta.Valor.ToString(),
-                                                               depreciacionAnual=tarjeta.DepreciacionAnual.ToString(),       
-                                                                depreciacionAcumulada = tarjeta.DepreciacionAcumulada.ToString(),
-                                                                 valorActual=tarjeta.ValorActual.ToString(),
-                                                                valorMejora=tarjeta.ValorMejora.ToString()
+                                                                 montoTransaccion = Math.Round((double)tarjeta.Valor,2),
+                                                               depreciacionAnual= Math.Round((double)tarjeta.DepreciacionAnual,2),       
+                                                                depreciacionAcumulada = Math.Round((double)tarjeta.DepreciacionAcumulada,2),
+                                                                valorActual = Math.Round((double)tarjeta.ValorActual,2),
+                                                                valorMejora = Math.Round((double)tarjeta.ValorMejora,2)
                                                                          }).ToList();
                 return ListaTransacciones;
             }
