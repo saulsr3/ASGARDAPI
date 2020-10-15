@@ -224,6 +224,97 @@ namespace ASGARDAPI.Controllers
 
 
                     }
+                    if(oActivoAF.tipoactivo == 3)
+                    {
+                        ActivoFijo oActivoFijo = new ActivoFijo();
+                        //Datos para la tabla activo fijo
+                        oActivoFijo.IdBien = oActivoAF.idbien;
+                        oActivoFijo.TipoActivo = oActivoAF.tipoactivo;
+                        FormularioIngreso oFormulario = bd.FormularioIngreso.Last();
+                        oActivoFijo.NoFormulario = oFormulario.NoFormulario;
+                        oActivoFijo.Desripcion = oActivoAF.descripcion;
+                        oActivoFijo.TipoAdquicicion = oActivoAF.tipoadquicicion;
+
+                        oActivoFijo.IdClasificacion = oActivoAF.idclasificacion;
+                        oActivoFijo.VidaUtil = oActivoAF.vidautil;
+                        if (oActivoAF.tipoadquicicion == 3)
+                        {
+                            oActivoFijo.IdDonante = oActivoAF.idproveedor;
+                        }
+                        else
+                        {
+                            oActivoFijo.IdProveedor = oActivoAF.idproveedor;
+                            if (oActivoAF.tipoadquicicion == 2)
+                            {
+                                oActivoFijo.PlazoPago = oActivoAF.plazopago;
+                                oActivoFijo.Prima = oActivoAF.prima;
+                                oActivoFijo.CuotaAsignanda = oActivoAF.cuotaasignada;
+                                oActivoFijo.Intereses = oActivoAF.interes;
+                            }
+                        }
+
+                        oActivoFijo.ValorAdquicicion = oActivoAF.valoradquicicion;
+                        oActivoFijo.Foto = oActivoAF.foto;
+                        oActivoFijo.ValorResidual = oActivoAF.valorresidual;
+                        oActivoFijo.EnSolicitud = 0;
+                        oActivoFijo.EstadoActual = 1;
+                        oActivoFijo.EstaAsignado = 0;
+                        bd.ActivoFijo.Add(oActivoFijo);
+                        bd.SaveChanges();
+                        //Generar codigo
+                        //objeto de la clase codigo que contiene los elementos
+                        CodigoAF oCodigo = new CodigoAF();
+                        //Extraer los datos padres de la base
+                        ActivoFijo oActivo = bd.ActivoFijo.Last();
+                        AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oActivoAF.idarea).First();
+                        Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oarea.IdSucursal).First();
+                        Clasificacion oclasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                        
+
+                        //LLenado de objeto
+                        oCodigo.CorrelativoSucursal = osucursal.Correlativo;
+                        oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
+                        oCodigo.CorrelativoArea = oarea.Correlativo;
+                        //selccionar cuantos hay de esa clasificacion
+                        int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado == 1 && p.IdClasificacion == oclasificacion.IdClasificacion).Count();
+
+                        //comparar para la concatenacion correspondiente 
+                        if (oActivoC >= 0 && oActivoC <= 9)
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = "00" + oActivoC.ToString();
+                        }
+                        else if (oActivoC >= 10 && oActivoC <= 99)
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = "0" + oActivoC.ToString();
+                        }
+                        else
+                        {
+                            oActivoC = oActivoC + 1;
+                            oCodigo.Correlativo = oActivoC.ToString();
+                        }
+                        oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-"  + oCodigo.CorrelativoArea + "-"  + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
+                        //Guardamos en la tabla activo fijo
+                        oActivo.DestinoInicial = osucursal.Nombre;
+                        oActivo.EstaAsignado = 1;
+                        bd.SaveChanges();
+
+                        //Transaccion a tarjeta
+                        TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
+                        ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                        transaccion.IdBien = oActivoFijoTransaccion.IdBien;
+                        transaccion.Fecha = oFormulario.FechaIngreso;
+                        transaccion.Concepto = "Compra";
+                        transaccion.Valor = oActivoFijoTransaccion.ValorAdquicicion;
+                        transaccion.DepreciacionAnual = 0.00;
+                        transaccion.DepreciacionAcumulada = 0.00;
+                        transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
+                        transaccion.ValorMejora = 0.00;
+                        bd.TarjetaDepreciacion.Add(transaccion);
+                        bd.SaveChanges();
+
+                    }
 
                     rpta = 1;
                 }

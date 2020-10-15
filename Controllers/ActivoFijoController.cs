@@ -295,6 +295,26 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Listar clasificación sólo de categoría intangibles
+        [HttpGet]
+        [Route("api/ActivoFijo/listarClasificacionComboIntan")]
+        public IEnumerable<ClasificacionAF> listarClasificacionComboIntan()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
+                                                      where clasificacion.Dhabilitado == 1 & clasificacion.IdCategoria == 4
+                                                      select new ClasificacionAF
+                                                      {
+                                                          idclasificacion = clasificacion.IdClasificacion,
+                                                          clasificacion = clasificacion.Clasificacion1,
+
+                                                      }).ToList();
+                return lista;
+            }
+        }
+
         //Listar combo sucursal
         [HttpGet]
         [Route("api/ActivoFijo/comboSucursal")]
@@ -313,6 +333,34 @@ namespace ASGARDAPI.Controllers
 
                                                  }).ToList();
                 return lista;
+            }
+        }
+
+        //Listar área de negocio
+        [HttpGet]
+        [Route("api/ActivoFijo/listarAreaCombo")]
+        public IEnumerable<AreasDeNegocioAF> listarAreaCombo()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<AreasDeNegocioAF> listarAreas = (from sucursal in bd.Sucursal
+                                                             join area in bd.AreaDeNegocio
+                                                             on sucursal.IdSucursal equals area.IdSucursal
+                                                             where area.Dhabilitado == 1
+                                                             select new AreasDeNegocioAF
+                                                             {
+                                                                 IdAreaNegocio = area.IdAreaNegocio,
+                                                                 Nombre = area.Nombre,
+                                                                 IdSucursal = sucursal.IdSucursal,
+                                                                 nombreSucursal = sucursal.Nombre,
+                                                                 ubicacion = sucursal.Ubicacion
+
+
+                                                             }).ToList();
+
+
+                return listarAreas;
+
             }
         }
 

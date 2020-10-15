@@ -31,5 +31,6 @@ namespace ASGARDAPI.Clases
         // Nueva variable
         public int tipoactivo { get; set; }
         public int idsucursal { get; set; }
+        public int idarea { get; set; }
     }
 }
