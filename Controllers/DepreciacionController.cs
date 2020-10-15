@@ -301,7 +301,7 @@ namespace ASGARDAPI.Controllers
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
-                odatos.valorActual = oTarjeta.ValorActual.ToString();
+                odatos.valorActual = (float)oTarjeta.ValorActual;
                 double valor=0.00;
                 valor =(double) (oTarjeta.Valor / oactivo.VidaUtil);
                 

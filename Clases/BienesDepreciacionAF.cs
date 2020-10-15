@@ -16,7 +16,7 @@ namespace ASGARDAPI.Clases
         public string valorAdquicicon { get; set; }
         public double valorDepreciacion { get; set; }
         public float mejoras { get; set; }
-        public string valorActual { get; set; }
+        public float valorActual { get; set; }
         public int vidaUtil { get; set; }
 
     }
