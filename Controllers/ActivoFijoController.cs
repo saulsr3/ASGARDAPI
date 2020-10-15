@@ -427,7 +427,7 @@ namespace ASGARDAPI.Controllers
 
         //Medotos para modulo de control mayra
         
-
+        //Activos asignados de bienes muebles
         [HttpGet]
         [Route("api/ActivoFIjo/listarActivosAsignados")]
         public List<ActivoFijoAF> listarActivosAsignados()
@@ -456,6 +456,64 @@ namespace ASGARDAPI.Controllers
                                                 Clasificacion = clasif.Clasificacion1,
                                                 AreaDeNegocio = area.Nombre,
                                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                            }).ToList();
+                return lista;
+
+            }
+        }
+
+        //Activos para edificios e instalaciones
+        [HttpGet]
+        [Route("api/ActivoFIjo/listarActivosEdificios")]
+        public List<ActivoFijoAF> listarActivosEdificios()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join clasif in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                            where activo.EstaAsignado==1 && activo.TipoActivo==1 && activo.EstadoActual == 1
+                                            orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                Clasificacion = clasif.Clasificacion1,
+                                            }).ToList();
+                return lista;
+
+            }
+        }
+
+        //Activos para edificios e instalaciones
+        [HttpGet]
+        [Route("api/ActivoFIjo/listarActivosIntangibles")]
+        public List<ActivoFijoAF> listarActivosIntangibles()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join clasif in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                          // Acá iría el área pero como está referenciada a empleado
+                                           
+                                            where activo.EstaAsignado == 1 && activo.TipoActivo == 3 && activo.EstadoActual==1
+                                            orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                Clasificacion = clasif.Clasificacion1,
                                             }).ToList();
                 return lista;
 
