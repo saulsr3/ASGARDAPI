@@ -766,9 +766,9 @@ namespace ASGARDAPI.Controllers
         //Buscadores no asignados
         [HttpGet]
         [Route("api/ActivoFijo/buscarActivoNoAsig/{buscador?}")]
-        public IEnumerable<RegistroAF> buscarActivo(string buscador = "")
+        public IEnumerable<NoAsignadosAF> buscarActivo(string buscador = "")
         {
-            List<RegistroAF> listaActivo;
+            List<NoAsignadosAF> listaActivo;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 if (buscador == "")
@@ -780,11 +780,12 @@ namespace ASGARDAPI.Controllers
                                    on activo.IdClasificacion equals clasif.IdClasificacion
                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 0
 
-                                   select new RegistroAF
+                                   select new NoAsignadosAF
                                    {
                                        IdBien = activo.IdBien,
+                                       NoFormulario=noFormulario.NoFormulario,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                       Descripcion = activo.Desripcion,
+                                       Desripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
                                    }).ToList();
 
@@ -802,14 +803,16 @@ namespace ASGARDAPI.Controllers
                                      && ((activo.IdBien).ToString().Contains(buscador)
                                       || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
                                       || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                       || (noFormulario.NoFormulario).ToString().Contains(buscador.ToLower())
                                       || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
                                       )
 
-                                   select new RegistroAF
+                                   select new NoAsignadosAF
                                    {
                                        IdBien = activo.IdBien,
+                                       NoFormulario = noFormulario.NoFormulario,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                       Descripcion = activo.Desripcion,
+                                       Desripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
                                    }).ToList();
 
