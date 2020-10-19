@@ -302,10 +302,31 @@ namespace ASGARDAPI.Controllers
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
                 odatos.valorActual = (float)oTarjeta.ValorActual;
-                double valor=0.00;
-                valor =(double) (oTarjeta.Valor / oactivo.VidaUtil);
-                
-                odatos.valorDepreciacion = valor;
+                if (oTarjeta.Concepto == "Compra")
+                {
+                    double valor = 0.00;
+                    valor = (double)(oTarjeta.Valor / oactivo.VidaUtil);
+                    odatos.valorDepreciacion = valor;
+                } else if (oTarjeta.Concepto == "Depreciación") {
+                    double valor = 0.00;
+                    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien==idBien && p.Concepto == "Depreciación").Count();
+                    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
+                    valor = (double)(oTarjeta.ValorActual / aniosRestantes);
+                    odatos.valorDepreciacion = valor;
+                }
+                else if (oTarjeta.Concepto == "Revalorización")
+                {
+                    double valor = 0.00;
+                    TarjetaDepreciacion oValorAcumulado = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Last();
+                    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Count();
+                    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
+                    valor = (double)(oTarjeta.Valor - oValorAcumulado.DepreciacionAcumulada) / aniosRestantes;
+                    odatos.valorDepreciacion = valor;
+                }
+             
+
+
+
                 odatos.vidaUtil =(int) oactivo.VidaUtil;
                 return odatos;
             }
@@ -406,17 +427,26 @@ namespace ASGARDAPI.Controllers
                       
                         TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
                         TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien).Last();
-                        
-                        //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
-                        transaccion.IdBien = oActivoAF.idBien;
+                   
+                    //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                    transaccion.IdBien = oActivoAF.idBien;
                         transaccion.Fecha =  oActivoAF.fecha;
                         transaccion.Concepto = "Depreciación";
                         transaccion.Valor = oUltimaTransaccion.Valor;
                         transaccion.DepreciacionAnual = oActivoAF.valorDepreciacion;
-                        double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion; 
-                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado,3);
-                        //transaccion.DepreciacionAcumulada = valorAcumulado;
-                        double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
+                    if (oUltimaTransaccion.Concepto == "Compra"|| oUltimaTransaccion.Concepto == "Depreciación") {
+                        double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + oActivoAF.valorDepreciacion;
+                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
+
+                    }else if (oUltimaTransaccion.Concepto == "Revalorización")
+                        {
+                        TarjetaDepreciacion oDepreciacionAcumulada = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien && p.Concepto == "Depreciación").Last();
+                        double valorAcumulado = (double)oDepreciacionAcumulada.DepreciacionAcumulada + oActivoAF.valorDepreciacion;
+                        transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
+                    }
+                  
+                    //transaccion.DepreciacionAcumulada = valorAcumulado;
+                    double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
                         double rounded = Math.Round(valor,3);
                         transaccion.ValorActual = rounded;
                         transaccion.ValorMejora = 0.00;
