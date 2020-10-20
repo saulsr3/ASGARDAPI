@@ -56,12 +56,15 @@ namespace ASGARDAPI.Controllers
             {
 
                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<RegistroAF> listaActivos = (from activo in bd.ActivoFijo
+                IEnumerable<RegistroAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
+                                                        group tarjeta by tarjeta.IdBien into bar
+                                                        join activo in bd.ActivoFijo
+                                                       on bar.FirstOrDefault().IdBien equals activo.IdBien
                                                             join noFormulario in bd.FormularioIngreso
                                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                                             join clasif in bd.Clasificacion
                                                             on activo.IdClasificacion equals clasif.IdClasificacion
-                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&& activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                                            where (activo.EstadoActual !=0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&& activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                             orderby activo.CorrelativoBien
                                                             select new RegistroAF
                                                             {
@@ -82,12 +85,15 @@ namespace ASGARDAPI.Controllers
             {
 
                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<RegistroAF> listaActivos = (from activo in bd.ActivoFijo
+                IEnumerable<RegistroAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
+                                                        group tarjeta by tarjeta.IdBien into bar
+                                                        join activo in bd.ActivoFijo
+                                                       on bar.FirstOrDefault().IdBien equals activo.IdBien
                                                         join noFormulario in bd.FormularioIngreso
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
-                                                        where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                                        where (activo.EstadoActual !=0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
                                                         {

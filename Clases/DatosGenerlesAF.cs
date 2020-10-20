@@ -12,6 +12,7 @@ namespace ASGARDAPI.Clases
         public string codigo { get; set; }
         public string fecha { get; set; }
         public string valorAquisicion { get; set; }
+        public string Clasificacion { get; set; }
         public string Respondable { get; set; }
         public string Ubicacion { get; set; }
         public string valorActual { get; set; }

@@ -179,6 +179,57 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("api/Configuracion/DatosGeneralesEdificiosIntangibles/{id}")]
+        public DatosGenerlesAF DatosGeneralesEdificiosIntangibles(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DatosGenerlesAF oDatosF = new DatosGenerlesAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                FormularioIngreso oFOrmulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                //Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                //Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oDatosF.ProvDon = oProveedor.Nombre;
+                    oDatosF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oDatosF.ProvDon = oDonante.Nombre;
+                    oDatosF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oDatosF.ProvDon = "";
+                }
+
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivo.IdBien).Last();
+
+                oDatosF.idBien = (int)oActivo.IdBien;
+                oDatosF.descripcion = oActivo.Desripcion;
+                oDatosF.fecha = oFOrmulario.FechaIngreso == null ? " " : ((DateTime)oFOrmulario.FechaIngreso).ToString("dd-MM-yyyy");
+                oDatosF.codigo = oActivo.CorrelativoBien;
+                oDatosF.Clasificacion = oClasificacion.Clasificacion1;
+                oDatosF.valorAquisicion = oActivo.ValorAdquicicion.ToString();
+                //oDatosF.Respondable = oEmpleado.Nombres + " " + oEmpleado.Apellidos;
+                //oDatosF.Ubicacion = oArea.Nombre + " - " + oSucursal.Nombre;
+                oDatosF.valorActual = oTarjeta.ValorActual.ToString();
+                //oDatosF.NoSerie = oActivo.NoSerie;
+                oDatosF.VidaUtil = oActivo.VidaUtil.ToString();
+                oDatosF.Observaciones = oFOrmulario.Observaciones;
+
+                oDatosF.foto = oActivo.Foto;
+                return oDatosF;
+            }
+
+        }
 
     }
 }
