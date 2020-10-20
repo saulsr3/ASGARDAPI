@@ -32,8 +32,6 @@ namespace ASGARDAPI.Controllers
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
-                                                          
-                                                  
 
                                                             where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&&(bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual>0)
                                                             select new DepreciacionAF
@@ -47,6 +45,58 @@ namespace ASGARDAPI.Controllers
                                                                 
                                                               
                                                             }).ToList();
+                return listaActivos;
+            }
+        }
+        [HttpGet]
+        [Route("api/Depreciacion/listarActivosEdificiosDepreciacion")]
+        public IEnumerable<RegistroAF> listarActivosEdificiosDepreciacion()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<RegistroAF> listaActivos = (from activo in bd.ActivoFijo
+                                                            join noFormulario in bd.FormularioIngreso
+                                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                                            join clasif in bd.Clasificacion
+                                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&& activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                                            orderby activo.CorrelativoBien
+                                                            select new RegistroAF
+                                                            {
+                                                                IdBien = activo.IdBien,
+                                                                Codigo = activo.CorrelativoBien,
+                                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                Descripcion = activo.Desripcion,
+                                                                Clasificacion = clasif.Clasificacion1,
+                                                            }).ToList();
+                return listaActivos;
+            }
+        }
+        [HttpGet]
+        [Route("api/Depreciacion/listarActivosIntangiblesDepreciacion")]
+        public IEnumerable<RegistroAF> listarActivosIntangiblesDepreciacion()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<RegistroAF> listaActivos = (from activo in bd.ActivoFijo
+                                                        join noFormulario in bd.FormularioIngreso
+                                                        on activo.NoFormulario equals noFormulario.NoFormulario
+                                                        join clasif in bd.Clasificacion
+                                                        on activo.IdClasificacion equals clasif.IdClasificacion
+                                                        where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                                        orderby activo.CorrelativoBien
+                                                        select new RegistroAF
+                                                        {
+                                                            IdBien = activo.IdBien,
+                                                            Codigo = activo.CorrelativoBien,
+                                                            fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                            Descripcion = activo.Desripcion,
+                                                            Clasificacion = clasif.Clasificacion1,
+                                                        }).ToList();
                 return listaActivos;
             }
         }

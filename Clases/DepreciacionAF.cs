@@ -13,5 +13,6 @@ namespace ASGARDAPI.Clases
         public string sucursal { get; set; }
         public string areanegocio { get; set; }
         public string responsable { get; set; }
+        public string clasificacion { get; set; }
     }
 }
