@@ -821,165 +821,445 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-
+        //Para modal de activos asignados
         [HttpGet]
-        [Route("api/ActivoFijo/VerDatosActivoAsig/{id}")]
-        public JsonResult DatosVer(int id)
+        [Route("api/ActivoFijo/DatosGeneralesActivosAsignados/{id}")]
+        public DatosGeneralesActivosAsignadosAF DatosGeneralesActivosAsignados(int id)
         {
+
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                //creamos un nuevo objeto dinamico bien
-                dynamic bien = new Newtonsoft.Json.Linq.JObject();
-                //Extraer los datos padres de la base
+                DatosGeneralesActivosAsignadosAF oDatosAF = new DatosGeneralesActivosAsignadosAF();
                 ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                //Utilizar los datos padres para extraer los datos
-                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
-                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
+                FormularioIngreso oFOrmulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
                 Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
-                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
-                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
-                // Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
-                // si los datos son nulos
+
                 Marcas omarca = (oActivo.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First() : null;
-                string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
-                string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
-                string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";
-                bien.responsable = oempleado.Nombres + " " + oempleado.Apellidos;
-                bien.area = oArea.Nombre;
                 if (omarca == null)
                 {
-                    bien.marca = "";
+                    oDatosAF.marca = "";
                 }
                 else
                 {
-                    bien.marca = omarca.Marca;
+                    oDatosAF.marca = omarca.Marca;
                 }
-                bien.clasificacion = oclasi.Clasificacion1;
-                bien.destino = oArea.Nombre + " " + oSucursal.Nombre;
-                bien.proveedor = oprov;
-                bien.responsable = oemple;
-                bien.donante = odona;
-                bien.fecha = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
 
-                bien.noformulario = oActivo.NoFormulario;
-                bien.Codigo = oActivo.CorrelativoBien;
-                bien.Desripcion = oActivo.Desripcion;
-                bien.Modelo = oActivo.Modelo;
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oDatosAF.ProvDon = oProveedor.Nombre;
+                    oDatosAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oDatosAF.ProvDon = oDonante.Nombre;
+                    oDatosAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oDatosAF.ProvDon = "";
+                }
+
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivo.IdBien).Last();
+
+                oDatosAF.idBien = (int)oActivo.IdBien;
+                oDatosAF.fecha = oFOrmulario.FechaIngreso == null ? " " : ((DateTime)oFOrmulario.FechaIngreso).ToString("dd-MM-yyyy");
+                oDatosAF.codigo = oActivo.CorrelativoBien;
+                oDatosAF.descripcion = oActivo.Desripcion;
+                oDatosAF.valorAquisicion = oActivo.ValorAdquicicion.ToString();
+               
+                oDatosAF.modelo = oActivo.Modelo;
+                //Datos del estado del activo
+                if (oActivo.EstadoIngreso == "1")
+                {
+                    oDatosAF.estadoingreso = "Nuevo";
+                }
+                else if (oActivo.EstadoIngreso == "2")
+                {
+                    oDatosAF.estadoingreso = "Usado";
+                }
+                else
+                {
+                    oDatosAF.estadoingreso = "Usado mal estado";
+                }
+                oDatosAF.color = oActivo.Color;
+                oDatosAF.clasificacion = oclasi.Clasificacion1;
+                oDatosAF.responsable = oEmpleado.Nombres + " " + oEmpleado.Apellidos;
+                oDatosAF.Ubicacion = oArea.Nombre + " - " + oSucursal.Nombre;
+                //Datos para el tipo de adquisición
                 if (oActivo.TipoAdquicicion == 1)
                 {
-                    bien.tipoadquicicion = "Contado";
+                    oDatosAF.tipoadquicicion = "Contado";
                 }
                 else if (oActivo.TipoAdquicicion == 2)
                 {
-                    bien.tipoadquicicion = "Crédito";
+                    oDatosAF.tipoadquicicion = "Crédito";
                 }
                 else
                 {
-                    bien.tipoadquicicion = "Donado";
+                    oDatosAF.tipoadquicicion = "Donado";
                 }
-                bien.Color = oActivo.Color;
-                bien.numserie = oActivo.NoSerie;
-                bien.vidautil = oActivo.VidaUtil;
-                if (oActivo.EstadoIngreso == "1")
+                //Datos del crédito
+                if (oActivo.Prima != null)
                 {
-                    bien.estadoingreso = "Nuevo";
-                }
-                else if (oActivo.EstadoIngreso == "1")
-                {
-                    bien.estadoingreso = "Usado";
+                    oDatosAF.prima = oActivo.Prima.ToString();
                 }
                 else
                 {
-                    bien.estadoingreso = "Usado mal estado";
+                    oDatosAF.prima = "";
                 }
-
-                bien.valoradquicicion = oActivo.ValorAdquicicion;
-                bien.plazopago = oActivo.PlazoPago;
-                bien.prima = oActivo.Prima;
-                bien.cuotaasignada = oActivo.CuotaAsignanda;
-                bien.interes = oActivo.Intereses;
-                bien.valorresidual = oActivo.ValorResidual;
-                bien.foto = oActivo.Foto;
-                bien.destinoinicial = oActivo.DestinoInicial;
-                //para saber si es un donante o un proveedor
-                bien.donaprov = false;
-                return Json(bien);
+                if (oActivo.PlazoPago != null)
+                {
+                    oDatosAF.plazo = oActivo.PlazoPago.ToString();
+                }
+                else
+                {
+                    oDatosAF.plazo = "";
+                }
+                if (oActivo.CuotaAsignanda != null)
+                {
+                    oDatosAF.cuota = oActivo.CuotaAsignanda.ToString();
+                }
+                else
+                {
+                    oDatosAF.cuota = "";
+                }
+                if (oActivo.Intereses != null)
+                {
+                    oDatosAF.interes = oActivo.Intereses.ToString();
+                }
+                else
+                {
+                    oDatosAF.interes = "";
+                }
+                oDatosAF.VidaUtil = oActivo.VidaUtil.ToString();
+                oDatosAF.valorresidual = oActivo.ValorResidual.ToString();
+                oDatosAF.Observaciones = oFOrmulario.Observaciones;
+                oDatosAF.foto = oActivo.Foto;
+                return oDatosAF;
             }
+
         }
+
+        //Para modal de activos no asignados
         [HttpGet]
-        [Route("api/ActivoFijo/VerDatosActivoNoAsig/{id}")]
-        public JsonResult DatosVernoAsig(int id)
+        [Route("api/ActivoFijo/DatosGeneralesActivosNoAsignados/{id}")]
+        public DatosGeneralesActivosNoAsignadosAF DatosGeneralesActivosNoAsignados(int id)
         {
+
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                //creamos un nuevo objeto dinamico bien
-                dynamic bien = new Newtonsoft.Json.Linq.JObject();
-                //Extraer los datos padres de la base
+                DatosGeneralesActivosNoAsignadosAF oDatosAF = new DatosGeneralesActivosNoAsignadosAF();
                 ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                FormularioIngreso oFOrmulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
                 Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
-                //Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
-                // si los datos son nulos
                 Marcas omarca = (oActivo.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First() : null;
-                string oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First().Nombre : "--";
-                string odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First().Nombre : "--";
-                //string oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First().Nombres : "--";   
                 if (omarca == null)
                 {
-                    bien.marca = "";
+                    oDatosAF.marca = "";
                 }
-                else {
-                    bien.marca = omarca.Marca;
+                else
+                {
+                    oDatosAF.marca = omarca.Marca;
                 }
-                bien.clasificacion = oclasi.Clasificacion1;
-                bien.proveedor = oprov;
-               // bien.responsable = oemple;
-                bien.donante = odona;
-                bien.fecha = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("dd-MM-yyyy");
 
-                bien.noformulario = oActivo.NoFormulario;
-                bien.Codigo = oActivo.CorrelativoBien;
-                bien.Desripcion = oActivo.Desripcion;
-                bien.Modelo = oActivo.Modelo;
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oDatosAF.ProvDon = oProveedor.Nombre;
+                    oDatosAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oDatosAF.ProvDon = oDonante.Nombre;
+                    oDatosAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oDatosAF.ProvDon = "";
+                }
+
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivo.IdBien).Last();
+
+                oDatosAF.idBien = (int)oActivo.IdBien;
+                oDatosAF.fecha = oFOrmulario.FechaIngreso == null ? " " : ((DateTime)oFOrmulario.FechaIngreso).ToString("dd-MM-yyyy");
+                oDatosAF.descripcion = oActivo.Desripcion;
+                oDatosAF.valorAquisicion = oActivo.ValorAdquicicion.ToString();
+
+                oDatosAF.modelo = oActivo.Modelo;
+                //Datos del estado del activo
+                if (oActivo.EstadoIngreso == "1")
+                {
+                    oDatosAF.estadoingreso = "Nuevo";
+                }
+                else if (oActivo.EstadoIngreso == "2")
+                {
+                    oDatosAF.estadoingreso = "Usado";
+                }
+                else
+                {
+                    oDatosAF.estadoingreso = "Usado mal estado";
+                }
+                oDatosAF.color = oActivo.Color;
+                oDatosAF.clasificacion = oclasi.Clasificacion1;
+                //Datos para el tipo de adquisición
                 if (oActivo.TipoAdquicicion == 1)
                 {
-                    bien.tipoadquicicion = "Contado";
+                    oDatosAF.tipoadquicicion = "Contado";
                 }
                 else if (oActivo.TipoAdquicicion == 2)
                 {
-                    bien.tipoadquicicion = "Crédito";
+                    oDatosAF.tipoadquicicion = "Crédito";
                 }
                 else
                 {
-                    bien.tipoadquicicion = "Donado";
+                    oDatosAF.tipoadquicicion = "Donado";
                 }
-                bien.Color = oActivo.Color;
-               
+                //Datos del crédito
+                if (oActivo.Prima != null)
+                {
+                    oDatosAF.prima = oActivo.Prima.ToString();
+                }
+                else
+                {
+                    oDatosAF.prima = "";
+                }
+                if (oActivo.PlazoPago != null)
+                {
+                    oDatosAF.plazo = oActivo.PlazoPago.ToString();
+                }
+                else
+                {
+                    oDatosAF.plazo = "";
+                }
+                if (oActivo.CuotaAsignanda != null)
+                {
+                    oDatosAF.cuota = oActivo.CuotaAsignanda.ToString();
+                }
+                else
+                {
+                    oDatosAF.cuota = "";
+                }
+                if (oActivo.Intereses != null)
+                {
+                    oDatosAF.interes = oActivo.Intereses.ToString();
+                }
+                else
+                {
+                    oDatosAF.interes = "";
+                }
+                oDatosAF.valorresidual = oActivo.ValorResidual.ToString();
+                oDatosAF.Observaciones = oFOrmulario.Observaciones;
+                oDatosAF.foto = oActivo.Foto;
+                return oDatosAF;
+            }
+
+        }
+
+        //Para modal de edificios e instalaciones
+        [HttpGet]
+        [Route("api/ActivoFijo/DatosGeneralesEdificios/{id}")]
+        public DatosGeneralesEdificiosAF DatosGeneralesEdificios(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DatosGeneralesEdificiosAF oDatosAF = new DatosGeneralesEdificiosAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                FormularioIngreso oFOrmulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oDatosAF.ProvDon = oProveedor.Nombre;
+                    oDatosAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oDatosAF.ProvDon = oDonante.Nombre;
+                    oDatosAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oDatosAF.ProvDon = "";
+                }
+
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivo.IdBien).Last();
+
+                oDatosAF.idBien = (int)oActivo.IdBien;
+                oDatosAF.descripcion = oActivo.Desripcion;
+                oDatosAF.fecha = oFOrmulario.FechaIngreso == null ? " " : ((DateTime)oFOrmulario.FechaIngreso).ToString("dd-MM-yyyy");
+                oDatosAF.codigo = oActivo.CorrelativoBien;
+                oDatosAF.valorAquisicion = oActivo.ValorAdquicicion.ToString();
+                oDatosAF.clasificacion = oclasi.Clasificacion1;
+                oDatosAF.VidaUtil = oActivo.VidaUtil.ToString();
+                oDatosAF.Observaciones = oFOrmulario.Observaciones;
+
+                //Datos del estado del edificio
                 if (oActivo.EstadoIngreso == "1")
                 {
-                    bien.estadoingreso = "Nuevo";
+                    oDatosAF.estadoingreso = "Nuevo";
                 }
-                else if (oActivo.EstadoIngreso == "1")
+                else if (oActivo.EstadoIngreso == "2")
                 {
-                    bien.estadoingreso = "Usado";
+                    oDatosAF.estadoingreso = "Usado";
                 }
                 else
                 {
-                    bien.estadoingreso = "Usado mal estado";
+                    oDatosAF.estadoingreso = "Usado mal estado";
                 }
-              
-                bien.valoradquicicion = oActivo.ValorAdquicicion;
-                bien.plazopago = oActivo.PlazoPago;
-                bien.prima = oActivo.Prima;
-                bien.cuotaasignada = oActivo.CuotaAsignanda;
-                bien.interes = oActivo.Intereses;
-                bien.valorresidual = oActivo.ValorResidual;
-                bien.foto = oActivo.Foto;
-               
-                //para saber si es un donante o un proveedor
-                bien.donaprov = false;
-                return Json(bien);
+
+                //Datos para el tipo de adquisición
+                if (oActivo.TipoAdquicicion == 1)
+                {
+                    oDatosAF.tipoadquicicion = "Contado";
+                }
+                else if (oActivo.TipoAdquicicion == 2)
+                {
+                    oDatosAF.tipoadquicicion = "Crédito";
+                }
+                else
+                {
+                    oDatosAF.tipoadquicicion = "Donado";
+                }
+
+                //Datos del crédito
+                if (oActivo.Prima!=null)
+                {
+                    oDatosAF.prima = oActivo.Prima.ToString();
+                } else
+                {
+                    oDatosAF.prima = "";
+                }
+                if(oActivo.PlazoPago!=null)
+                {
+                    oDatosAF.plazo = oActivo.PlazoPago.ToString();
+                } else
+                {
+                    oDatosAF.plazo = "";
+                }
+                if(oActivo.CuotaAsignanda!=null)
+                {
+                    oDatosAF.cuota = oActivo.CuotaAsignanda.ToString();
+                } else
+                {
+                    oDatosAF.cuota = "";
+                }
+                if(oActivo.Intereses!=null)
+                {
+                    oDatosAF.interes = oActivo.Intereses.ToString();
+                } else
+                {
+                    oDatosAF.interes = "";
+                }
+                oDatosAF.valorresidual = oActivo.ValorResidual.ToString();
+                oDatosAF.foto = oActivo.Foto;
+                return oDatosAF;
             }
+
+        }
+
+        //Para modal de activos intangibles
+        [HttpGet]
+        [Route("api/ActivoFijo/DatosGeneralesIntangibles/{id}")]
+        public DatosGeneralesIntangiblesAF DatosGeneralesIntangibles(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DatosGeneralesIntangiblesAF oDatosAF = new DatosGeneralesIntangiblesAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                FormularioIngreso oFOrmulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oDatosAF.ProvDon = oProveedor.Nombre;
+                    oDatosAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oDatosAF.ProvDon = oDonante.Nombre;
+                    oDatosAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oDatosAF.ProvDon = "";
+                }
+
+                TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivo.IdBien).Last();
+
+                oDatosAF.idBien = (int)oActivo.IdBien;
+                oDatosAF.descripcion = oActivo.Desripcion;
+                oDatosAF.fecha = oFOrmulario.FechaIngreso == null ? " " : ((DateTime)oFOrmulario.FechaIngreso).ToString("dd-MM-yyyy");
+                oDatosAF.codigo = oActivo.CorrelativoBien;
+                oDatosAF.valorAquisicion = oActivo.ValorAdquicicion.ToString();
+                oDatosAF.clasificacion = oclasi.Clasificacion1;
+                oDatosAF.VidaUtil = oActivo.VidaUtil.ToString();
+                oDatosAF.Observaciones = oFOrmulario.Observaciones;
+
+                //Datos para el tipo de adquisición
+                if (oActivo.TipoAdquicicion == 1)
+                {
+                    oDatosAF.tipoadquicicion = "Contado";
+                }
+                else if (oActivo.TipoAdquicicion == 2)
+                {
+                    oDatosAF.tipoadquicicion = "Crédito";
+                }
+                else
+                {
+                    oDatosAF.tipoadquicicion = "Donado";
+                }
+
+                //Datos del crédito
+                if (oActivo.Prima != null)
+                {
+                    oDatosAF.prima = oActivo.Prima.ToString();
+                }
+                else
+                {
+                    oDatosAF.prima = "";
+                }
+                if (oActivo.PlazoPago != null)
+                {
+                    oDatosAF.plazo = oActivo.PlazoPago.ToString();
+                }
+                else
+                {
+                    oDatosAF.plazo = "";
+                }
+                if (oActivo.CuotaAsignanda != null)
+                {
+                    oDatosAF.cuota = oActivo.CuotaAsignanda.ToString();
+                }
+                else
+                {
+                    oDatosAF.cuota = "";
+                }
+                if (oActivo.Intereses != null)
+                {
+                    oDatosAF.interes = oActivo.Intereses.ToString();
+                }
+                else
+                {
+                    oDatosAF.interes = "";
+                }
+                oDatosAF.valorresidual = oActivo.ValorResidual.ToString();
+                oDatosAF.foto = oActivo.Foto;
+                return oDatosAF;
+            }
+
         }
 
 
