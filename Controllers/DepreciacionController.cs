@@ -443,6 +443,54 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+        //Datos generales de la tarjeta para edificios
+        [HttpGet]
+        [Route("api/Depreciacion/TarjetaDatosEdificios/{idBien}")]
+        public TarjetaDatosEdificiosAF TarjetaDatosEdificios(int idBien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                TarjetaDatosEdificiosAF odatos = new TarjetaDatosEdificiosAF();
+                ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                FormularioIngreso oformulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oactivo.NoFormulario).First();
+                odatos.fechaAdquicicion = oformulario.FechaIngreso == null ? " " : ((DateTime)oformulario.FechaIngreso).ToString("dd-MM-yyyy");
+                odatos.Observaciones = oformulario.Observaciones;
+                odatos.codigo = oactivo.CorrelativoBien;
+                odatos.descripcion = oactivo.Desripcion;
+                odatos.valor = oactivo.ValorAdquicicion.ToString();
+                odatos.prima = oactivo.Prima.ToString();
+                odatos.plazo = oactivo.PlazoPago;
+                odatos.cuota = oactivo.CuotaAsignanda.ToString();
+                odatos.interes = oactivo.Intereses.ToString();
+                int tasa = (int)(100 / oactivo.VidaUtil);
+                odatos.tasaAnual = tasa.ToString();
+                odatos.vidaUtil = oactivo.VidaUtil.ToString();
+                odatos.valorResidual = oactivo.ValorResidual.ToString();
+
+                if (oactivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
+                    odatos.proveedor = oProveedor.Nombre;
+                    odatos.direccion = oProveedor.Direccion;
+                    odatos.telefono = oProveedor.Telefono;
+                    odatos.isProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oactivo.IdDonante).First();
+                    odatos.proveedor = oDonante.Nombre;
+                    odatos.direccion = oDonante.Direccion;
+                    odatos.telefono = oDonante.Telefono;
+                    odatos.isProvDon = 2;
+                }
+
+                return odatos;
+
+            }
+        }
+
+
         //Metodo que lista las transacciones por cada activo y lo muestra en la tarjeta.
         [HttpGet]
         [Route("api/Depreciacion/TarjetaListaTrasacciones/{id}")]
