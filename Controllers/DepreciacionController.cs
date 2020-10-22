@@ -60,20 +60,21 @@ namespace ASGARDAPI.Controllers
                                                         group tarjeta by tarjeta.IdBien into bar
                                                         join activo in bd.ActivoFijo
                                                        on bar.FirstOrDefault().IdBien equals activo.IdBien
-                                                            join noFormulario in bd.FormularioIngreso
-                                                            on activo.NoFormulario equals noFormulario.NoFormulario
-                                                            join clasif in bd.Clasificacion
-                                                            on activo.IdClasificacion equals clasif.IdClasificacion
-                                                            where (activo.EstadoActual !=0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&& activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
-                                                            orderby activo.CorrelativoBien
-                                                            select new RegistroAF
-                                                            {
-                                                                IdBien = activo.IdBien,
-                                                                Codigo = activo.CorrelativoBien,
-                                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                                Descripcion = activo.Desripcion,
-                                                                Clasificacion = clasif.Clasificacion1,
-                                                            }).ToList();
+                                                        join noFormulario in bd.FormularioIngreso
+                                                        on activo.NoFormulario equals noFormulario.NoFormulario
+                                                        join clasif in bd.Clasificacion
+                                                        on activo.IdClasificacion equals clasif.IdClasificacion
+                                                        where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                        orderby activo.CorrelativoBien
+                                                        select new RegistroAF
+                                                        {
+                                                            IdBien = activo.IdBien,
+                                                            Codigo = activo.CorrelativoBien,
+                                                            fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                            Descripcion = activo.Desripcion,
+                                                            vidautil = activo.VidaUtil,
+                                                            Clasificacion = clasif.Clasificacion1,
+                                                        }).ToList();
                 return listaActivos;
             }
         }
@@ -101,6 +102,7 @@ namespace ASGARDAPI.Controllers
                                                             Codigo = activo.CorrelativoBien,
                                                             fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                             Descripcion = activo.Desripcion,
+                                                            vidautil = activo.VidaUtil,
                                                             Clasificacion = clasif.Clasificacion1,
                                                         }).ToList();
                 return listaActivos;
