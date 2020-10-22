@@ -670,6 +670,7 @@ namespace ASGARDAPI.Controllers
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
                                        Clasificacion = clasif.Clasificacion1
                                    }).ToList();
 
@@ -698,6 +699,7 @@ namespace ASGARDAPI.Controllers
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
                                        Clasificacion = clasif.Clasificacion1
 
                                    }).ToList();
@@ -728,6 +730,7 @@ namespace ASGARDAPI.Controllers
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
                                        Clasificacion = clasif.Clasificacion1
                                    }).ToList();
 
@@ -755,6 +758,7 @@ namespace ASGARDAPI.Controllers
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
                                        Clasificacion = clasif.Clasificacion1
 
                                    }).ToList();

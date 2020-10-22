@@ -229,6 +229,7 @@ namespace ASGARDAPI.Controllers
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
                                        areanegocio = area.Nombre,
+                                       vidautil = activo.VidaUtil,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
 
@@ -264,6 +265,7 @@ namespace ASGARDAPI.Controllers
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
                                        areanegocio = area.Nombre,
+                                       vidautil = activo.VidaUtil,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
                                    }).ToList();

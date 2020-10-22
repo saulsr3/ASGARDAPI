@@ -14,5 +14,9 @@ namespace ASGARDAPI.Clases
         public string Clasificacion { get; set; }
         public string AreaDeNegocio { get; set; }
         public string Responsable { get; set; }
+
+        //para actualizar la vida util despues de buscar
+
+        public int? vidautil { get; set; }
     }
 }
