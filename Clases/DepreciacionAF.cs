@@ -14,5 +14,8 @@ namespace ASGARDAPI.Clases
         public string areanegocio { get; set; }
         public string responsable { get; set; }
         public string clasificacion { get; set; }
+
+        //para cargar la vida util en revalorización.
+         public int? vidautil { get; set; }
     }
 }
