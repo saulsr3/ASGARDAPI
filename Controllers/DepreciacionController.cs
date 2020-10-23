@@ -574,30 +574,38 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
         [HttpGet]
-        [Route("api/Depreciacion/Prueba")]
-        public IEnumerable<ComboAnidadoAF> Prueba()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+        [Route("api/Depreciacion/ValidarActivosADepreciar")]
+        public int ValidarActivosADepreciar() { 
+            int rpta = 0;
+            try
             {
-                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                //ActivoFijo oActivoFijoo = bd.ActivoFijo.Where(p => p.IdBien == oActivoAF2.idbien).First();
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                    List<ComboAnidadoAF> lista = (from tarjeta in bd.TarjetaDepreciacion
+                                                  group tarjeta by tarjeta.IdBien into bar
+                                                  join activo in bd.ActivoFijo
+                                                 on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0) && activo.EstaAsignado == 1
+                                                  select new ComboAnidadoAF
+                                                  {
+                                                      id = activo.IdBien,
+                                                      nombre = activo.CorrelativoBien
 
-                ////Datos para la tabla activo fijo
-                //oActivoFijoo.IdBien = oActivoAF2.idbien;
-                //FormularioIngreso oFormulario = bd.FormularioIngreso.First();
-                List<ComboAnidadoAF> lista = (from tarjeta in bd.TarjetaDepreciacion
-                                              group tarjeta by tarjeta.IdBien into bar
-                                              join activo in bd.ActivoFijo
-                                             on bar.FirstOrDefault().IdBien equals activo.IdBien
-                                              where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0) && activo.EstaAsignado==1
-                                              select new ComboAnidadoAF
-                                              {
-                                                  id = activo.IdBien,
-                                                  nombre=activo.CorrelativoBien
+                                                  }).ToList();
+                    if (lista.Count() > 0)
+                    {
+                        rpta = 1;
+                    }
+                }
+            }catch (Exception ex)
+            {
 
-                                              }).ToList();
-                return lista;
+                rpta = 0;
+                // Console.WriteLine("prueba");
             }
+            return rpta;
+
         }
         //Metodo que recupera losdatos necesarios para el cierre de periodo.
         [HttpGet]
@@ -623,66 +631,69 @@ namespace ASGARDAPI.Controllers
 
                                                   }).ToList();
 
+                    if (lista.Count() > 0) {
+                        foreach (var res in lista)
+                        {
 
-                    foreach (var res in lista)
-                    {
+                            //Transaccion a tarjeta
+                            ActivoFijo activo = bd.ActivoFijo.Where(p => p.IdBien == res.id).FirstOrDefault();
+                            TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
 
-                        //Transaccion a tarjeta
-                        ActivoFijo activo = bd.ActivoFijo.Where(p => p.IdBien == res.id).FirstOrDefault();
-                        TarjetaDepreciacion transaccion = new TarjetaDepreciacion();
-                      
-                        TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id).Last();
-                        double valor = 0.00;
-                        if (oUltimaTransaccion.Concepto == "Compra")
-                        {
-                            valor = (double)(oUltimaTransaccion.Valor / activo.VidaUtil);
-                        }
-                        else if (oUltimaTransaccion.Concepto == "Depreciación")
-                        {
-                            int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Count();
-                            int aniosRestantes = (int)activo.VidaUtil - oDepreciaciones;
-                            valor = (double)(oUltimaTransaccion.ValorActual / aniosRestantes);
-                        }
-                        else if (oUltimaTransaccion.Concepto == "Revalorización")
-                        {
-                            TarjetaDepreciacion oValorAcumulado = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Last();
-                            int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Count();
-                            int aniosRestantes = (int)activo.VidaUtil - oDepreciaciones;
-                            valor = (double)(oUltimaTransaccion.Valor - oValorAcumulado.DepreciacionAcumulada) / aniosRestantes;
-                        }
-                        //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
-                        transaccion.IdBien = res.id;
-                        //transaccion.Fecha = (DateTime)"12/31/" +anioActual.Anio;
-                        transaccion.Concepto = "Depreciación";
-                        transaccion.Valor = oUltimaTransaccion.Valor;
-                        transaccion.DepreciacionAnual = valor;
-                        if (oUltimaTransaccion.Concepto == "Compra" || oUltimaTransaccion.Concepto == "Depreciación")
-                        {
-                            double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + valor;
-                            transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
+                            TarjetaDepreciacion oUltimaTransaccion = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id).Last();
+                            double valor = 0.00;
+                            if (oUltimaTransaccion.Concepto == "Compra")
+                            {
+                                valor = (double)(oUltimaTransaccion.Valor / activo.VidaUtil);
+                            }
+                            else if (oUltimaTransaccion.Concepto == "Depreciación")
+                            {
+                                int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Count();
+                                int aniosRestantes = (int)activo.VidaUtil - oDepreciaciones;
+                                valor = (double)(oUltimaTransaccion.ValorActual / aniosRestantes);
+                            }
+                            else if (oUltimaTransaccion.Concepto == "Revalorización")
+                            {
+                                TarjetaDepreciacion oValorAcumulado = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Last();
+                                int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Count();
+                                int aniosRestantes = (int)activo.VidaUtil - oDepreciaciones;
+                                valor = (double)(oUltimaTransaccion.Valor - oValorAcumulado.DepreciacionAcumulada) / aniosRestantes;
+                            }
+                            //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
+                            transaccion.IdBien = res.id;
+                            //transaccion.Fecha = (DateTime)"12/31/" +anioActual.Anio;
+                            transaccion.Concepto = "Depreciación";
+                            transaccion.Valor = oUltimaTransaccion.Valor;
+                            transaccion.DepreciacionAnual = valor;
+                            if (oUltimaTransaccion.Concepto == "Compra" || oUltimaTransaccion.Concepto == "Depreciación")
+                            {
+                                double valorAcumulado = (double)oUltimaTransaccion.DepreciacionAcumulada + valor;
+                                transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
 
-                        }
-                        else if (oUltimaTransaccion.Concepto == "Revalorización")
-                        {
-                            TarjetaDepreciacion oDepreciacionAcumulada = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Last();
-                            double valorAcumulado = (double)oDepreciacionAcumulada.DepreciacionAcumulada + valor;
-                            transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
+                            }
+                            else if (oUltimaTransaccion.Concepto == "Revalorización")
+                            {
+                                TarjetaDepreciacion oDepreciacionAcumulada = bd.TarjetaDepreciacion.Where(p => p.IdBien == res.id && p.Concepto == "Depreciación").Last();
+                                double valorAcumulado = (double)oDepreciacionAcumulada.DepreciacionAcumulada + valor;
+                                transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
+                            }
+
+                            //transaccion.DepreciacionAcumulada = valorAcumulado;
+                            double valorActual = (double)oUltimaTransaccion.ValorActual - valor;
+                            double rounded = Math.Round(valorActual, 3);
+                            transaccion.ValorActual = rounded;
+                            transaccion.ValorMejora = 0.00;
+                            bd.TarjetaDepreciacion.Add(transaccion);
+                            bd.SaveChanges();
+                            //cambia ultimo anio de depreciación
+                            //Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                            activo.UltimoAnioDepreciacion = anioActual.Anio;
+                            bd.SaveChanges();
                         }
 
-                        //transaccion.DepreciacionAcumulada = valorAcumulado;
-                        double valorActual = (double)oUltimaTransaccion.ValorActual - valor;
-                        double rounded = Math.Round(valorActual, 3);
-                        transaccion.ValorActual = rounded;
-                        transaccion.ValorMejora = 0.00;
-                        bd.TarjetaDepreciacion.Add(transaccion);
-                        bd.SaveChanges();
-                        //cambia ultimo anio de depreciación
-                        //Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                        activo.UltimoAnioDepreciacion = anioActual.Anio;
-                        bd.SaveChanges();
+                        rpta = 1;
                     }
 
-                    rpta = 1;
+                  
                 }
             }
             catch (Exception ex)
