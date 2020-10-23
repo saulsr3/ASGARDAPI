@@ -6,6 +6,11 @@ namespace ASGARDAPI.Clases
         //variables
         //Variables de activo fijo
         public int idbien { get; set; }
+        public string fechaingreso { get; set; }
+        public string nofactura { get; set; }
+        public string personaentrega { get; set; }
+        public string personarecibe { get; set; }
+        public string observaciones { get; set; }
         public int noformularioactivo { get; set; }
         public string descripcion { get; set; }
         public string modelo { get; set; }
@@ -15,6 +20,8 @@ namespace ASGARDAPI.Clases
         public int idclasificacion { get; set; }
         public int idproveedor { get; set; }
         public int iddonante { get; set; }
+        public string ProvDon { get; set; }
+        public int IsProvDon { get; set; }
         public int idresponsable { get; set; } // Empleado
         public string estadoingreso { get; set; }
         public double valoradquicicion { get; set; }
