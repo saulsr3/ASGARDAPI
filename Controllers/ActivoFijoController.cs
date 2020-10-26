@@ -566,62 +566,6 @@ namespace ASGARDAPI.Controllers
         }
 
 
-        [HttpGet]
-        [Route("api/ActivoFijo/RecuperarFormCompleto/{id}")]
-        public JsonResult RecuperarFormCompleto(int id)
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                //creamos un nuevo objeto dinamico bien
-                dynamic odatos = new Newtonsoft.Json.Linq.JObject();
-                //Extraer los datos padres de la base
-                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                //FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == id).First();
-                //Utilizar los datos padres para extraer los datos
-                FormularioIngreso oformu = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
-                Clasificacion oclasi = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
-                //Marcas omarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
-                Marcas omarca = (oActivo.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First() : null;
-                Proveedor oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First() : null;
-                Donantes odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First() : null;
-                Empleado oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First() : null;
-
-                //llenado
-                odatos.idbien = oActivo.IdBien;
-                odatos.bandera = 0;
-                odatos.idclasificacion = oclasi.IdClasificacion;
-                odatos.estadoingreso = oActivo.EstadoIngreso;
-                odatos.fechaingreso = oformu.FechaIngreso == null ? " " : ((DateTime)oformu.FechaIngreso).ToString("yyyy-MM-dd");
-                odatos.tipoadquicicion = (int)oActivo.TipoAdquicicion;
-                odatos.idproveedor = (oprov != null) ? oprov.IdProveedor : odona.IdDonante;
-                odatos.descripcion = oActivo.Desripcion;
-                odatos.color = oActivo.Color;
-                odatos.idmarca= (omarca == null) ? 0 :omarca.IdMarca;
-                odatos.idresponsable = (oemple == null) ? 0 : oemple.IdEmpleado;
-                odatos.modelo = oActivo.Modelo;
-                odatos.nofactura = oformu.NoFactura;
-                odatos.valoradquicicion = oActivo.ValorAdquicicion;
-                odatos.prima = oActivo.Prima;
-                odatos.plazopago = oActivo.PlazoPago;
-                odatos.cuotaasignada = oActivo.CuotaAsignanda;
-                odatos.personaentrega = oformu.PersonaEntrega;
-                odatos.personarecibe = oformu.PersonaRecibe;
-                odatos.observaciones = oformu.Observaciones;
-                odatos.valorresidual = oActivo.ValorResidual;
-                odatos.foto = oActivo.Foto;
-                
-                odatos.interes = oActivo.Intereses;
-                odatos.noformulario = oformu.NoFormulario;
-                odatos.cantidad = (from activo in bd.ActivoFijo
-                                   join noFormulario in bd.FormularioIngreso
-                                   on activo.NoFormulario equals noFormulario.NoFormulario
-                                   where activo.NoFormulario == oActivo.NoFormulario && activo.EstadoActual ==1 && activo.EstaAsignado == 0
-                                   select activo).ToList().Count();
-
-
-                return Json(odatos);
-            }
-        }
 
 
         [HttpPost]

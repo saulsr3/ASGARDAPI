@@ -15,6 +15,16 @@ namespace ASGARDAPI.Clases
         public int tipoadquicicion { get; set; }
         public int idmarca { get; set; }
         public int idclasificacion { get; set; }
+        public int idproveedor { get; set; }
+        public int iddonante { get; set; }
+        public string plazopago { get; set; }
+        public double prima { get; set; }
+        public double cuotaasignada { get; set; }
+        public double interes { get; set; }
+        public string estadoingreso { get; set; }
+        public double valoradquicicion { get; set; }
+        public double valorresidual { get; set; }
+        public string foto { get; set; }
 
     }
 }

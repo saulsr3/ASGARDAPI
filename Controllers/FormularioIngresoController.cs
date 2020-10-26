@@ -396,43 +396,42 @@ namespace ASGARDAPI.Controllers
                             ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == res.IdBien).First();
 
                             oActivoFijo.Desripcion = oActivo.descripcion;
-                        //    oActivoFijo.Modelo = oActivoAF2.modelo;
-                        //    oActivoFijo.TipoAdquicicion = oActivoAF2.tipoadquicicion;
-                        //    oActivoFijo.Color = oActivoAF2.color;
-                        //    if(oActivoAF2.idmarca != 0) { 
-                        //        oActivoFijo.IdMarca = oActivoAF2.idmarca;
-                        //    }
-                        //    else
-                        //    {
-                        //        oActivoFijo.IdMarca = null;
-                        //    }
+                            oActivoFijo.Modelo = oActivo.modelo;
+                            oActivoFijo.TipoAdquicicion = oActivo.tipoadquicicion;
+                            oActivoFijo.Color = oActivo.color;
+                            if(oActivo.idmarca != 0) { 
+                                oActivoFijo.IdMarca = oActivo.idmarca;
+                            }
+                            else
+                            {
+                                oActivoFijo.IdMarca = null;
+                            }
 
-                        //  oActivoFijo.IdClasificacion = oActivoAF2.idclasificacion;
+                          oActivoFijo.IdClasificacion = oActivo.idclasificacion;
 
-                        //    if (oActivoAF2.tipoadquicicion == 3)
-                        //    {
+                            if (oActivo.tipoadquicicion == 3)
+                            {
 
-                        //            oActivoFijo.IdDonante = oActivoAF2.idproveedor;
-                        //            oActivoFijo.IdProveedor = null;
-
-
-                        //    }
-                        //    else
-                        //    {
-
-                        //            oActivoFijo.IdProveedor = oActivoAF2.idproveedor;
-                        //            oActivoFijo.IdDonante = null;
+                                    oActivoFijo.IdDonante = oActivo.idproveedor;
+                                    oActivoFijo.IdProveedor = null;
 
 
-                        //    }
-                        //    oActivoFijo.PlazoPago = oActivoAF2.plazopago;
-                        //    oActivoFijo.Prima = oActivoAF2.prima;
-                        //    oActivoFijo.CuotaAsignanda = oActivoAF2.cuotaasignada;
-                        //    oActivoFijo.Intereses = oActivoAF2.interes;
-                        //    oActivoFijo.EstadoIngreso = oActivoAF2.estadoingreso;
-                        //    oActivoFijo.ValorAdquicicion = oActivoAF2.valoradquicicion;
-                        //    oActivoFijo.Foto = oActivoAF2.foto;
-                        //    oActivoFijo.ValorResidual = oActivoAF2.valorresidual;
+                            }
+                            else
+                            {
+
+                                    oActivoFijo.IdProveedor = oActivo.idproveedor;
+                                    oActivoFijo.IdDonante = null;
+                            }
+
+                            oActivoFijo.PlazoPago = oActivo.plazopago;
+                            oActivoFijo.Prima = oActivo.prima;
+                            oActivoFijo.CuotaAsignanda = oActivo.cuotaasignada;
+                            oActivoFijo.Intereses = oActivo.interes;
+                            oActivoFijo.EstadoIngreso = oActivo.estadoingreso;
+                            oActivoFijo.ValorAdquicicion = oActivo.valoradquicicion;
+                            oActivoFijo.Foto = oActivo.foto;
+                            oActivoFijo.ValorResidual = oActivo.valorresidual;
 
                         bd.SaveChanges();
                     }
