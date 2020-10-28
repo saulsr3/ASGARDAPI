@@ -447,6 +447,60 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+        //Modificar edificios e instalaciones
+        [HttpPost]
+        [Route("api/FormularioIngreso/modificarEdificiosInstalaciones")]
+        public int modificarEdificiosInstalaciones([FromBody] ActivoEdificiosIntangiblesAF oActivoEdi)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                  
+                        ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivoEdi.idbien).First();
+
+                        oActivoFijo.Desripcion = oActivoEdi.descripcion;
+                        oActivoFijo.TipoAdquicicion = oActivoEdi.tipoadquicicion;
+                        oActivoFijo.IdClasificacion = oActivoEdi.idclasificacion;
+
+                        if (oActivoEdi.tipoadquicicion == 3)
+                        {
+
+                            oActivoFijo.IdDonante = oActivoEdi.idproveedor;
+                            oActivoFijo.IdProveedor = null;
+
+                        }
+                        else
+                        {
+
+                            oActivoFijo.IdProveedor = oActivoEdi.idproveedor;
+                            oActivoFijo.IdDonante = null;
+                        }
+
+                        oActivoFijo.PlazoPago = oActivoEdi.plazopago;
+                        oActivoFijo.Prima = oActivoEdi.prima;
+                        oActivoFijo.CuotaAsignanda = oActivoEdi.cuotaasignada;
+                        oActivoFijo.Intereses = oActivoEdi.interes;
+                        oActivoFijo.ValorAdquicicion = oActivoEdi.valoradquicicion;
+                        oActivoFijo.Foto = oActivoEdi.foto;
+                        oActivoFijo.ValorResidual = oActivoEdi.valorresidual;
+                        oActivoFijo.VidaUtil = oActivoEdi.vidautil;
+
+                        bd.SaveChanges();
+                    
+
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
     }
 
 }
