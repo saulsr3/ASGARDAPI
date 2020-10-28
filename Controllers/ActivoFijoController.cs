@@ -565,6 +565,95 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        //Recuperar edificios e instalaciones
+        [HttpGet]
+        [Route("api/ActivoFijo/recuperarEdificioInsta/{id}")]
+        public ActivoEdificiosIntangiblesAF recuperarEdificioInsta(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoEdificiosIntangiblesAF oEdificiosAF = new ActivoEdificiosIntangiblesAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                FormularioIngreso oFormulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+
+                //Llenar campos
+                oEdificiosAF.idbien = oActivo.IdBien;
+                oEdificiosAF.idclasificacion = oClasificacion.IdClasificacion;
+                oEdificiosAF.estadoingreso = oActivo.EstadoIngreso;
+                oEdificiosAF.fechaingreso = oFormulario.FechaIngreso == null ? " " : ((DateTime)oFormulario.FechaIngreso).ToString("yyyy-MM-dd");
+                oEdificiosAF.tipoadquicicion = (int)oActivo.TipoAdquicicion;
+
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oEdificiosAF.idproveedor = oProveedor.IdProveedor;
+                    oEdificiosAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oEdificiosAF.iddonante = oDonante.IdDonante;
+                    oEdificiosAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oEdificiosAF.ProvDon = "";
+                }
+
+                oEdificiosAF.descripcion = oActivo.Desripcion;
+                oEdificiosAF.valoradquicicion = (double)oActivo.ValorAdquicicion;
+
+
+
+                //Datos del crédito
+                if (oActivo.Prima != null)
+                {
+                    oEdificiosAF.prima = (double)oActivo.Prima;
+                }
+                else
+                {
+
+                }
+                if (oActivo.PlazoPago != null)
+                {
+                    oEdificiosAF.plazopago = oActivo.PlazoPago;
+                }
+                else
+                {
+
+                }
+                if (oActivo.CuotaAsignanda != null)
+                {
+                    oEdificiosAF.cuotaasignada = (double)oActivo.CuotaAsignanda;
+                }
+                else
+                {
+
+                }
+                if (oActivo.Intereses != null)
+                {
+                    oEdificiosAF.interes = (double)oActivo.Intereses;
+                }
+                else
+                {
+
+                }
+
+                oEdificiosAF.personaentrega = oFormulario.PersonaEntrega;
+                oEdificiosAF.personarecibe = oFormulario.PersonaRecibe;
+                oEdificiosAF.observaciones = oFormulario.Observaciones;
+                oEdificiosAF.valorresidual = (double)oActivo.ValorResidual;
+                oEdificiosAF.foto = oActivo.Foto;
+                oEdificiosAF.noformularioactivo = oFormulario.NoFormulario;
+                oEdificiosAF.vidautil = (int)oActivo.VidaUtil;
+
+                return oEdificiosAF;
+            }
+
+        }
+
 
 
 
