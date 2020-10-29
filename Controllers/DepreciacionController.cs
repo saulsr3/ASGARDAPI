@@ -662,7 +662,7 @@ namespace ASGARDAPI.Controllers
                             }
                             //ActivoFijo oActivoFijoTransaccion = bd.ActivoFijo.Last();
                             transaccion.IdBien = res.id;
-                            //transaccion.Fecha = (DateTime)"12/31/" +anioActual.Anio;
+                            transaccion.Fecha =DateTime.Parse("31/12/"+anioActual.Anio.ToString());
                             transaccion.Concepto = "Depreciación";
                             transaccion.Valor = oUltimaTransaccion.Valor;
                             transaccion.DepreciacionAnual = valor;
