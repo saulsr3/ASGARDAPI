@@ -461,6 +461,109 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+        //RECUPERAMOS EL ACTIVO CUANDO ESTÁ ASIGNADO.
+        //Recuperar bien mueble
+        [HttpGet]
+        [Route("api/ActivoFijo/recuperarActivoAsignado/{id}")]
+        public ActivoAF recuperarActivoAsignado(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoAF oActivoAF = new ActivoAF();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                FormularioIngreso oFormulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oActivo.NoFormulario).First();
+                Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
+                Marcas omarca = (oActivo.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First() : null;
+                //  Proveedor oprov = (oActivo.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First() : null;
+                //  Donantes odona = (oActivo.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First() : null;
+                Empleado oemple = (oActivo.IdResponsable != null) ? bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First() : null;
+
+                //Llenar campos
+                oActivoAF.idbien = oActivo.IdBien;
+                oActivoAF.idclasificacion = oClasificacion.IdClasificacion;
+                oActivoAF.estadoingreso = oActivo.EstadoIngreso;
+                oActivoAF.fechaingreso = oFormulario.FechaIngreso == null ? " " : ((DateTime)oFormulario.FechaIngreso).ToString("yyyy-MM-dd");
+                oActivoAF.tipoadquicicion = (int)oActivo.TipoAdquicicion;
+
+                //oActivoAF.idproveedor = oprov.IdProveedor : odona.IdDonante;
+
+                if (oActivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oActivo.IdProveedor).First();
+                    oActivoAF.idproveedor = oProveedor.IdProveedor;
+                    oActivoAF.IsProvDon = 1;
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oActivo.IdDonante).First();
+                    oActivoAF.iddonante = oDonante.IdDonante;
+                    oActivoAF.IsProvDon = 2;
+                }
+                if (oActivo.IdProveedor == null && oActivo.IdDonante == null)
+                {
+                    oActivoAF.ProvDon = "";
+                }
+
+                oActivoAF.descripcion = oActivo.Desripcion;
+                oActivoAF.color = oActivo.Color;
+                oActivoAF.idmarca = (omarca == null) ? 0 : omarca.IdMarca;
+                oActivoAF.modelo = oActivo.Modelo;
+                oActivoAF.nofactura = oFormulario.NoFactura;
+                oActivoAF.valoradquicicion = (double)oActivo.ValorAdquicicion;
+
+
+
+                //Datos del crédito
+                if (oActivo.Prima != null)
+                {
+                    oActivoAF.prima = (double)oActivo.Prima;
+                }
+                else
+                {
+
+                }
+                if (oActivo.PlazoPago != null)
+                {
+                    oActivoAF.plazopago = oActivo.PlazoPago;
+                }
+                else
+                {
+
+                }
+                if (oActivo.CuotaAsignanda != null)
+                {
+                    oActivoAF.cuotaasignada = (double)oActivo.CuotaAsignanda;
+                }
+                else
+                {
+
+                }
+                if (oActivo.Intereses != null)
+                {
+                    oActivoAF.interes = (double)oActivo.Intereses;
+                }
+                else
+                {
+
+                }
+
+                oActivoAF.personaentrega = oFormulario.PersonaEntrega;
+                oActivoAF.personarecibe = oFormulario.PersonaRecibe;
+                oActivoAF.observaciones = oFormulario.Observaciones;
+                oActivoAF.valorresidual = (double)oActivo.ValorResidual;
+                oActivoAF.foto = oActivo.Foto;
+                oActivoAF.noformularioactivo = oFormulario.NoFormulario;
+                oActivoAF.cantidad = (from activo in bd.ActivoFijo
+                                      join noFormulario in bd.FormularioIngreso
+                                      on activo.NoFormulario equals noFormulario.NoFormulario
+                                      where activo.NoFormulario == oActivo.NoFormulario && activo.EstadoActual == 1 && activo.EstaAsignado == 1 //SOLO ESTO CAMBIAMOS
+                                      select activo).ToList().Count();
+
+                return oActivoAF;
+            }
+
+        }
 
         //Recuperar bien mueble
         [HttpGet]
