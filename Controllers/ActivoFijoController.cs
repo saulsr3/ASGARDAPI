@@ -757,6 +757,23 @@ namespace ASGARDAPI.Controllers
 
         }
 
+        //Método para recuperar fecha 
+        [HttpGet]
+        [Route("api/ActivoFijo/listarAnio")]
+        public IEnumerable<PeriodoAF> listarAnio()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<PeriodoAF> listaAnio = (from periodo in bd.Periodo
+                                                   where periodo.Estado==1
+                                                   select new PeriodoAF
+                                                   {
+                                                       anio= (int)periodo.Anio
+                                                   }).ToList();
+                return listaAnio;
+            }
+        }
+
 
 
 
