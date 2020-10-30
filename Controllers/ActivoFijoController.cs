@@ -655,7 +655,6 @@ namespace ASGARDAPI.Controllers
                 oActivoAF.personarecibe = oFormulario.PersonaRecibe;
                 oActivoAF.observaciones = oFormulario.Observaciones;
                 oActivoAF.valorresidual = (double)oActivo.ValorResidual;
-                 oActivoAF.noserie = oActivo.NoSerie;
                 oActivoAF.foto = oActivo.Foto;
                 oActivoAF.noformularioactivo = oFormulario.NoFormulario;
                 oActivoAF.cantidad = (from activo in bd.ActivoFijo

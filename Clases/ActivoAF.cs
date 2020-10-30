@@ -33,7 +33,6 @@ namespace ASGARDAPI.Clases
         public string foto { get; set; }
         public int cantidad { get; set; }
         public int vidautil { get; set; }
-        public string noserie { get; set; }
         //////////////////////////////////////////
         public string Codigo { get; set; }
         // Nueva variable
