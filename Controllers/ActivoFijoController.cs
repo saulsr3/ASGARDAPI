@@ -773,7 +773,21 @@ namespace ASGARDAPI.Controllers
                 return listaAnio;
             }
         }
-
+        [HttpGet]
+        [Route("api/Depreciacion/RecuperarAnio")]
+        public CierreAF RecuperarAnio()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CierreAF odatos = new CierreAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                Periodo oPeriodo = bd.Periodo.Where(p => p.Estado == 1).First();
+                odatos.anio = oPeriodo.Anio.ToString();
+                //odatos.cooperativa = oCooperativa.Nombre;
+                //odatos.idPeriodo = oPeriodo.IdPeriodo;
+                return odatos;
+            }
+        }
 
 
 

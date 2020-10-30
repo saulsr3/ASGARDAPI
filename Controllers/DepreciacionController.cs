@@ -357,7 +357,7 @@ namespace ASGARDAPI.Controllers
                 odatos.idBien = oactivo.IdBien;
                 //DateTime _date = DateTime.Now;
                 //var _dateString = _date.ToString("yyyy");
-                //odatos.fecha= _dateString;
+                odatos.fecha=oTarjeta.Fecha == null ? " " : ((DateTime)oTarjeta.Fecha).ToString("dd-MM-yyyy");
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
