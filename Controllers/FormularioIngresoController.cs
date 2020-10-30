@@ -378,7 +378,7 @@ namespace ASGARDAPI.Controllers
                                             join noFormulario in bd.FormularioIngreso
                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                             where activo.NoFormulario == oActivoFijoo.NoFormulario
-                                            && activo.EstadoActual ==1 && activo.EstaAsignado == 0
+                                            && activo.EstadoActual ==1 && activo.EstaAsignado == 0 || activo.EstaAsignado==1
                                             select activo).ToList();
 
                     //if (oActivoAF2.tipoadquicicion == 1 || oActivoAF2.tipoadquicicion == 3)
