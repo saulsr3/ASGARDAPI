@@ -30,6 +30,7 @@ namespace ASGARDAPI.Clases
         public double cuotaasignada { get; set; }
         public double interes { get; set; }
         public double valorresidual { get; set; }
+        public string noserie { get; set; }
         public string foto { get; set; }
         public int cantidad { get; set; }
         public int vidautil { get; set; }

@@ -482,7 +482,7 @@ namespace ASGARDAPI.Controllers
                    // foreach (var res in laf)
                     //{
 
-                        ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == res.IdBien).First();
+                        ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivo.idbien).First();
 
                         oActivoFijo.Desripcion = oActivo.descripcion;
                         oActivoFijo.Modelo = oActivo.modelo;
