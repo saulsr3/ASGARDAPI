@@ -447,6 +447,78 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+        [HttpPost]
+        [Route("api/FormularioIngreso/modificarActivoAsignado")]
+        public int modificarActivoAsignado([FromBody]ActivoModificarAF oActivo)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+
+                    ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivo.idbien).First();
+
+
+                        if(oActivoFijo.EstaAsignado == 1)
+                    {
+                        oActivoFijo.Desripcion = oActivo.descripcion;
+                        oActivoFijo.Modelo = oActivo.modelo;
+                        oActivoFijo.TipoAdquicicion = oActivo.tipoadquicicion;
+                        oActivoFijo.Color = oActivo.color;
+                        if (oActivo.idmarca != 0)
+                        {
+                            oActivoFijo.IdMarca = oActivo.idmarca;
+                        }
+                        else
+                        {
+                            oActivoFijo.IdMarca = null;
+                        }
+
+                        oActivoFijo.IdClasificacion = oActivo.idclasificacion;
+
+                        if (oActivo.tipoadquicicion == 3)
+                        {
+
+                            oActivoFijo.IdDonante = oActivo.idproveedor;
+                            oActivoFijo.IdProveedor = null;
+
+
+                        }
+                        else
+                        {
+
+                            oActivoFijo.IdProveedor = oActivo.idproveedor;
+                            oActivoFijo.IdDonante = null;
+                        }
+
+                        oActivoFijo.PlazoPago = oActivo.plazopago;
+                        oActivoFijo.Prima = oActivo.prima;
+                        oActivoFijo.CuotaAsignanda = oActivo.cuotaasignada;
+                        oActivoFijo.Intereses = oActivo.interes;
+                        oActivoFijo.EstadoIngreso = oActivo.estadoingreso;
+                        oActivoFijo.ValorAdquicicion = oActivo.valoradquicicion;
+                        oActivoFijo.NoSerie = oActivo.noserie;
+                        oActivoFijo.Foto = oActivo.foto;
+                        oActivoFijo.ValorResidual = oActivo.valorresidual;
+
+                        bd.SaveChanges();
+
+
+                        rpta = 1;
+                    }
+                        
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+                // Console.WriteLine("prueba");
+            }
+            return rpta;
+        }
+
         //Modificar edificios e instalaciones
         [HttpPost]
         [Route("api/FormularioIngreso/modificarEdificiosInstalaciones")]
