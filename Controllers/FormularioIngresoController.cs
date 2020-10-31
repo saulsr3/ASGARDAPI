@@ -378,7 +378,7 @@ namespace ASGARDAPI.Controllers
                                             join noFormulario in bd.FormularioIngreso
                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                             where activo.NoFormulario == oActivoFijoo.NoFormulario
-                                            && activo.EstadoActual ==1 && activo.EstaAsignado == 0 || activo.EstaAsignado==1
+                                            && activo.EstadoActual ==1 && activo.EstaAsignado == 0
                                             select activo).ToList();
 
                     //if (oActivoAF2.tipoadquicicion == 1 || oActivoAF2.tipoadquicicion == 3)
@@ -455,35 +455,14 @@ namespace ASGARDAPI.Controllers
 
             try
             {
-                // Console.WriteLine("BIEN" + oActivoAF2.idbien);
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    ActivoFijo oActivoFijoo = bd.ActivoFijo.Where(p => p.IdBien == oActivo.idbien).First();
 
-                    //Datos para la tabla activo fijo
-                    //oActivoFijoo.IdBien = oActivoAF2.idbien;
-                    //FormularioIngreso oFormulario = bd.FormularioIngreso.First();
-                    List<ActivoFijo> laf = (from activo in bd.ActivoFijo
-                                            join noFormulario in bd.FormularioIngreso
-                                            on activo.NoFormulario equals noFormulario.NoFormulario
-                                            where activo.NoFormulario == oActivoFijoo.NoFormulario
-                                            && activo.EstadoActual == 1 && activo.EstaAsignado == 1
-                                            select activo).ToList();
+                    ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivo.idbien).First();
 
-                    //if (oActivoAF2.tipoadquicicion == 1 || oActivoAF2.tipoadquicicion == 3)
-                    //{
-                    //    oActivoAF2.plazopago = "";
-                    //    oActivoAF2.prima = 0;
-                    //    oActivoAF2.interes = 0;
-                    //    oActivoAF2.cuotaasignada = 0;
 
-                    //}
-
-                   // foreach (var res in laf)
-                    //{
-
-                        ActivoFijo oActivoFijo = bd.ActivoFijo.Where(p => p.IdBien == oActivo.idbien).First();
-
+                        if(oActivoFijo.EstaAsignado == 1)
+                    {
                         oActivoFijo.Desripcion = oActivo.descripcion;
                         oActivoFijo.Modelo = oActivo.modelo;
                         oActivoFijo.TipoAdquicicion = oActivo.tipoadquicicion;
@@ -520,13 +499,16 @@ namespace ASGARDAPI.Controllers
                         oActivoFijo.Intereses = oActivo.interes;
                         oActivoFijo.EstadoIngreso = oActivo.estadoingreso;
                         oActivoFijo.ValorAdquicicion = oActivo.valoradquicicion;
+                        oActivoFijo.NoSerie = oActivo.noserie;
                         oActivoFijo.Foto = oActivo.foto;
                         oActivoFijo.ValorResidual = oActivo.valorresidual;
 
                         bd.SaveChanges();
-                    //}
 
-                    rpta = 1;
+
+                        rpta = 1;
+                    }
+                        
                 }
             }
             catch (Exception ex)

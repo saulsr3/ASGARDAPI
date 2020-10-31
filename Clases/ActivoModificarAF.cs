@@ -10,6 +10,7 @@ namespace ASGARDAPI.Clases
         public string nofactura { get; set; }
         public int tipoactivo { get; set; }
         public string color { get; set; }
+        public string noserie { get; set; }
         public string descripcion { get; set; }
         public string modelo { get; set; }
         public int tipoadquicicion { get; set; }
