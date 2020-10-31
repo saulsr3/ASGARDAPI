@@ -348,15 +348,16 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 BienesDepreciacionAF odatos = new BienesDepreciacionAF();
+           
                 ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                FormularioIngreso oFecha = bd.FormularioIngreso.Where(p => p.NoFormulario == oactivo.NoFormulario).First();
                 TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien).Last();
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 Periodo oPeriodo =bd.Periodo.Where(p => p.Estado == 1).First();
                 odatos.cooperativa = oCooperativa.Nombre;
                 odatos.anio = oPeriodo.Anio.ToString();
                 odatos.idBien = oactivo.IdBien;
-                //DateTime _date = DateTime.Now;
-                //var _dateString = _date.ToString("yyyy");
+                odatos.fechaAdquisicion = oFecha.FechaIngreso == null ? " " : ((DateTime)oFecha.FechaIngreso).ToString("dd-MM-yyyy"); ;
                 odatos.fecha=oTarjeta.Fecha == null ? " " : ((DateTime)oTarjeta.Fecha).ToString("dd-MM-yyyy");
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
