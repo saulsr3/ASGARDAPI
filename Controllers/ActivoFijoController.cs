@@ -432,7 +432,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        //Activos para edificios e instalaciones
+        //Activos para intangibles
         [HttpGet]
         [Route("api/ActivoFIjo/listarActivosIntangibles")]
         public List<RegistroAF> listarActivosIntangibles()
