@@ -352,38 +352,39 @@ namespace ASGARDAPI.Controllers
                 ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
                 FormularioIngreso oFecha = bd.FormularioIngreso.Where(p => p.NoFormulario == oactivo.NoFormulario).First();
                 TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien).Last();
+                TarjetaDepreciacion oUltimaFecha = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto!= "Revalorización").Last();
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 Periodo oPeriodo =bd.Periodo.Where(p => p.Estado == 1).First();
                 odatos.cooperativa = oCooperativa.Nombre;
                 odatos.anio = oPeriodo.Anio.ToString();
                 odatos.idBien = oactivo.IdBien;
                 odatos.fechaAdquisicion = oFecha.FechaIngreso == null ? " " : ((DateTime)oFecha.FechaIngreso).ToString("dd-MM-yyyy"); ;
-                odatos.fecha=oTarjeta.Fecha == null ? " " : ((DateTime)oTarjeta.Fecha).ToString("dd-MM-yyyy");
+                odatos.fecha=oUltimaFecha.Fecha == null ? " " : ((DateTime)oUltimaFecha.Fecha).ToString("dd-MM-yyyy");
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
                 odatos.valorActual = (float)oTarjeta.ValorActual;
-                if (oTarjeta.Concepto == "Compra")
-                {
-                    double valor = 0.00;
-                    valor = (double)(oTarjeta.Valor / oactivo.VidaUtil);
-                    odatos.valorDepreciacion = valor;
-                } else if (oTarjeta.Concepto == "Depreciación") {
-                    double valor = 0.00;
-                    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien==idBien && p.Concepto == "Depreciación").Count();
-                    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
-                    valor = (double)(oTarjeta.ValorActual / aniosRestantes);
-                    odatos.valorDepreciacion = valor;
-                }
-                else if (oTarjeta.Concepto == "Revalorización")
-                {
-                    double valor = 0.00;
-                    TarjetaDepreciacion oValorAcumulado = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Last();
-                    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Count();
-                    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
-                    valor = (double)(oTarjeta.Valor - oValorAcumulado.DepreciacionAcumulada) / aniosRestantes;
-                    odatos.valorDepreciacion = valor;
-                }
+                //if (oTarjeta.Concepto == "Compra")
+                //{
+                //    double valor = 0.00;
+                //    valor = (double)(oTarjeta.Valor / oactivo.VidaUtil);
+                //    odatos.valorDepreciacion = valor;
+                //} else if (oTarjeta.Concepto == "Depreciación") {
+                //    double valor = 0.00;
+                //    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien==idBien && p.Concepto == "Depreciación").Count();
+                //    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
+                //    valor = (double)(oTarjeta.ValorActual / aniosRestantes);
+                //    odatos.valorDepreciacion = valor;
+                //}
+                //else if (oTarjeta.Concepto == "Revalorización")
+                //{
+                //    double valor = 0.00;
+                //    TarjetaDepreciacion oValorAcumulado = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Last();
+                //    int oDepreciaciones = bd.TarjetaDepreciacion.Where(p => p.IdBien == idBien && p.Concepto == "Depreciación").Count();
+                //    int aniosRestantes = (int)oactivo.VidaUtil - oDepreciaciones;
+                //    valor = (double)(oTarjeta.Valor - oValorAcumulado.DepreciacionAcumulada) / aniosRestantes;
+                //    odatos.valorDepreciacion = valor;
+                //}
              
 
 
@@ -576,6 +577,7 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+        //Validar si hay activos para depreciar
         [HttpGet]
         [Route("api/Depreciacion/ValidarActivosADepreciar")]
         public int ValidarActivosADepreciar() { 
@@ -609,6 +611,28 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
 
+        }
+        //listar activos a depreciar
+        [HttpGet]
+        [Route("api/Depreciacion/ListaActivosADepreciar")]
+        public IEnumerable<ComboAnidadoAF> ListaActivosADepreciar()
+        {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                    IEnumerable<ComboAnidadoAF> lista = (from tarjeta in bd.TarjetaDepreciacion
+                                                  group tarjeta by tarjeta.IdBien into bar
+                                                  join activo in bd.ActivoFijo
+                                                 on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0) && activo.EstaAsignado == 1
+                                                  select new ComboAnidadoAF
+                                                  {
+                                                      id = activo.IdBien,
+                                                      nombre = activo.CorrelativoBien
+
+                                                  }).ToList();
+                return lista;
+                }
         }
         //Metodo que recupera losdatos necesarios para el cierre de periodo.
         [HttpGet]
