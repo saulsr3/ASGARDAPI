@@ -123,6 +123,30 @@ namespace ASGARDAPI.Controllers
                 return oCodigo;
             }
         }
+
+        //Metodo para no permitir editar la fecha de un activo asignado si ya se ha depreciado.
+        [HttpGet]
+        [Route("api/ActivoFIjo/noEditarfecha/{idbien}")]
+        public int noEditarfecha(int idbien)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien && p.UltimoAnioDepreciacion != null).First();
+                    respuesta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
         [HttpPost]
         [Route("api/ActivoFIjo/asignarBien")]
         public int asignarBien([FromBody]AsignacionAF oAsignacionAF)
