@@ -281,8 +281,8 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 1;
                     
-                    oSolic.Acuerdo = acuerdo;
-                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
+                    //oSolic.Acuerdo = acuerdo;
+                   // oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
