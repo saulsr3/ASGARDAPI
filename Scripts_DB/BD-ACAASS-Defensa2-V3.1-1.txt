@@ -265,6 +265,22 @@ Telefono varchar(20),
 Acuerdo varchar(50),
 Fechabaja date
 )
+
+
+use BDAcaassAF
+CREATE TABLE SolicitudTraspaso(
+IdSolicitud int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha date,
+Fechatraspaso date
+Folio varchar(10),
+Descripcion varchar(250),
+IdBien int,
+Estado int,
+Responsableanterior varchar(100),
+Areadenegocioanterior varchar(100),
+Acuerdo varchar(50),
+)t
+
 GO
 USE BDAcaassAF
 ALTER TABLE Periodo
