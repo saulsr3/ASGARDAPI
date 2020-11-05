@@ -276,10 +276,10 @@ Folio varchar(10),
 Descripcion varchar(250),
 IdBien int,
 Estado int,
-Responsableanterior varchar(100),
-Areadenegocioanterior varchar(100),
+ResponsableAnterior varchar(100),
+AreadenegocioAnterior varchar(100),
 Acuerdo varchar(50),
-)t
+)
 
 GO
 USE BDAcaassAF
@@ -352,6 +352,10 @@ ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
 GO
 USE BDAcaassAF
 ALTER TABLE SolicitudBaja
+ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
+GO
+USE BDAcaassAF
+ALTER TABLE SolicitudTraspaso
 ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
 GO
 USE BDAcaassAF
