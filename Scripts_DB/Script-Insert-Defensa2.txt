@@ -6,7 +6,7 @@ INSERT INTO [Cooperativa] ([IdCooperativa],[Nombre],[Logo],[Descripcion],[Dhabil
 SET IDENTITY_INSERT Cooperativa OFF
 
 SET IDENTITY_INSERT Periodo ON
-INSERT INTO [Periodo] ([IdPeriodo],[Anio],[IdCooperativa],[Estado])VALUES(1,2010,1,'1')
+INSERT INTO [Periodo] ([IdPeriodo],[Anio],[IdCooperativa],[Estado])VALUES(1,2008,1,'1')
 SET IDENTITY_INSERT Periodo OFF
 
 SET IDENTITY_INSERT Sucursal ON

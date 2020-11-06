@@ -161,6 +161,7 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oAsignacionAF.idBien).First();
                     oActivo.IdBien = oAsignacionAF.idBien;
                     oActivo.NoSerie = oAsignacionAF.noSerie;
+                    oActivo.FechaAsignacion = oAsignacionAF.fecha;
                     oActivo.VidaUtil = oAsignacionAF.vidaUtil;
                     oActivo.IdResponsable = oAsignacionAF.idEmpleado;
                     Empleado oEmpleado= bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();

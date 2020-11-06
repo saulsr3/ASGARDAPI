@@ -359,11 +359,14 @@ namespace ASGARDAPI.Controllers
                 odatos.anio = oPeriodo.Anio.ToString();
                 odatos.idBien = oactivo.IdBien;
                 odatos.fechaAdquisicion = oFecha.FechaIngreso == null ? " " : ((DateTime)oFecha.FechaIngreso).ToString("dd-MM-yyyy"); ;
+                odatos.fechaAsignacion = oactivo.FechaAsignacion == null ? " " : ((DateTime)oactivo.FechaAsignacion).ToString("dd-MM-yyyy"); ;
                 odatos.fecha=oUltimaFecha.Fecha == null ? " " : ((DateTime)oUltimaFecha.Fecha).ToString("dd-MM-yyyy");
+                odatos.concepto = oUltimaFecha.Concepto;
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
                 odatos.valorActual = (float)oTarjeta.ValorActual;
+                odatos.tipo =(int) oactivo.TipoActivo;
                 //if (oTarjeta.Concepto == "Compra")
                 //{
                 //    double valor = 0.00;

@@ -11,6 +11,7 @@ namespace ASGARDAPI.Clases
         public string cooperativa { get; set; }
         public string anio { get; set; }
         public string fechaAdquisicion { get; set; }
+        public string fechaAsignacion { get; set; }
         public string fecha { get; set; }
         public string codigo { get; set; }
         public string descipcion { get; set; }
@@ -19,6 +20,7 @@ namespace ASGARDAPI.Clases
         public float mejoras { get; set; }
         public float valorActual { get; set; }
         public int vidaUtil { get; set; }
-
+        public string concepto { get; set; }
+        public int tipo { get; set; }
     }
 }
