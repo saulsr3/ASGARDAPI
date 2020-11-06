@@ -9,10 +9,12 @@ namespace ASGARDAPI.Models
         {
             BienMantenimiento = new HashSet<BienMantenimiento>();
             SolicitudBaja = new HashSet<SolicitudBaja>();
+            SolicitudTraspaso = new HashSet<SolicitudTraspaso>();
             TarjetaDepreciacion = new HashSet<TarjetaDepreciacion>();
         }
 
         public int IdBien { get; set; }
+        public DateTime? FechaAsignacion { get; set; }
         public string CorrelativoBien { get; set; }
         public int? NoFormulario { get; set; }
         public string Desripcion { get; set; }
@@ -49,6 +51,7 @@ namespace ASGARDAPI.Models
         public FormularioIngreso NoFormularioNavigation { get; set; }
         public ICollection<BienMantenimiento> BienMantenimiento { get; set; }
         public ICollection<SolicitudBaja> SolicitudBaja { get; set; }
+        public ICollection<SolicitudTraspaso> SolicitudTraspaso { get; set; }
         public ICollection<TarjetaDepreciacion> TarjetaDepreciacion { get; set; }
     }
 }

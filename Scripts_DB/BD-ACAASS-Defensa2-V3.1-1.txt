@@ -174,6 +174,7 @@ GO
 use BDAcaassAF
 CREATE TABLE ActivoFijo(
 IdBien int NOT NULL PRIMARY KEY IDENTITY(1,1),
+FechaAsignacion date,
 CorrelativoBien varchar(20), 
 NoFormulario int,
 Desripcion varchar(100),
@@ -271,14 +272,14 @@ use BDAcaassAF
 CREATE TABLE SolicitudTraspaso(
 IdSolicitud int NOT NULL PRIMARY KEY IDENTITY(1,1),
 Fecha date,
-Fechatraspaso date
+Fechatraspaso date,
 Folio varchar(10),
 Descripcion varchar(250),
 IdBien int,
 Estado int,
 ResponsableAnterior varchar(100),
 AreadenegocioAnterior varchar(100),
-Acuerdo varchar(50),
+Acuerdo varchar(50)
 )
 
 GO
