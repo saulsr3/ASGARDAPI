@@ -33,7 +33,7 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
 
-                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&&(bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual>0)
+                                                            where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))&&(bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual>activo.ValorResidual)
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien=activo.IdBien,
@@ -365,7 +365,7 @@ namespace ASGARDAPI.Controllers
                 odatos.codigo = oactivo.CorrelativoBien;
                 odatos.descipcion = oactivo.Desripcion;
                 odatos.valorAdquicicon = oactivo.ValorAdquicicion.ToString();
-                odatos.valorActual = (float)oTarjeta.ValorActual;
+                odatos.valorActual = (float)oTarjeta.ValorActual-(float)oactivo.ValorResidual;
                 odatos.tipo =(int) oactivo.TipoActivo;
                 //if (oTarjeta.Concepto == "Compra")
                 //{
