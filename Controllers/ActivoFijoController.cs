@@ -411,7 +411,7 @@ namespace ASGARDAPI.Controllers
                                             on activo.IdResponsable equals resposable.IdEmpleado
                                             join area in bd.AreaDeNegocio
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                            where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 1
+                                            where (activo.EstadoActual != 0) && activo.EstaAsignado == 1
 
                                             orderby activo.CorrelativoBien
                                             select new RegistroAF
