@@ -64,7 +64,7 @@ namespace ASGARDAPI.Controllers
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
-                                                        where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                        where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
                                                         {
@@ -94,7 +94,7 @@ namespace ASGARDAPI.Controllers
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
-                                                        where (activo.EstadoActual !=0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                        where (activo.EstadoActual !=0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
                                                         {
@@ -594,7 +594,7 @@ namespace ASGARDAPI.Controllers
                                                   group tarjeta by tarjeta.IdBien into bar
                                                   join activo in bd.ActivoFijo
                                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
-                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0) && activo.EstaAsignado == 1
+                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual) && activo.EstaAsignado == 1
                                                   select new ComboAnidadoAF
                                                   {
                                                       id = activo.IdBien,
@@ -627,7 +627,7 @@ namespace ASGARDAPI.Controllers
                                                   group tarjeta by tarjeta.IdBien into bar
                                                   join activo in bd.ActivoFijo
                                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
-                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0) && activo.EstaAsignado == 1
+                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual) && activo.EstaAsignado == 1
                                                   select new ComboAnidadoAF
                                                   {
                                                       id = activo.IdBien,

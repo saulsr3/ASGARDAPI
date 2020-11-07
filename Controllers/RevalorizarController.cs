@@ -34,8 +34,8 @@ namespace ASGARDAPI.Controllers
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
-                                                            where activo.EstaAsignado==1 && activo.TipoActivo==2
-                                                            //where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                            where activo.EstaAsignado == 1 && activo.TipoActivo == 2
+                                                            //where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual)
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien = activo.IdBien,
