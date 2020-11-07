@@ -16,7 +16,7 @@ namespace ASGARDAPI.Controllers
             return View();
         }
 
-        //Metodo que lista los bienes en la tabla depreciación, validados si estan ya depreciados en el periodo actual.
+      
         [HttpGet]
         [Route("api/Revalorizar/listarActivosRevalorizar")]
         public IEnumerable<DepreciacionAF> listarActivosRevalorizar()
@@ -34,8 +34,8 @@ namespace ASGARDAPI.Controllers
                                                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
-                                                          //  where activo.EstaAsignado==1 && activo.TipoActivo==2 && activo.TipoActivo==3 && activo.TipoActivo == 1
-                                                             where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                            where activo.EstaAsignado==1 && activo.TipoActivo==2
+                                                            //where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien = activo.IdBien,
@@ -63,13 +63,13 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<RegistroAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
                                                         group tarjeta by tarjeta.IdBien into bar
                                                         join activo in bd.ActivoFijo
-                                                       on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                                        on bar.FirstOrDefault().IdBien equals activo.IdBien
                                                         join noFormulario in bd.FormularioIngreso
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
-                                                        //where activo.EstaAsignado == 1 && activo.TipoActivo == 1 
-                                                        where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
+                                                        where activo.EstaAsignado == 1 && activo.TipoActivo == 1 
+                                                       // where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 1 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
                                                         {
@@ -99,6 +99,7 @@ namespace ASGARDAPI.Controllers
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
+                                                        where activo.EstaAsignado == 1 && activo.TipoActivo == 1 
                                                         where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
