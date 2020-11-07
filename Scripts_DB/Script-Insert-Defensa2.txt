@@ -12,7 +12,7 @@ SET IDENTITY_INSERT Periodo OFF
 SET IDENTITY_INSERT Sucursal ON
 INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(1,'Unidad Central','San Sebastian','AC01',1,'1')
 INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(2,'Despensa','San Sebastian','AC02',1,'1')
-INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(3,'Centro de Negocios','Santo Domingo','AC03',1,'1')
+INSERT INTO [Sucursal] ([IdSucursal],[Nombre],[Ubicacion],[Correlativo],[IdCooperativa],[Dhabilitado])VALUES(3,'Sucursal 2','Apastepeque','AC03',1,'1')
 SET IDENTITY_INSERT Sucursal OFF
 
 SET IDENTITY_INSERT AreaDeNegocio  ON
@@ -50,6 +50,7 @@ INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[De
 INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(7,'Equipo de seguridad','107','Equipo de seguridad, camaras, y sensores',3,1)
 INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(8,'Equipo de Trasporte','108','Equipo de trasporte de la cooperativa',2,1)
 INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(9,'Mobiliario y equipo indrustrial','109','Equipo de produccion en area de negocios',3,1)
+INSERT INTO [Clasificacion] ([IdClasificacion],[Clasificacion],[Correlativo],[Descripcion],[IdCategoria],[Dhabilitado])VALUES(10,'Software','110','Bienes intangibles',4,1)
 SET IDENTITY_INSERT Clasificacion OFF
 
 SET IDENTITY_INSERT Marcas  ON
@@ -68,18 +69,19 @@ INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(12,'S
 INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(13,'carlastor','Marca de muebles',1)
 INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(14,'Toyota','Marca de equipo de trasporte',1)
 INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(15,'Nissan','Marca de equipo de trasporte',1)
+INSERT INTO [Marcas] ([IdMarca],[Marca],[Descripcion],[Dhabilitado])VALUES(16,'Lenovo','Marca de equipo informatico',1)
 SET IDENTITY_INSERT Marcas OFF
 
 SET IDENTITY_INSERT Tecnicos  ON
-INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(1,'Chepito','Sersaprosa',1)
-INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(2,'Toñito de la niña flor','Todotec',1)
-INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(3,'Juan mundo','Sersaprosa',1)
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(1,'Juan Alverto Campos','Sersaprosa',1)
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(2,'Pedro Moran valdes','Todotec',1)
+INSERT INTO [Tecnicos] ([IdTecnico],[Nombre],[Empresa],[Dhabilitado])VALUES(3,'Amilcar Alejandro Vasquez','Sersaprosa',1)
 SET IDENTITY_INSERT Tecnicos OFF
 
 SET IDENTITY_INSERT Donantes  ON
-INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(1,'Donaciones Cooperativa','2333-9877','col escalon #4',1)
-INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(2,'Bill Gates','2333-8877','USA, val #45 new york',1)
-INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(3,'Emma Watson','2333-6753','Howarts 44, callejon diagon',1)
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(1,'Donaciones Cooperativas','2333-9877','col escalon #4',1)
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(2,'Donaciones municipales','2333-8877','san sebastian #43',1)
+INSERT INTO [Donantes] ([IdDonante],[Nombre],[Telefono],[Direccion],[Dhabilitado])VALUES(3,'Pedro Antonio Perdomo Varela','2333-6753','col. miralvalle #23 santa tecla',1)
 SET IDENTITY_INSERT Donantes OFF
 
 SET IDENTITY_INSERT Cargos  ON
@@ -105,10 +107,11 @@ SET IDENTITY_INSERT Empleado OFF
 
 SET IDENTITY_INSERT Proveedor  ON
 INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(1,'La comercial el espino','Col escalon #34','2333-4453','Venta de equipo','Jose siguenza','7867-3647',1)
-INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(2,'Tecno Tech','Col escalon #34','2333-4454','Venta de equipo','Pedro Rivas','6267-3647',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(2,'Tecno Store','Col escalon #34','2333-4454','Venta de equipo','Pedro Rivas','6267-3647',1)
 INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(3,'Tropigas','Col escalon #34','2333-4353','Venta de equipo','Jose Arias','7937-3447',1)
-INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(4,'Bajamesa','Col escalon #34','2333-2353','Venta de equipo','Julio Perez','7347-3657',1)
-INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(5,'Sombol','Col escalon #34','2333-4783','Venta de equipo','Jorge Chacon','7677-3787',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(4,'Maquinaria San Jose','Col escalon #34','2333-2353','Venta de equipo','Julio Perez','7347-3657',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(5,'Comercial los proceres','Col escalon #34','2333-4783','Venta de equipo','Jorge Chacon','7677-3787',1)
+INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[Encargado],[TelefonoEncargado],[Dhabilitado])VALUES(6,'Carpinteria los hernandez','Col escalon #34','2333-4783','Venta de equipo','Jorge Chacon','7677-3787',1)
 SET IDENTITY_INSERT Proveedor OFF
 
 SET IDENTITY_INSERT TipoUsuario  ON
