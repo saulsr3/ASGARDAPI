@@ -99,7 +99,6 @@ namespace ASGARDAPI.Controllers
                                                         on activo.NoFormulario equals noFormulario.NoFormulario
                                                         join clasif in bd.Clasificacion
                                                         on activo.IdClasificacion equals clasif.IdClasificacion
-                                                        //where activo.EstaAsignado == 1 && activo.TipoActivo == 3
                                                         where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.TipoActivo == 3 && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > 0)
                                                         orderby activo.CorrelativoBien
                                                         select new RegistroAF
