@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASGARDAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace ASGARDAPI.Clases
         public string Descripcion { get; set; }
         public string Clasificacion { get; set; }
         public string AreaDeNegocio { get; set; }
+        public string sucursal { get; set; }
         public string Responsable { get; set; }
 
         //para actualizar la vida util despues de buscar
