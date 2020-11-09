@@ -469,20 +469,21 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                 IEnumerable<InformeMatenimientoAF> listaInformeMante = (from tecnico in bd.Tecnicos
-                                                                        join informemante in bd.InformeMantenimiento 
+                                                                      join informemante in bd.InformeMantenimiento
                                                                         on tecnico.IdTecnico equals informemante.IdTecnico
-                                                                        join bienmante in bd.BienMantenimiento
-                                                                        on informemante.IdMantenimiento equals bienmante.IdMantenimiento
-                                                                        join bienes in bd.ActivoFijo
-                                                                        on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado == 1
+                                                                      join bienmante in bd.BienMantenimiento
+                                                                      on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                                      join activo in bd.ActivoFijo
+                                                                      on bienmante.IdBien equals activo.IdBien
+                                                                       where informemante.Estado == 1 && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
 
-                                                                       
+
                                                                         select new InformeMatenimientoAF
                                                                         {
                                                                             idinformematenimiento = informemante.IdInformeMantenimiento,
-                                                                            idBien = bienes.IdBien,
+                                                                            idBien = activo.IdBien,
                                                                             idmantenimiento = (int)informemante.IdMantenimiento,
                                                                             fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
                                                                             nombretecnico = tecnico.Nombre,
@@ -490,8 +491,8 @@ namespace ASGARDAPI.Controllers
                                                                             costomateriales = (double)informemante.CostoMateriales,
                                                                             costomo = (double)informemante.CostoMo,
                                                                             costototal = (double)informemante.CostoTotal,
-                                                                            vidautil= bienes.VidaUtil,
-                                                                            bienes = bienes.Desripcion
+                                                                            vidautil= activo.VidaUtil,
+                                                                            bienes = activo.Desripcion
                                                                             
 
                                                                         }).ToList();
