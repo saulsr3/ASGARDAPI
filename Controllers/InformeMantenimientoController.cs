@@ -256,6 +256,8 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
                                                               join activo in bd.ActivoFijo
                                                               on bienMtto.IdBien equals activo.IdBien
+                                                              join solicitud in bd.SolicitudMantenimiento
+                                                              on bienMtto.IdSolicitud equals solicitud.IdSolicitud
                                                               //  join informe in bd.InformeMantenimiento
                                                               // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
                                                               where activo.EstadoActual == 3 && bienMtto.Estado == 1 //ELEMENTO 2 LISTA
@@ -267,7 +269,9 @@ namespace ASGARDAPI.Controllers
                                                                   Codigo = activo.CorrelativoBien,
                                                                   Descripcion = activo.Desripcion,
                                                                   Periodo = bienMtto.PeriodoMantenimiento,
-                                                                  Razon = bienMtto.RazonMantenimiento
+                                                                  Razon = bienMtto.RazonMantenimiento,
+                                                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                                                  
 
                                                               }).ToList();
 
