@@ -10,6 +10,7 @@ namespace ASGARDAPI.Clases
         public int idsolicitud { get; set; }
         public int idbien { get; set; }
         public string folio { get; set; }
+        public string codigo { get; set; }
         public DateTime? fechasolicitud { get; set; }
         public DateTime? fechatraspaso { get; set; }
         public string descripcion { get; set; }
@@ -22,7 +23,8 @@ namespace ASGARDAPI.Clases
         //para listar el area actual y posible antigua.
         public string areaanterior { get; set; }
         public string responsableanterior { get; set; }
-     
+        public string sucursal { get; set; }
+
 
     }
 }
