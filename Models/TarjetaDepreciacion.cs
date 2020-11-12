@@ -13,7 +13,7 @@ namespace ASGARDAPI.Models
         public double? DepreciacionAnual { get; set; }
         public double? DepreciacionAcumulada { get; set; }
         public double? ValorActual { get; set; }
-        public double? ValorMejora { get; set; }
+        public double? ValorTransaccion { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
     }

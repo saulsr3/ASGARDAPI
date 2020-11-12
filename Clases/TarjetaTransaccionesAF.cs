@@ -15,6 +15,6 @@ namespace ASGARDAPI.Clases
         public double depreciacionAnual { get; set; }
         public double depreciacionAcumulada { get; set; }
         public double valorActual { get; set; }
-        public double valorMejora { get; set; }
+        public double valorTransaccion { get; set; }
     }
 }

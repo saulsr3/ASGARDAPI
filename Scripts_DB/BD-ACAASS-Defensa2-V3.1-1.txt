@@ -214,7 +214,7 @@ Valor float,
 DepreciacionAnual float,
 DepreciacionAcumulada float,
 ValorActual float,
-ValorMejora float
+ValorTransaccion float
 )
 GO
 use BDAcaassAF

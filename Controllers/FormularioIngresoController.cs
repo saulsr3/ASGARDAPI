@@ -149,7 +149,7 @@ namespace ASGARDAPI.Controllers
                         transaccion.DepreciacionAnual = 0.00;
                         transaccion.DepreciacionAcumulada = 0.00;
                         transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
-                        transaccion.ValorMejora = 0.00;
+                        transaccion.ValorTransaccion = oActivoFijoTransaccion.ValorAdquicicion;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
                         //Generar codigo
@@ -216,7 +216,7 @@ namespace ASGARDAPI.Controllers
                             transaccion.DepreciacionAnual = 0.00;
                             transaccion.DepreciacionAcumulada = 0.00;
                             transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
-                            transaccion.ValorMejora = 0.00;
+                            transaccion.ValorTransaccion = oActivoFijoTransaccion.ValorAdquicicion;
                             bd.TarjetaDepreciacion.Add(transaccion);
                             bd.SaveChanges();
                         }
@@ -310,7 +310,7 @@ namespace ASGARDAPI.Controllers
                         transaccion.DepreciacionAnual = 0.00;
                         transaccion.DepreciacionAcumulada = 0.00;
                         transaccion.ValorActual = oActivoFijoTransaccion.ValorAdquicicion;
-                        transaccion.ValorMejora = 0.00;
+                        transaccion.ValorTransaccion = oActivoFijoTransaccion.ValorAdquicicion;
                         bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
 

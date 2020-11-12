@@ -71,7 +71,7 @@ namespace ASGARDAPI.Controllers
 
                     transaccion.IdBien = oActivoAF.idBien;
                     transaccion.Fecha = oActivoAF.fecha;
-                    transaccion.ValorMejora =oActivoAF.valorRevalorizacion;
+                    transaccion.ValorTransaccion =oActivoAF.valorRevalorizacion;
                     transaccion.Concepto = "Revalorización";
                     transaccion.Valor = oUltimaTransaccion.Valor + oActivoAF.valorRevalorizacion;
                     transaccion.DepreciacionAnual = 0.00;

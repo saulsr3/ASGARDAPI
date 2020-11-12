@@ -520,7 +520,7 @@ namespace ASGARDAPI.Controllers
                                                                depreciacionAnual= Math.Round((double)tarjeta.DepreciacionAnual,2),       
                                                                 depreciacionAcumulada = Math.Round((double)tarjeta.DepreciacionAcumulada,2),
                                                                 valorActual = Math.Round((double)tarjeta.ValorActual,2),
-                                                                valorMejora = Math.Round((double)tarjeta.ValorMejora,2)
+                                                                valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion,2)
                                                                          }).ToList();
                 return ListaTransacciones;
             }
@@ -562,8 +562,8 @@ namespace ASGARDAPI.Controllers
                     double valor= (double)oUltimaTransaccion.ValorActual - oActivoAF.valorDepreciacion;
                         double rounded = Math.Round(valor,3);
                         transaccion.ValorActual = rounded;
-                        transaccion.ValorMejora = 0.00;
-                        bd.TarjetaDepreciacion.Add(transaccion);
+                        transaccion.ValorTransaccion = oActivoAF.valorDepreciacion;
+                    bd.TarjetaDepreciacion.Add(transaccion);
                         bd.SaveChanges();
                     //cambia ultimo anio de depreciación
 
@@ -711,7 +711,7 @@ namespace ASGARDAPI.Controllers
                             double valorActual = (double)oUltimaTransaccion.ValorActual - valor;
                             double rounded = Math.Round(valorActual, 3);
                             transaccion.ValorActual = rounded;
-                            transaccion.ValorMejora = 0.00;
+                            transaccion.ValorTransaccion = valor;
                             bd.TarjetaDepreciacion.Add(transaccion);
                             bd.SaveChanges();
                             //cambia ultimo anio de depreciación
