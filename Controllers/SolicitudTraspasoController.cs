@@ -176,18 +176,21 @@ namespace ASGARDAPI.Controllers
                                                       on activo.IdResponsable equals empleado.IdEmpleado
                                                       join area in bd.AreaDeNegocio
                                                       on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                      join sucursal in bd.Sucursal
+                                                      on area.IdSucursal equals sucursal.IdSucursal
                                                       where solicitud.Estado == 1
                                                       select new SolicitudTraspasoAF
                                                       {
                                                           idbien = activo.IdBien,
                                                           idsolicitud = solicitud.IdSolicitud,
                                                           folio = solicitud.Folio,
+                                                          codigo=activo.CorrelativoBien,
                                                           fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
                                                           descripcion= solicitud.Descripcion,
                                                           responsableanterior= solicitud.ResponsableAnterior,
                                                           areaanterior=solicitud.AreadenegocioAnterior, 
                                                           nuevoresponsable= empleado.Nombres +" "+ empleado.Apellidos,
-                                                          nuevaarea= area.Nombre,
+                                                          nuevaarea= area.Nombre +" "+ sucursal.Nombre +" "+sucursal.Ubicacion,
                                                       }).ToList();
                 return lista;
 
@@ -207,15 +210,16 @@ namespace ASGARDAPI.Controllers
                 ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitud.IdBien).First();
                 Empleado oEmpleado = bd.Empleado.Where(p=> p.IdEmpleado == oActivo.IdResponsable).First();
                 AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                Sucursal oSucursal = bd.Sucursal.Where(p=>p.IdSucursal == oArea.IdSucursal).First();
 
                 odatos.NoSolicitud = oSolicitud.IdSolicitud;
                 odatos.fechacadena = oSolicitud.Fecha == null ? " " : ((DateTime)oSolicitud.Fecha).ToString("dd-MM-yyyy");
                 odatos.folio = oSolicitud.Folio;
                 odatos.idbien = (int)oSolicitud.IdBien;
-                odatos.areanegocioactual = oArea.Nombre;
-                odatos.areanegocioanterior = odatos.areanegocioanterior;
+                odatos.areanegocioactual = oArea.Nombre + " - " + oSucursal.Nombre + " - " + oSucursal.Ubicacion;
+                odatos.areanegocioanterior = oSolicitud.AreadenegocioAnterior;
                 odatos.responsableactual = oEmpleado.Nombres + " " + oEmpleado.Apellidos;
-                odatos.responsableanterior = odatos.responsableanterior;
+                odatos.responsableanterior = oSolicitud.ResponsableAnterior;
                 odatos.Codigo = oActivo.CorrelativoBien;
                 odatos.Descripcion = oActivo.Desripcion;
 
