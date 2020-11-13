@@ -33,6 +33,8 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
+                                            join sucursal in bd.Sucursal
+                                            on area.IdSucursal equals sucursal.IdSucursal
                                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
@@ -41,7 +43,7 @@ namespace ASGARDAPI.Controllers
                                                 Codigo = activo.CorrelativoBien,
                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Desripcion = activo.Desripcion,
-                                                AreaDeNegocio = area.Nombre,
+                                                AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
                                                 cargo = cargo.Cargo,
 
@@ -227,5 +229,62 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //ACEPTAR LA SOLICITUD DE TRASPASO DE UN ACTIVO.
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/aceptarSolicitud/{idsolicitud}")]
+        public int aceptarSolicitud(int idsolicitud)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudTraspaso oSolicitud = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == idsolicitud).First();
+                    oSolicitud.Estado = 2;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+        //CAMBIAR ESTADO DEL BIEN A ACEPTADO
+        //GUARDO EL ACUERDO Y LA FECHA AQUI POR QUE DEPENDE DE SI ACEPTO O NO LA SOLICITUD.
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/cambiarEstadoAceptoTraspaso/{idactivo}/{acuerdo}/{fechatraspaso}")] // 
+        public int cambiarEstadoAceptoTraspaso(int idactivo, string acuerdo, string fechasolicitud)// 
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //primero cambiamos el el estado del activo para hacer notar que ya no está en solicitud (UNA VEZ SEA APROBADA)
+                    SolicitudTraspaso oSolicitudT = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == idactivo).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitudT.IdBien).First();
+                    oActivo.EstadoActual = 1;
+                    oActivo.EstaAsignado = 1;
+                    //guardamos el acuerdo y la fecha
+                    oSolicitudT.Acuerdo = acuerdo;
+                    oSolicitudT.Fechatraspaso = Convert.ToDateTime(fechasolicitud);
+                    bd.SaveChanges();
+                    respuesta = 1;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
     }
 }

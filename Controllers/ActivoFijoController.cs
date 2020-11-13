@@ -126,7 +126,7 @@ namespace ASGARDAPI.Controllers
 
         //Metodo para no permitir editar la fecha de un activo asignado si ya se ha depreciado.
         [HttpGet]
-        [Route("api/ActivoFIjo/noEditarfecha/{idbien}")]
+        [Route("api/ActivoFijo/noEditarfecha/{idbien}")]
         public int noEditarfecha(int idbien)
         {
             int respuesta = 0;

@@ -204,7 +204,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1
                                    orderby activo.CorrelativoBien
                                    select new RegistroAF
                                    {
@@ -225,7 +225,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1
 
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
@@ -310,6 +310,46 @@ namespace ASGARDAPI.Controllers
                     return listaActivo;
                 }
             }
+        }
+
+        //PARA VER SI HAY ACTIVOS QUE REVALORIZAR
+        [HttpGet]
+        [Route("api/Revalorizar/ValidarActivosARevalorizar")]
+        public int ValidarActivosADepreciar()
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                    List<ComboAnidadoAF> lista = (from tarjeta in bd.TarjetaDepreciacion
+                                                  group tarjeta by tarjeta.IdBien into bar
+                                                  join activo in bd.ActivoFijo
+                                                 on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                                 // where (activo.EstadoActual != 0) && activo.TipoActivo == 2 && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.EstaAsignado == 1
+                                                  where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual) && activo.EstaAsignado == 1
+                                                 // where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && (bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual > activo.ValorResidual) && activo.EstaAsignado == 1
+                                                  select new ComboAnidadoAF
+                                                  {
+                                                      id = activo.IdBien,
+                                                      nombre = activo.CorrelativoBien
+
+                                                  }).ToList();
+                    if (lista.Count() > 0)
+                    {
+                        rpta = 1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                rpta = 0;
+                // Console.WriteLine("prueba");
+            }
+            return rpta;
+
         }
 
     }
