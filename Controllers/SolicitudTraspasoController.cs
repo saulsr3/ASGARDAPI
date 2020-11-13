@@ -286,5 +286,60 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+
+        //DENEGAR SOLICITUD DE TRASPASO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/denegarSolicitud/{idsolicitud}")]
+        public int denegarSolicitud(int idsolicitud)
+        {
+            int rpta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    SolicitudTraspaso oSolicitud = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == idsolicitud).First();
+                    oSolicitud.Estado = 0;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+        //CAMBIAR ESTADO DE SOLICITUD CUANDO SE DENEGA
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/estadoSolicitudDenegada/{idsolicitud}")]
+        public int estadoSolicitudDenegada(int idsolicitud)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                   // SolicitudTraspaso oSolicitud = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == idsolicitud).First();
+
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idsolicitud).First();                   
+                    oActivo.EstadoActual = 1;// a 1 para que vuelva a estar disponible para traspaso o para otros procesos
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
     }
 }
