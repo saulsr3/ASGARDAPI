@@ -46,6 +46,26 @@ namespace ASGARDAPI.Controllers
             }
         }
         [HttpGet]
+        [Route("api/ActivoFIjo/validarActivosAsignar")]
+        public int validarActivosAsignar()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo    
+                                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 0
+                                                    select new NoAsignadosAF
+                                                    {
+                                                        IdBien = activo.IdBien,
+                                                        Desripcion = activo.Desripcion,
+                                                    }).ToList();
+                if (lista.Count() > 0) {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+        [HttpGet]
         [Route("api/ActivoFIjo/RecuperarVidaUtil/{idbien}")]
         public AsignacionAF RecuperarVidaUtil(int idbien)
         {
