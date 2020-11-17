@@ -33,7 +33,8 @@ namespace ASGARDAPI.Controllers
                                                        idcooperativa=cooperativa.IdCooperativa,
                                                        nombre=cooperativa.Nombre,
                                                        anio= (int)operiodo.Anio,
-                                                       descripcion = cooperativa.Descripcion
+                                                       descripcion = cooperativa.Descripcion,
+                                                       logo=cooperativa.Logo
 
                                                    }).ToList();
                 return listarCooperativa;
@@ -97,6 +98,24 @@ namespace ASGARDAPI.Controllers
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == id).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                return oCooperativaAF;
+            }
+
+        }
+
+        //Recuperar logo de cooperativa
+        [HttpGet]
+        [Route("api/Cooperativa/recuperarLogoCooperativa")]
+        public CooperativaAF recuperarLogoCooperativa()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 2).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 return oCooperativaAF;
