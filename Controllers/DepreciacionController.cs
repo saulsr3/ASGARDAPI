@@ -553,7 +553,7 @@ namespace ASGARDAPI.Controllers
 
                     }else if (oUltimaTransaccion.Concepto == "Revalorización")
                         {
-                        TarjetaDepreciacion oDepreciacionAcumulada = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien && p.Concepto == "Depreciación").Last();
+                        TarjetaDepreciacion oDepreciacionAcumulada = bd.TarjetaDepreciacion.Where(p => p.IdBien == oActivoAF.idBien && (p.Concepto == "Depreciación"|| p.Concepto == "Revalorización")).Last();
                         double valorAcumulado = (double)oDepreciacionAcumulada.DepreciacionAcumulada + oActivoAF.valorDepreciacion;
                         transaccion.DepreciacionAcumulada = Math.Round(valorAcumulado, 3);
                     }
