@@ -52,6 +52,25 @@ namespace ASGARDAPI.Controllers
                 return listaActivos;
             }
         }
+        [HttpGet]
+        [Route("api/Revalorizar/listarfechacadena")]
+        public IEnumerable<RegistroAF> listarfechacadena()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<RegistroAF> listaActivos = (from noFormulario in bd.FormularioIngreso
+                                          
+                                                       
+                                                        select new RegistroAF
+                                                        {
+                                                            
+                                                            fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),                                                         
+                                                        }).ToList();
+                return listaActivos;
+            }
+        }
 
         [HttpGet]
         [Route("api/Revalorizar/listarActivosEdificiosRevalorizar")]

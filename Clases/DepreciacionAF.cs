@@ -15,6 +15,7 @@ namespace ASGARDAPI.Clases
         public string responsable { get; set; }
         public string clasificacion { get; set; }
 
+        public string fechacadena { get; set; }
         //para cargar la vida util en revalorización.
          public int? vidautil { get; set; }
     }
