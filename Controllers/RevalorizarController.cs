@@ -20,55 +20,37 @@ namespace ASGARDAPI.Controllers
       
         [HttpGet]
         [Route("api/Revalorizar/listarActivosRevalorizar")]
-        public IEnumerable<DepreciacionAF> listarActivosRevalorizar()
+        public IEnumerable<RegistroAF> listarActivosRevalorizar()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<DepreciacionAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
-                                                            group tarjeta by tarjeta.IdBien into bar
-                                                            join activo in bd.ActivoFijo
-                                                           on bar.FirstOrDefault().IdBien equals activo.IdBien
-                                                            join empleado in bd.Empleado
-                                                            on activo.IdResponsable equals empleado.IdEmpleado
-                                                            join area in bd.AreaDeNegocio
-                                                            on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                            join sucursal in bd.Sucursal
-                                                            on area.IdSucursal equals sucursal.IdSucursal
-                                                            where (activo.EstadoActual != 0) && activo.TipoActivo == 2 && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
-
-                                                            select new DepreciacionAF
-                                                            {
-                                                                idBien = activo.IdBien,
-                                                                codigo = activo.CorrelativoBien,
-                                                                descripcion = activo.Desripcion,
-                                                                areanegocio = area.Nombre,
-                                                                sucursal = sucursal.Nombre,
-                                                                vidautil = activo.VidaUtil,
-                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
-
-
-                                                            }).ToList();
-                return listaActivos;
-            }
-        }
-        [HttpGet]
-        [Route("api/Revalorizar/listarfechacadena")]
-        public IEnumerable<RegistroAF> listarfechacadena()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-
-                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
-                IEnumerable<RegistroAF> listaActivos = (from noFormulario in bd.FormularioIngreso
-                                          
-                                                       
+                //IEnumerable<DepreciacionAF> listaActivos = (Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<RegistroAF> listaActivos = (from tarjeta in bd.TarjetaDepreciacion
+                                                        group tarjeta by tarjeta.IdBien into bar
+                                                        join activo in bd.ActivoFijo
+                                                       on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                                        join noFormulario in bd.FormularioIngreso
+                                                        on activo.NoFormulario equals noFormulario.NoFormulario
+                                                        join clasif in bd.Clasificacion
+                                                        on activo.IdClasificacion equals clasif.IdClasificacion
+                                                    //  where (activo.EstadoActual != 0) && activo.TipoActivo == 2 && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+                                                        where (activo.EstadoActual != 0 && activo.EstaAsignado == 1) && activo.TipoActivo == 2 && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+                                                        orderby activo.CorrelativoBien
                                                         select new RegistroAF
                                                         {
-                                                            
-                                                            fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),                                                         
+                                                            IdBien = activo.IdBien,
+                                                            Codigo = activo.CorrelativoBien,
+                                                            fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                            Descripcion = activo.Desripcion,
+                                                            vidautil = activo.VidaUtil,
+                                                            Clasificacion = clasif.Clasificacion1,
+
+
                                                         }).ToList();
                 return listaActivos;
+               
+
             }
         }
 
