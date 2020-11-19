@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Transactions;
 
 namespace ASGARDAPI.Controllers
 {
@@ -48,20 +51,20 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    //using (var transaccion = new TransactionScope())
-                    // if (oUsuarioAF.iidusuario == 0)
-                    //  {
-                    Usuario oUsuario = new Usuario();
+                    using (var transaccion = new TransactionScope())
+                        if (oUsuarioAF.iidusuario == 0)
+                        {
+                            Usuario oUsuario = new Usuario();
                     oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
-                    //cifrar contraseña
-                    //SHA256Managed sha = new SHA256Managed();
-                    //string clave = oUsuarioAF.contra;
-                    //byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
-                    //byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
-                    //string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
-                    //oUsuario.Contra = claveCifrada;
-                    oUsuario.Contra = oUsuarioAF.contra;
+                            //cifrar contraseña
+                            SHA256Managed sha = new SHA256Managed();
+                            string clave = oUsuarioAF.contra;
+                            byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
+                            byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
+                            string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
+                            oUsuario.Contra = claveCifrada;
+                            //oUsuario.Contra = oUsuarioAF.contra;
                     oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
                     oUsuario.Dhabilitado = 1;
@@ -71,9 +74,9 @@ namespace ASGARDAPI.Controllers
                     Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuarioAF.iidEmpleado).First();
                     oEmpleado.BtieneUsuario = 1;
                     bd.SaveChanges();
-                    //  transaccion.Complete();
-                    rpta = 1;
-                    //   }
+                            transaccion.Complete();
+                            rpta = 1;
+                        }
                 }
             }
 
