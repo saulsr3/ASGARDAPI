@@ -7,6 +7,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Transactions;
+using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Http;
 
 namespace ASGARDAPI.Controllers
 {
@@ -58,12 +60,12 @@ namespace ASGARDAPI.Controllers
                     oUsuario.IdUsuario = oUsuarioAF.iidusuario;
                     oUsuario.NombreUsuario = oUsuarioAF.nombreusuario;
                             //cifrar contraseña
-                            SHA256Managed sha = new SHA256Managed();
-                            string clave = oUsuarioAF.contra;
-                            byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
-                            byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
-                            string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
-                            oUsuario.Contra = claveCifrada;
+                    SHA256Managed sha = new SHA256Managed();
+                    string clave = oUsuarioAF.contra;
+                    byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
+                    byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
+                    string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
+                     oUsuario.Contra = claveCifrada;
                             //oUsuario.Contra = oUsuarioAF.contra;
                     oUsuario.IdEmpleado = oUsuarioAF.iidEmpleado;
                     oUsuario.IdTipoUsuario = oUsuarioAF.iidTipousuario;
@@ -86,7 +88,7 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
-
+    
         [HttpGet]
         [Route("api/Usuario/listarEmpleadoCombo")]
         public IEnumerable<EmpleadoAF> listarEmpleadoCombo()
