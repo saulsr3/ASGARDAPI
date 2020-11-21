@@ -31,9 +31,11 @@ namespace ASGARDAPI.Controllers
                 rpta = bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada).Count();
                 if (rpta == 1)
                 {
-                   Usuario oUsuarioRecuperar= bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada).First();
+                    Usuario oUsuarioRecuperar = bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada).First();
                     oUsuario.iidusuario = oUsuarioRecuperar.IdUsuario;
                     oUsuario.nombreusuario = oUsuarioRecuperar.NombreUsuario;
+                    oUsuario.iidEmpleado = (int)oUsuarioRecuperar.IdEmpleado;
+                    oUsuario.iidTipousuario = (int)oUsuarioRecuperar.IdTipoUsuario;
                 }
                 else {
                     oUsuario.iidusuario = 0;
