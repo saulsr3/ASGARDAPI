@@ -305,7 +305,7 @@ namespace ASGARDAPI.Controllers
                         oCodigo.Correlativo = oActivoC.ToString();
                     }
 
-                    oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
+                    oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
                     //Guardamos en la tabla activo fijo
                     //oActivo.CorrelativoBien = "";
                     oActivo.EstadoActual = 1;
