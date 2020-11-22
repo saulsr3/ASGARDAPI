@@ -268,8 +268,8 @@ namespace ASGARDAPI.Controllers
 
         //si la solicitud es rechazada vuelve al estado normal que es 1
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoRechazado/{idbien}/{acuerdo}/{fecha2}")] //  
-        public int cambiarEstadoDenegado(int idbien , string acuerdo, string fecha2)//
+        [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}")] //  
+        public int cambiarEstadoDenegado(int idbien)//
         {
             int rpta = 0;
 
@@ -281,8 +281,8 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 1;
                     
-                    oSolic.Acuerdo = acuerdo;
-                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
+                   // oSolic.Acuerdo = acuerdo;
+                   // oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 

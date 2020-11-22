@@ -279,7 +279,10 @@ IdBien int,
 Estado int,
 ResponsableAnterior varchar(100),
 AreadenegocioAnterior varchar(100),
-Acuerdo varchar(50)
+Acuerdo varchar(50),
+NuevoResponsable varchar(100),
+NuevaAreadenegocio varchar(100),
+IdResponsable int
 )
 
 GO
