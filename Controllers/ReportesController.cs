@@ -87,7 +87,7 @@ namespace ASGARDAPI.Controllers
             doc.AddAuthor("Asgard");
             doc.AddTitle("Reporte PDF");
             doc.Open();
-            doc.Add(new Phrase("Esto es una prueba"));
+            doc.Add(new Phrase("Esto es una prueba descargando el pdf montano se la come"));
 
             writer.Close();
             doc.Close();
