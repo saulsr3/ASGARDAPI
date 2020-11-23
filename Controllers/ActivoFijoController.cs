@@ -166,7 +166,27 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
-
+        [HttpGet]
+        [Route("api/ActivoFijo/datosCodigoBarra/{idBien}")]
+        public DatosCodigoBarraAF datosCodigoBarra(int idBien) {
+            DatosCodigoBarraAF oDatos = new DatosCodigoBarraAF();
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idBien).First();
+                if (oActivo.IdMarca == null)
+                {
+                    oDatos.marca = "";
+                }
+                else {
+                    Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                    oDatos.marca = oMarca.Marca;
+                }
+                oDatos.nombre = oActivo.Desripcion;          
+                oDatos.modelo = oActivo.Modelo;       
+            }
+            return oDatos;
+                
+        }
         [HttpPost]
         [Route("api/ActivoFIjo/asignarBien")]
         public int asignarBien([FromBody]AsignacionAF oAsignacionAF)

@@ -264,7 +264,106 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-
+        [HttpGet]
+        [Route("api/Usuario/validarUsuariosregistrados")]
+        public int validarUsuariosregistrados()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<UsuarioAF> lista = (from usuario in bd.Usuario
+                                                         where usuario.Dhabilitado == 1
+                                                         select new UsuarioAF
+                                                         {
+                                                             iidusuario = usuario.IdUsuario
+                                                         }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+                return rpta;
+        }
+        [HttpGet]
+        [Route("api/Usuario/validarCooperativasRegistradas")]
+        public int validarCooperativassregistrados()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<UsuarioAF> lista = (from cooperativa in bd.Cooperativa
+                                                where cooperativa.Dhabilitado == 1
+                                                select new UsuarioAF
+                                                {
+                                                    iidusuario = cooperativa.IdCooperativa
+                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+        [HttpGet]
+        [Route("api/Usuario/validarSucursalesRegistradas")]
+        public int validarSucursalessRegistradas()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<UsuarioAF> lista = (from sucursal in bd.Sucursal
+                                                where sucursal.Dhabilitado == 1
+                                                select new UsuarioAF
+                                                {
+                                                    iidusuario = sucursal.IdSucursal
+                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+        [HttpGet]
+        [Route("api/Usuario/validarAreasRegistradas")]
+        public int validarAreasRegistradas()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<UsuarioAF> lista = (from areas in bd.AreaDeNegocio
+                                                where areas.Dhabilitado == 1
+                                                select new UsuarioAF
+                                                {
+                                                    iidusuario = areas.IdAreaNegocio
+                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+        [HttpGet]
+        [Route("api/Usuario/validarEmpleadosRegistrados")]
+        public int validarEmpleadosRegistrados()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<UsuarioAF> lista = (from empleados in bd.Empleado
+                                                where empleados.Dhabilitado == 1
+                                                select new UsuarioAF
+                                                {
+                                                    iidusuario = empleados.IdEmpleado
+                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
 
     }
 }
