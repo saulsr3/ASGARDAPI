@@ -41,6 +41,31 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
+       
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/validarActivosParaMantenimiento")]
+        public int validarActivosParaMantenimiento()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+               
+                IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
+                                                               where activo.EstaAsignado == 1 && activo.TipoActivo == 2 && activo.EstadoActual == 1 && activo.EstadoActual != 2 && activo.EnSolicitud == 0
+                                                               select new SolicitudMantenimientoAF
+                                                 {
+                                                     idbien = activo.IdBien,
+                                                     codigobien = activo.CorrelativoBien,
+                                                     descripcionbien = activo.Desripcion
+                                                 }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
 
         [HttpGet]
         [Route("api/SolicitudMantenimiento/listarSolicitudMante")]
@@ -67,6 +92,34 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("api/SolicitudMantenimiento/validarSolicitudesParaMantenimiento")]
+        public int validarSolicitudesParaMantenimiento()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<SolicitudMantenimientoPAF> lista = (from solicitud in bd.SolicitudMantenimiento
+                                                               where solicitud.Estado == 1
+
+                                                               select new SolicitudMantenimientoPAF
+                                                               {
+                                                                   idsolicitud = solicitud.IdSolicitud,
+                                                                   folio = solicitud.Folio,
+                                                                   descripcion = solicitud.Descripcion,
+                                                                   fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
+
+                                                               }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
 
 
 

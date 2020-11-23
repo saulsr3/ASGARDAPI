@@ -87,7 +87,7 @@ namespace ASGARDAPI.Controllers
             doc.AddAuthor("Asgard");
             doc.AddTitle("Reporte PDF");
             doc.Open();
-            doc.Add(new Phrase("Esto es una prueba descargando el pdf montano se la come"));
+            doc.Add(new Phrase("Esto es una prueba descargando el pdf montano se la "));
 
             writer.Close();
             doc.Close();
@@ -95,6 +95,8 @@ namespace ASGARDAPI.Controllers
             var pdf = new FileStream("hola mundo.pdf", FileMode.Open, FileAccess.Read);
             return File(pdf, "application/pdf");
 
+          //  iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(Path.Combine(env.WebRootPath, "img", "logo.jpg"));
+          //  doc.Add(logo);
 
         }
 
