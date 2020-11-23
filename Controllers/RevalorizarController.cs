@@ -54,6 +54,35 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //VALIDACION DE TABLA VACIÍA
+        [HttpGet]
+        [Route("api/Revalorizar/validarActivosRevalorizar")]
+        public int validarActivosRevalorizar()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+               
+            {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                                 where (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio))) && activo.EstaAsignado == 1
+
+                                                 // where (activo.EstadoActual != 0 && activo.EstaAsignado == 1) && activo.TipoActivo == 1 && activo.TipoActivo == 2 &&  activo.TipoActivo == 3 && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+                                                 select new RegistroAF
+                                                    {
+                                                        IdBien = activo.IdBien,
+                                                        Codigo = activo.CorrelativoBien,                                            
+                                                        Descripcion = activo.Desripcion,
+                                                        vidautil = activo.VidaUtil                                                     
+                                                    }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
         [HttpGet]
         [Route("api/Revalorizar/listarActivosEdificiosRevalorizar")]
         public IEnumerable<RegistroAF> listarActivosEdificiosRevalorizar()
