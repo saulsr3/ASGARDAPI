@@ -489,6 +489,14 @@ namespace ASGARDAPI.Models
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
+                entity.Property(e => e.NuevaAreadenegocio)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NuevoResponsable)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.ResponsableAnterior)
                     .HasMaxLength(100)
                     .IsUnicode(false);

@@ -15,6 +15,9 @@ namespace ASGARDAPI.Models
         public string ResponsableAnterior { get; set; }
         public string AreadenegocioAnterior { get; set; }
         public string Acuerdo { get; set; }
+        public string NuevoResponsable { get; set; }
+        public string NuevaAreadenegocio { get; set; }
+        public int? IdResponsable { get; set; }
 
         public ActivoFijo IdBienNavigation { get; set; }
     }
