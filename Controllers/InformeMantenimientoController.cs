@@ -280,6 +280,38 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("api/InformeMantenimiento/validarActivosEnMantenimiento")]
+        public int validarActivosEnMantenimiento()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
+                                                              join activo in bd.ActivoFijo
+                                                              on bienMtto.IdBien equals activo.IdBien
+                                                              where activo.EstadoActual == 3 && bienMtto.Estado == 1
+                                                              select new BienesSolicitadosMttoAF
+                                                                {
+                                                                  idBien = activo.IdBien,
+                                                                  idmantenimiento = bienMtto.IdMantenimiento,
+                                                                  estadoActual = (int)activo.EstadoActual,
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion,
+                                                                  Periodo = bienMtto.PeriodoMantenimiento,
+                                                                  Razon = bienMtto.RazonMantenimiento,
+                                                                  
+
+                                                              }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
 
         //cambia el estado una vez que el bien se le realizó el informe
         [HttpGet]
@@ -412,7 +444,7 @@ namespace ASGARDAPI.Controllers
 
      
         
-        // METODO DOS PARA INTENTAR LISTAR EL MANTENIMIENTO.
+        // METODO DOS PARA LISTAR EL MANTENIMIENTO.
 
         [HttpGet]
         [Route("api/InformeMantenimiento/datosHistorial/{idbien}")]
@@ -440,7 +472,7 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                //Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                 IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
@@ -462,6 +494,43 @@ namespace ASGARDAPI.Controllers
 
                                                             }).ToList();
                 return listaActivos;
+            }
+        }
+        [HttpGet]
+        [Route("api/InformeMantenimiento/validarHistorialMantenimiento")]
+        public int validarSolicitudesParaMantenimiento()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<DepreciacionAF> lista = (from activo in bd.ActivoFijo
+                                                     join empleado in bd.Empleado
+                                                     on activo.IdResponsable equals empleado.IdEmpleado
+                                                     join area in bd.AreaDeNegocio
+                                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                     join sucursal in bd.Sucursal
+                                                     on area.IdSucursal equals sucursal.IdSucursal
+
+                                                     where activo.EstaAsignado == 1
+
+                                                     select new DepreciacionAF
+                                                                {
+                                                         idBien = activo.IdBien,
+                                                         codigo = activo.CorrelativoBien,
+                                                         descripcion = activo.Desripcion,
+                                                         areanegocio = area.Nombre,
+                                                         sucursal = sucursal.Nombre,
+                                                         responsable = empleado.Nombres + " " + empleado.Apellidos
+
+
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
             }
         }
 
@@ -501,6 +570,48 @@ namespace ASGARDAPI.Controllers
 
                                                                         }).ToList();
                 return listaInformeMante;
+            }
+        }
+        //para tabla vacia
+        [HttpGet]
+        [Route("api/InformeMantenimiento/validarListarInformeMantenimiento")]
+        public int validarListarInformeMantenimiento()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<InformeMatenimientoAF> lista = (from tecnico in bd.Tecnicos
+                                                            join informemante in bd.InformeMantenimiento
+                                                              on tecnico.IdTecnico equals informemante.IdTecnico
+                                                            join bienmante in bd.BienMantenimiento
+                                                            on informemante.IdMantenimiento equals bienmante.IdMantenimiento
+                                                            join activo in bd.ActivoFijo
+                                                            on bienmante.IdBien equals activo.IdBien
+                                                            where informemante.Estado == 1 && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+
+                                                            select new InformeMatenimientoAF
+                                                                {
+                                                                idinformematenimiento = informemante.IdInformeMantenimiento,
+                                                                idBien = activo.IdBien,
+                                                                idmantenimiento = (int)informemante.IdMantenimiento,
+                                                                fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
+                                                                nombretecnico = tecnico.Nombre,
+                                                                descripcion = informemante.Descripcion,
+                                                                costomateriales = (double)informemante.CostoMateriales,
+                                                                costomo = (double)informemante.CostoMo,
+                                                                costototal = (double)informemante.CostoTotal,
+                                                                vidautil = activo.VidaUtil,
+                                                                bienes = activo.Desripcion
+
+                                                            }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
             }
         }
 

@@ -53,6 +53,8 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+
+
         //LISTAR EL AREA DE NEGOCIO CON LA SUCURSAL Y SU UBICACIÓN EN UN COMBO.
         [HttpGet]
         [Route("api/SolicitudTraspaso/listarAreaCombo")]
