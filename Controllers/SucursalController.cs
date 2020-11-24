@@ -46,7 +46,8 @@ namespace ASGARDAPI.Controllers
                     oSucursal.Nombre = oSucursalAF.Nombre;
                     oSucursal.Ubicacion = oSucursalAF.Ubicacion;
                     oSucursal.Correlativo = oSucursalAF.Correlativo;
-                    oSucursal.IdCooperativa = 1;
+                    Cooperativa ocooperativa = bd.Cooperativa.First();
+                    oSucursal.IdCooperativa = ocooperativa.IdCooperativa;
                     oSucursal.Dhabilitado = 1;
                     bd.Sucursal.Add(oSucursal);
                     bd.SaveChanges();

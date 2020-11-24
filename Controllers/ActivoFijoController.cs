@@ -1634,6 +1634,26 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+        [HttpGet]
+        [Route("api/ActivoFijo/validarTransacciones")]
+        public int validarTransacciones()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ComboAnidadoAF> lista = (from activo in bd.TarjetaDepreciacion
+                                      
+                                                select new ComboAnidadoAF
+                                                {
+                                                    id = activo.IdTarjeta
+                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
 
 
     }
