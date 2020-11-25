@@ -160,20 +160,12 @@ namespace ASGARDAPI.Controllers
             //Logo de la base de datos
              using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                  CooperativaAF oCooperativaAF = new CooperativaAF();
-                  Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 3).First();
-                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-              var nombre=   oCooperativaAF.nombre = oCooperativa.Nombre;
-                // oCooperativaAF.imagen = oCooperativa.Logo;
+              CooperativaAF oCooperativaAF = new CooperativaAF();
 
-                //Convertir la imagen en un array
-                //     string image = oCooperativa.Logo;
-                //     byte[] imageBytes = Encoding.UTF8.GetBytes(image);
-                //     var encodeData = Convert.ToBase64String(imageBytes);
-
-                //var image = Convert.FromBase64String(oCooperativa.Logo);
-
-                //     iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(oCooperativaAF.logo);
+             Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado==1).First();
+             oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+             var nombre=   oCooperativaAF.nombre = oCooperativa.Nombre;
+              
                 BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
                 iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
                 doc.Add(new Paragraph(nombre, parrafo) { Alignment = Element.ALIGN_CENTER });
