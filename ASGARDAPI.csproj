@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Folder Include="Scripts_DB\" />
-    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
   <ItemGroup>

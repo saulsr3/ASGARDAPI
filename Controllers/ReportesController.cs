@@ -129,15 +129,55 @@ namespace ASGARDAPI.Controllers
                     tbl.AddCell(c3);
                     tbl.AddCell(c4);
                 }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+                
+                try
+                {
+                    iTextSharp.text.Image logo = null;              
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
             }
             doc.Add(tbl);
-
             writer.Close();
             doc.Close();
             ms.Seek(0, SeekOrigin.Begin);
             return File(ms, "application/pdf");
-
         }
+
+
+
+
 
 
         [HttpGet]
@@ -162,25 +202,34 @@ namespace ASGARDAPI.Controllers
             {
               CooperativaAF oCooperativaAF = new CooperativaAF();
 
-             Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado==1).First();
-             oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-             var nombre=   oCooperativaAF.nombre = oCooperativa.Nombre;
+              Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado==1).First();
+              oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+              var nombre=   oCooperativaAF.nombre = oCooperativa.Nombre;
               
                 BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
                 iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
                 doc.Add(new Paragraph(nombre, parrafo) { Alignment = Element.ALIGN_CENTER });
                 //string base64string = oCooperativa.Logo;
                 try{
-                    iTextSharp.text.Image gif = null;
+                    iTextSharp.text.Image logo = null;
                     //  Convert base64string to bytes array
                     //Byte[] bytes = Convert.FromBase64String(base64string);
-                    gif = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
-                    gif.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
-                    gif.Border = iTextSharp.text.Rectangle.NO_BORDER;
-                    gif.BorderColor = iTextSharp.text.BaseColor.White;
-                    gif.ScaleToFit(170f, 100f);
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
 
-                    doc.Add(gif);
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(30f, 690f);
+
+                    doc.Add(logo);
 
                 }
                 catch (DocumentException dex)
