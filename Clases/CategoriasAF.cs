@@ -12,5 +12,6 @@ namespace ASGARDAPI.Clases
         public string Categoria { get; set; }
         public string Descripcion { get; set; }
         public int Dhabilitado { get; set; }
+
     }
 }

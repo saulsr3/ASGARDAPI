@@ -32,9 +32,10 @@ namespace ASGARDAPI.Controllers
             return View();
         }
 
+        //INICIO DE REPOTE DE AREAS DE NEGOCIO
         [HttpGet]
-        [Route("api/Reporte/reporte")]
-        public async Task<IActionResult> reporte()
+        [Route("api/Reporte/areasDeNegociopdf")]
+        public async Task<IActionResult> areasDeNegociopdf()
         {
             Document doc = new Document(PageSize.Letter);
             doc.SetMargins(40f, 40f, 40f, 40f);
@@ -174,6 +175,745 @@ namespace ASGARDAPI.Controllers
             ms.Seek(0, SeekOrigin.Begin);
             return File(ms, "application/pdf");
         }
+
+        //FIN DE REPORTE DE AREAS DE NEGOCIO
+        //INICIO DE REPORTE DE SUCURSALES
+        [HttpGet]
+        [Route("api/Reporte/sucursalespdf")]
+        public async Task<IActionResult> sucursalespdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE SUCURSALES", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 30f, 45f, 50f}) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CORRELATIVO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("NOMBRE DE SUCURSAL", parrafo2));
+            var c3 = new PdfPCell(new Phrase("UBICACIÓN", parrafo2));
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SucursalAF> lista = (from suscursal in bd.Sucursal
+                                                           where suscursal.Dhabilitado == 1
+                                                           select new SucursalAF
+                                                           {
+                                                               IdSucursal = suscursal.IdSucursal,
+                                                               Nombre = suscursal.Nombre,
+                                                               Ubicacion = suscursal.Ubicacion,
+                                                               Correlativo = suscursal.Correlativo
+                                                           }).ToList();
+                foreach (var sucursal in lista)
+                {
+                    c1.Phrase = new Phrase(sucursal.Correlativo, parrafo5);
+                    c2.Phrase = new Phrase(sucursal.Nombre, parrafo5);
+                    c3.Phrase = new Phrase(sucursal.Ubicacion, parrafo5);
+                  
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                 
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //FIN DE REPORTE DE SUCURSALES 
+        //INICIO DE REPORTE DE CATEGORIAS
+        [HttpGet]
+        [Route("api/Reporte/categoriaspdf")]
+        public async Task<IActionResult> categoriaspdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CATEGORÍAS DE ACTIVOS", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 25f, 45f, 15f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CATEGORÍA", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("VIDA ÚTIL", parrafo2));
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CategoriasAF> lista = (from categorias in bd.Categorias
+                                                             where categorias.Dhabilitado == 1
+                                                             select new CategoriasAF
+
+                                                             {
+                                                                 IdCategoria = categorias.IdCategoria,
+                                                                 VidaUtil = categorias.VidaUtil,
+                                                                 Categoria = categorias.Categoria,
+                                                                 Descripcion = categorias.Descripcion,
+                                                                 
+
+                                                             }).ToList();
+                foreach (var categoria in lista)
+                {
+                    c1.Phrase = new Phrase(categoria.Categoria, parrafo5);
+                    c2.Phrase = new Phrase(categoria.Descripcion, parrafo5);
+                    c3.Phrase = new Phrase(categoria.VidaUtil.ToString(), parrafo5);
+
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //FIN DE REPORTE DE CATEGORIAS
+        //INICO DE REPORTE DE CLASIFICACIONES
+        [HttpGet]
+        [Route("api/Reporte/clasificacionespdf")]
+        public async Task<IActionResult> clasificacionespdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CLASIFICACIONES DE ACTIVOS", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 35f, 55f, 40f, 70f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CORRELATIVO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("CLASIFICACIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("CATEGORÍA", parrafo2));
+            var c4 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
+                                                       join categorias in bd.Categorias
+                                                       on clasificacion.IdCategoria equals categorias.IdCategoria
+                                                       where clasificacion.Dhabilitado == 1
+                                                       select new ClasificacionAF
+                                                       {
+                                                           idclasificacion = clasificacion.IdClasificacion,
+                                                           correlativo = clasificacion.Correlativo,
+                                                           categoria = categorias.Categoria,
+                                                           clasificacion = clasificacion.Clasificacion1,
+                                                           descripcion = clasificacion.Descripcion
+
+                                                       }).ToList();
+                foreach (var clasificacion in lista)
+                {
+                    c1.Phrase = new Phrase(clasificacion.correlativo, parrafo5);
+                    c2.Phrase = new Phrase(clasificacion.clasificacion, parrafo5);
+                    c3.Phrase = new Phrase(clasificacion.categoria, parrafo5);
+                    c4.Phrase = new Phrase(clasificacion.descripcion, parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //FIN DE REPORTE DE CLASIFICACIONES
+        //INICIO DE REPORTE DE CARGOS
+        [HttpGet]
+        [Route("api/Reporte/cargospdf")]
+        public async Task<IActionResult> cargospdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CARGOS", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 25f, 45f}) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CARGO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+           
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CargoAF> lista = (from cargo in bd.Cargos
+                                                   where cargo.Dhabilitado == 1
+                                                   select new CargoAF
+                                                   {
+                                                       idcargo = cargo.IdCargo,
+                                                       cargo = cargo.Cargo,
+                                                       descripcion = cargo.Descripcion
+                                                   }).ToList();
+                foreach (var cargo in lista)
+                {
+                    c1.Phrase = new Phrase(cargo.cargo, parrafo5);
+                    c2.Phrase = new Phrase(cargo.descripcion, parrafo5);
+                   
+
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    
+
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //FIN DE REPORTES DE CARGOS
+
+        //INICIO DE REPORTE DE EMPLEADOS
+        [HttpGet]
+        [Route("api/Reporte/empleadospdf")]
+        public async Task<IActionResult> empleadospdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE EMPLEADOS", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 30f,55f,45f,30f,50f,30f}) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("DUI", parrafo2));
+            var c2 = new PdfPCell(new Phrase("NOMBRE COMPLETO", parrafo2));
+            var c3 = new PdfPCell(new Phrase("DIRECCIÓN", parrafo2));
+            var c4 = new PdfPCell(new Phrase("TELÉFONO", parrafo2));
+            var c5 = new PdfPCell(new Phrase("ÁREA DE NEGOCIO", parrafo2));
+            var c6 = new PdfPCell(new Phrase("CARGO", parrafo2));
+           // var c8 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+           
+            //tbl.AddCell(c8);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<EmpleadoAF> lista = (from sucursal in bd.Sucursal
+                                                         join area in bd.AreaDeNegocio
+                                                         on sucursal.IdSucursal equals area.IdSucursal
+                                                         join empleado in bd.Empleado
+                                                         on area.IdAreaNegocio equals empleado.IdAreaDeNegocio
+                                                         join cargos in bd.Cargos
+                                                         on empleado.IdCargo equals cargos.IdCargo
+                                                         where empleado.Dhabilitado == 1
+                                                         select new EmpleadoAF
+                                                         {
+                                                             idempleado = empleado.IdEmpleado,
+                                                             dui = empleado.Dui,
+                                                             nombres = empleado.Nombres +" "+ empleado.Apellidos,
+                                                             apellidos = empleado.Apellidos,
+                                                             direccion = empleado.Direccion,
+                                                             telefono = empleado.Telefono,
+                                                             telefonopersonal = empleado.TelefonoPersonal,
+                                                             nombrearea = area.Nombre +" - "+ sucursal.Nombre +" - "+sucursal.Ubicacion,
+                                                             cargo = cargos.Cargo
+
+                                                         }).ToList();
+                foreach (var empleado in lista)
+                {
+                    c1.Phrase = new Phrase(empleado.dui, parrafo5);
+                    c2.Phrase = new Phrase(empleado.nombres, parrafo5);                  
+                    c3.Phrase = new Phrase(empleado.direccion, parrafo5);
+                    c4.Phrase = new Phrase(empleado.telefono, parrafo5);
+                    c5.Phrase = new Phrase(empleado.nombrearea, parrafo5);
+                    c6.Phrase = new Phrase(empleado.cargo, parrafo5);
+
+
+
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                 
+
+
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //FIN DE REPORTE DE EMPLEADOS
+
+
+
+
+
+
 
 
 
