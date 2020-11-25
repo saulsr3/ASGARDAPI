@@ -177,12 +177,12 @@ namespace ASGARDAPI.Controllers
                 BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
                 iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
                 doc.Add(new Paragraph(nombre, parrafo) { Alignment = Element.ALIGN_CENTER });
-                string base64string = oCooperativa.Logo;
+                //string base64string = oCooperativa.Logo;
                 try{
                     iTextSharp.text.Image gif = null;
                     //  Convert base64string to bytes array
                     //Byte[] bytes = Convert.FromBase64String(base64string);
-                    gif = iTextSharp.text.Image.GetInstance(base64string);
+                    gif = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
                     gif.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
                     gif.Border = iTextSharp.text.Rectangle.NO_BORDER;
                     gif.BorderColor = iTextSharp.text.BaseColor.White;
