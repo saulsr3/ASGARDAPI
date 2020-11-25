@@ -149,25 +149,35 @@ namespace ASGARDAPI.Controllers
             MemoryStream ms = new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(doc, ms);
 
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte PDF");
+            doc.Open();
+
+
             //Logo de la base de datos
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 2).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-                  oCooperativaAF.logo = oCooperativa.Logo;
-                // oCooperativaAF.imagen = oCooperativa.Logo;
+            //     using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            //   {
+            //       CooperativaAF oCooperativaAF = new CooperativaAF();
+            //       Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 2).First();
+            //      oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+            //       oCooperativaAF.logo = oCooperativa.Logo;
+            // oCooperativaAF.imagen = oCooperativa.Logo;
 
-                //Convertir la imagen en un array
-                string image = oCooperativa.Logo;
-                byte[] imageBytes = Encoding.UTF8.GetBytes(image);
-                var encodeData = Convert.ToBase64String(imageBytes);
+            //Convertir la imagen en un array
+            //     string image = oCooperativa.Logo;
+            //     byte[] imageBytes = Encoding.UTF8.GetBytes(image);
+            //     var encodeData = Convert.ToBase64String(imageBytes);
 
-                //var image = Convert.FromBase64String(oCooperativa.Logo);
+            //var image = Convert.FromBase64String(oCooperativa.Logo);
 
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(oCooperativaAF.logo);
-                doc.Add(logo);
-            }
+            //     iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(oCooperativaAF.logo);
+            //     doc.Add(logo);
+            //  }
+
+         
 
             writer.Close();
             doc.Close();
