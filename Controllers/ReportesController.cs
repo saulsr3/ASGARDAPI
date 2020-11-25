@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using System.Text;
 using iTextSharp;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -137,7 +138,42 @@ namespace ASGARDAPI.Controllers
             return File(ms, "application/pdf");
 
         }
-        
+
+
+        [HttpGet]
+        [Route("api/Reporte/reporteLogo")]
+        public async Task<IActionResult> reporteLogo()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Logo de la base de datos
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 2).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                  oCooperativaAF.logo = oCooperativa.Logo;
+                // oCooperativaAF.imagen = oCooperativa.Logo;
+
+                //Convertir la imagen en un array
+                string image = oCooperativa.Logo;
+                byte[] imageBytes = Encoding.UTF8.GetBytes(image);
+                var encodeData = Convert.ToBase64String(imageBytes);
+
+                //var image = Convert.FromBase64String(oCooperativa.Logo);
+
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(oCooperativaAF.logo);
+                doc.Add(logo);
+            }
+
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
 
     }
 }
