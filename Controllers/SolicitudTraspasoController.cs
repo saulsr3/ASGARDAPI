@@ -39,12 +39,13 @@ namespace ASGARDAPI.Controllers
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
-                                                IdBien = activo.IdBien,
+                                                IdBien = activo.IdBien,                                               
                                                 Codigo = activo.CorrelativoBien,
                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Desripcion = activo.Desripcion,
                                                 AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                                idresponsable= resposable.IdEmpleado,
                                                 cargo = cargo.Cargo,
 
                                             }).ToList();
@@ -121,9 +122,12 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Fecha = oSolicitudAF.fechasolicitud;
                     oSolicitud.Folio = oSolicitudAF.folio;
                     oSolicitud.Descripcion = oSolicitudAF.descripcion;       
-                    //en la bd se llaman responsableanterior y area anterior pero se guardarán los nuevos porque los anteriores serian los actuales.
-                    oSolicitud.ResponsableAnterior = oSolicitudAF.nuevoresponsable;
-                    oSolicitud.AreadenegocioAnterior = oSolicitudAF.nuevaarea;                   
+                    //en la bd se llaman responsableanterior y area anterior pero se guardarán los nuevos porque los anteriores serian los actuales.                  
+                    oSolicitud.NuevaAreadenegocio = oSolicitudAF.nuevaarea;
+                    oSolicitud.NuevoResponsable = oSolicitudAF.nuevoresponsable;
+                    oSolicitud.AreadenegocioAnterior = oSolicitudAF.areaanterior;
+                    oSolicitud.ResponsableAnterior = oSolicitudAF.responsableanterior;
+                    oSolicitud.IdResponsable = oSolicitudAF.idresponsable;
                     oSolicitud.Estado = 1;
                     bd.SolicitudTraspaso.Add(oSolicitud);
                     bd.SaveChanges();
@@ -220,12 +224,13 @@ namespace ASGARDAPI.Controllers
                 odatos.fechacadena = oSolicitud.Fecha == null ? " " : ((DateTime)oSolicitud.Fecha).ToString("dd-MM-yyyy");
                 odatos.folio = oSolicitud.Folio;
                 odatos.idbien = (int)oSolicitud.IdBien;
-                odatos.areanegocioactual = oArea.Nombre + " - " + oSucursal.Nombre + " - " + oSucursal.Ubicacion;
+                odatos.areanegocioactual = oSolicitud.NuevaAreadenegocio;
                 odatos.areanegocioanterior = oSolicitud.AreadenegocioAnterior;
-                odatos.responsableactual = oEmpleado.Nombres + " " + oEmpleado.Apellidos;
+                odatos.responsableactual = oSolicitud.NuevoResponsable;
                 odatos.responsableanterior = oSolicitud.ResponsableAnterior;
                 odatos.Codigo = oActivo.CorrelativoBien;
                 odatos.Descripcion = oActivo.Desripcion;
+                odatos.idresponsable = (int) oSolicitud.IdResponsable;
 
                 return odatos;
             }
@@ -380,6 +385,39 @@ namespace ASGARDAPI.Controllers
                 respuesta = 0;
             }
             return respuesta;
+        }
+
+        //LISTAR HISOTRIAL DE TRASPASOS
+        //LISTAR INFORMES (HISTORIAL)
+        [HttpGet]
+        [Route("api/InformeMantenimiento/historialSolicitudesTraspasos/{idbien}")]
+        public IEnumerable<SolicitudTraspasoAF> historialSolicitudesTraspasos(int idbien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SolicitudTraspasoAF> listaInformeMante = (from solicitud in bd.SolicitudTraspaso
+                                                                      join activo in bd.ActivoFijo
+                                                                      on solicitud.IdBien equals activo.IdBien
+                                                                      where activo.IdBien == idbien
+                                                                                                                                   
+                                                                        select new SolicitudTraspasoAF
+                                                                        {
+                                                                            idbien = activo.IdBien,
+                                                                            idsolicitud = solicitud.IdSolicitud,
+                                                                            folio = solicitud.Folio,
+                                                                            codigo = activo.CorrelativoBien,
+                                                                            fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                                                            descripcion = solicitud.Descripcion,
+                                                                            responsableanterior = solicitud.ResponsableAnterior,
+                                                                            areaanterior = solicitud.AreadenegocioAnterior,
+                                                                            nuevoresponsable = solicitud.NuevoResponsable,
+                                                                            nuevaarea = solicitud.NuevaAreadenegocio,
+                                                                            idresponsable= (int) solicitud.IdResponsable
+
+
+                                                                        }).ToList();
+                return listaInformeMante;
+            }
         }
 
     }
