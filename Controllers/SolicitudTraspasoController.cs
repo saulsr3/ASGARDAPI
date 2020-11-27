@@ -256,7 +256,7 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-
+                    
                     SolicitudTraspaso oSolicitud = new SolicitudTraspaso();
                     oSolicitud.IdSolicitud = oSolicitudAF.idsolicitud;
                     oSolicitud.IdBien = oSolicitudAF.idbien;                    
@@ -264,11 +264,16 @@ namespace ASGARDAPI.Controllers
                     oSolicitud.Folio = oSolicitudAF.folio;
                     oSolicitud.Descripcion = oSolicitudAF.descripcion;       
                     //en la bd se llaman responsableanterior y area anterior pero se guardarán los nuevos porque los anteriores serian los actuales.                  
-                    oSolicitud.NuevaAreadenegocio = oSolicitudAF.nuevaarea;
+                    //oSolicitud.NuevaAreadenegocio = oSolicitudAF.nuevaarea;
                     oSolicitud.NuevoResponsable = oSolicitudAF.nuevoresponsable;
                     oSolicitud.AreadenegocioAnterior = oSolicitudAF.areaanterior;
                     oSolicitud.ResponsableAnterior = oSolicitudAF.responsableanterior;
                     oSolicitud.IdResponsable = oSolicitudAF.idresponsable;
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oSolicitud.IdResponsable).First();
+                    AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                    Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                    oSolicitud.NuevoResponsable = oEmpleado.Nombres + " " + oEmpleado.Apellidos;
+                    oSolicitud.NuevaAreadenegocio = oArea.Nombre + " - " + oSucursal.Nombre + " - " + oSucursal.Ubicacion;
                     oSolicitud.Estado = 1;
                     bd.SolicitudTraspaso.Add(oSolicitud);
                     bd.SaveChanges();
@@ -541,7 +546,7 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudTraspasoAF> lista = (from solicitud in bd.SolicitudTraspaso
                                                                       join activo in bd.ActivoFijo
                                                                       on solicitud.IdBien equals activo.IdBien
-                                                                      where activo.IdBien == idbien
+                                                                      where activo.IdBien == idbien && solicitud.Estado==2
                                                                                                                                    
                                                                         select new SolicitudTraspasoAF
                                                                         {

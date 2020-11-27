@@ -25,7 +25,7 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudMantenimientoAF> lista = (from activo in bd.ActivoFijo
                                                                    //join bienmante in bd.BienMantenimiento
                                                                    //on activo.IdBien equals bienmante.IdBien
-                                                               where activo.EstaAsignado == 1 && activo.TipoActivo==2 && activo.EstadoActual == 1 && activo.EstadoActual != 2 &&activo.EnSolicitud==0
+                                                               where activo.EstaAsignado == 1 && activo.TipoActivo==2 && activo.EstadoActual == 1 && activo.EstadoActual != 2 && activo.EstadoActual != 6 && activo.EnSolicitud==0
 
                                                                select new SolicitudMantenimientoAF
                                                                {
