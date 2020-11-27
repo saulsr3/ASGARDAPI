@@ -39,7 +39,8 @@ namespace ASGARDAPI.Controllers
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
-                                                IdBien = activo.IdBien,                                               
+                                                IdBien = activo.IdBien,  
+                                                idarea= area.IdAreaNegocio,
                                                 Codigo = activo.CorrelativoBien,
                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Desripcion = activo.Desripcion,
@@ -103,6 +104,146 @@ namespace ASGARDAPI.Controllers
                 return lista;
             }
         }
+
+        //VALIDAR FOLIO DE SOLICITUD
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/validarFolio/{idsolicitud}/{folio}")]
+        public int validarFolio(int idsolicitud, string folio)
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idsolicitud == 0)
+                    {
+                        respuesta = bd.SolicitudTraspaso.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.SolicitudTraspaso.Where(p => p.Folio.ToLower() == folio.ToLower()).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+        //VALIDAR ACUERDO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/validarAcuerdo/{idsolicitud}/{acuerdo}")]
+        public int validarAcuerdo(int idsolicitud, string acuerdo)
+        {
+            int respuesta = 0;
+            try
+            {
+
+
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    if (idsolicitud == 0)
+                    {
+                        respuesta = bd.SolicitudTraspaso.Where(p => p.Acuerdo.ToLower() == acuerdo.ToLower()).Count();
+                    }
+                    else
+                    {
+                        respuesta = bd.SolicitudTraspaso.Where(p => p.Acuerdo.ToLower() == acuerdo.ToLower()).Count();
+                    }
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta = 0;
+
+            }
+            return respuesta;
+
+        }
+        //BUSCAR SOLICITUD DE TRASPASO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/buscarSolicitud/{buscador?}")]
+        public IEnumerable<SolicitudTraspasoAF> buscarSolicitud(string buscador = "")
+        {
+            List<SolicitudTraspasoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join solicitud in bd.SolicitudTraspaso
+                             on activo.IdBien equals solicitud.IdBien
+                             join empleado in bd.Empleado
+                             on activo.IdResponsable equals empleado.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join sucursal in bd.Sucursal
+                             on area.IdSucursal equals sucursal.IdSucursal
+                             where solicitud.Estado == 1
+                             select new SolicitudTraspasoAF
+                             {
+                                 idbien = activo.IdBien,
+                                 idsolicitud = solicitud.IdSolicitud,
+                                 folio = solicitud.Folio,
+                                 codigo = activo.CorrelativoBien,
+                                 fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                 descripcion = solicitud.Descripcion,
+                                 responsableanterior = solicitud.ResponsableAnterior,
+                                 areaanterior = solicitud.AreadenegocioAnterior,
+                                 nuevoresponsable = empleado.Nombres + " " + empleado.Apellidos,
+                                 nuevaarea = area.Nombre + " " + sucursal.Nombre + " " + sucursal.Ubicacion,
+                             }).ToList();
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join solicitud in bd.SolicitudTraspaso
+                             on activo.IdBien equals solicitud.IdBien
+                             join empleado in bd.Empleado
+                             on activo.IdResponsable equals empleado.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join sucursal in bd.Sucursal
+                             on area.IdSucursal equals sucursal.IdSucursal
+                             where solicitud.Estado == 1
+
+                                 && ((solicitud.Folio).ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.Fecha).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (solicitud.Descripcion).ToString().ToLower().Contains(buscador.ToLower())
+
+                                    )
+
+                             select new SolicitudTraspasoAF
+                             {
+                                 idbien = activo.IdBien,
+                                 idsolicitud = solicitud.IdSolicitud,
+                                 folio = solicitud.Folio,
+                                 codigo = activo.CorrelativoBien,
+                                 fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+                                 descripcion = solicitud.Descripcion,
+                                 responsableanterior = solicitud.ResponsableAnterior,
+                                 areaanterior = solicitud.AreadenegocioAnterior,
+                                 nuevoresponsable = empleado.Nombres + " " + empleado.Apellidos,
+                                 nuevaarea = area.Nombre + " " + sucursal.Nombre + " " + sucursal.Ubicacion,
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
+
 
         //GUARDAR SOLICITUD DE TRASPASO
 
@@ -315,11 +456,13 @@ namespace ASGARDAPI.Controllers
                     oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
                     //Guardamos en la tabla activo fijo7u8
                     //oActivo.CorrelativoBien = "";
+                   
                     oActivo.EstadoActual = 1;
                    // oActivo.EstaAsignado = 1;
                     //guardamos el acuerdo y la fecha
                     oSolicitudT.Acuerdo = oTraspasoAF.acuerdo;
                     oSolicitudT.Fechatraspaso = Convert.ToDateTime(oTraspasoAF.fechasolicitud);
+                    oActivo.IdResponsable = (int)oSolicitudT.IdResponsable; //para hacer el cambio de ids
                     bd.SaveChanges();
                     respuesta = 1;
 
@@ -390,12 +533,12 @@ namespace ASGARDAPI.Controllers
         //LISTAR HISOTRIAL DE TRASPASOS
         //LISTAR INFORMES (HISTORIAL)
         [HttpGet]
-        [Route("api/InformeMantenimiento/historialSolicitudesTraspasos/{idbien}")]
+        [Route("api/SolicitudTraspaso/historialSolicitudesTraspasos/{idbien}")]
         public IEnumerable<SolicitudTraspasoAF> historialSolicitudesTraspasos(int idbien)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<SolicitudTraspasoAF> listaInformeMante = (from solicitud in bd.SolicitudTraspaso
+                IEnumerable<SolicitudTraspasoAF> lista = (from solicitud in bd.SolicitudTraspaso
                                                                       join activo in bd.ActivoFijo
                                                                       on solicitud.IdBien equals activo.IdBien
                                                                       where activo.IdBien == idbien
@@ -412,13 +555,102 @@ namespace ASGARDAPI.Controllers
                                                                             areaanterior = solicitud.AreadenegocioAnterior,
                                                                             nuevoresponsable = solicitud.NuevoResponsable,
                                                                             nuevaarea = solicitud.NuevaAreadenegocio,
-                                                                            idresponsable= (int) solicitud.IdResponsable
+                                                                            fechacadenatraspaso= solicitud.Fechatraspaso == null ? " " : ((DateTime)solicitud.Fechatraspaso).ToString("dd-MM-yyyy"),
+                                                                            idresponsable = (int) solicitud.IdResponsable
 
 
                                                                         }).ToList();
-                return listaInformeMante;
+                return lista;
             }
         }
+
+        //MÉTODO PARA FILTRAR LOS EMPLEADOS SEGUN SU AREA DE NEGOCIO (AUN NO LO UTILIZO)
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/listarEmpleadosFiltro/{id}")]
+        public IEnumerable<ActivoFijoAF> listarEmpleadosFiltro(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+               
+                IEnumerable<ActivoFijoAF> listaActivos = (from responsable in bd.Empleado                                                          
+                                                            join area in bd.AreaDeNegocio
+                                                            on responsable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                            on area.IdSucursal equals sucursal.IdSucursal
+                                                            where responsable.IdEmpleado == id
+                                                            select new ActivoFijoAF
+                                                            {
+
+                                                                //AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
+                                                                idresponsable = responsable.IdEmpleado,
+                                                                Resposnsable = responsable.Nombres + " " + responsable.Apellidos
+                                                                
+
+
+                                                            }).ToList();
+                return listaActivos;
+            }
+        }
+
+        //COMBO empleado DE NEGOCIO CON ID 
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/comboEmpleados/{id}")]
+        public IEnumerable<EmpleadoAF> comboEmpleados(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
+                                                 join area in bd.AreaDeNegocio
+                                                 on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                       where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == id
+                                                       orderby empleado.Nombres
+                                                       select new EmpleadoAF
+                                                       {                                                     
+                                                           idempleado = empleado.IdEmpleado,
+                                                           nombres = empleado.Nombres,
+                                                           apellidos = empleado.Apellidos
+
+                                                       }).ToList();
+                return lista;
+            }
+        }
+
+        //LISTAR ACTIVOS EN EL FILTRO DE TRASPASO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/listarActivosFiltroT/{id}")]
+        public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                 join noFormulario in bd.FormularioIngreso
+                                                 on activo.NoFormulario equals noFormulario.NoFormulario
+                                                 join clasif in bd.Clasificacion
+                                                 on activo.IdClasificacion equals clasif.IdClasificacion
+                                                 join resposable in bd.Empleado
+                                                 on activo.IdResponsable equals resposable.IdEmpleado
+                                                 join area in bd.AreaDeNegocio
+                                                 on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                 where (activo.EstadoActual == 1) && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
+                                                 orderby activo.CorrelativoBien
+                                                 select new ActivoFijoAF
+                                                 {
+                                                     IdBien = activo.IdBien,
+                                                     Codigo = activo.CorrelativoBien,
+                                                     fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                     Desripcion = activo.Desripcion,
+                                                     Clasificacion = clasif.Clasificacion1,
+                                                     AreaDeNegocio = area.Nombre,
+                                                     Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                 }).ToList();
+
+                return lista;
+
+            }
+        }
+
+
+
 
     }
 }

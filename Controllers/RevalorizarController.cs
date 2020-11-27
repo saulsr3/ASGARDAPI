@@ -280,6 +280,24 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+        //PARA EL COMBO DE FILTRO EN AREA 
+        [HttpGet]
+        [Route("api/Revalorizar/comboAreaDeSucursal/{id}")]
+        public IEnumerable<AreasDeNegocioAF> comboAreaDeSucursal(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<AreasDeNegocioAF> lista = (from area in bd.AreaDeNegocio
+                                                       where area.Dhabilitado == 1 && area.IdSucursal == id
+                                                       orderby area.Nombre
+                                                       select new AreasDeNegocioAF
+                                                       {
+                                                           IdAreaNegocio = area.IdAreaNegocio,
+                                                           Nombre = area.Nombre
+                                                       }).ToList();
+                return lista;
+            }
+        }
 
         //BUSCAR ACTIVOS INTANGIBLES
         [HttpGet]
