@@ -18,10 +18,8 @@ namespace ASGARDAPI.Controllers
 {
     public class ReportesController : Controller
     {
-        //Inicializamos (aACA INICIALIZAS LA VARIABLE env)
         private readonly IHostingEnvironment env;
 
-        //Creamos el contructor (ESTE CONSTRUCTOR TE FALTABA)
         public ReportesController(IHostingEnvironment _evn)
         {
             env = _evn;
@@ -54,7 +52,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -71,14 +69,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -200,7 +198,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -217,14 +215,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -340,7 +338,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -357,14 +355,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -482,7 +480,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -499,14 +497,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -627,7 +625,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -644,14 +642,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -764,7 +762,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -781,14 +779,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -936,7 +934,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -953,14 +951,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -973,7 +971,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 20f, 15f, 15f, 15f, 20f, 20f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 20f, 21f, 13f, 15f, 20f, 16f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("NOMBRE", parrafo2));
             var c2 = new PdfPCell(new Phrase("DIRECCIÓN", parrafo2));
             var c3 = new PdfPCell(new Phrase("TELÉFONO", parrafo2));
@@ -1090,7 +1088,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -1107,14 +1105,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -1127,7 +1125,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 32f, 32f, 32f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 32f, 13f, 51f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("NOMBRE", parrafo2));
             var c2 = new PdfPCell(new Phrase("TELÉFONO", parrafo2));
             var c3 = new PdfPCell(new Phrase("DIRECCIÓN", parrafo2));
@@ -1228,7 +1226,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -1245,14 +1243,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -1265,7 +1263,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 35f, 65f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("MARCA", parrafo2));
             var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
 
@@ -1361,7 +1359,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -1378,14 +1376,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -1398,7 +1396,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 35f, 65f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("NOMBRE", parrafo2));
             var c2 = new PdfPCell(new Phrase("EMPRESA", parrafo2));
 
@@ -1494,7 +1492,7 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 13f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -1511,14 +1509,14 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == 1).First();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion, parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
                 doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
             }
 
@@ -1531,7 +1529,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 35f, 65f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("NOMBRE", parrafo2));
             var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
 
