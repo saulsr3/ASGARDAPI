@@ -9,6 +9,7 @@ using System.Text;
 using System.Transactions;
 using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Http;
+using System.Data.SqlClient;
 
 namespace ASGARDAPI.Controllers
 {
@@ -91,17 +92,17 @@ namespace ASGARDAPI.Controllers
     
         [HttpGet]
         [Route("api/Usuario/listarEmpleadoCombo")]
-        public IEnumerable<EmpleadoAF> listarEmpleadoCombo()
+        public IEnumerable<ComboAnidadoAF> listarEmpleadoCombo()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<EmpleadoAF> listarEmpleado = (from empleado in bd.Empleado
+                IEnumerable<ComboAnidadoAF> listarEmpleado = (from empleado in bd.Empleado
                                                           where empleado.Dhabilitado == 1
                                                           && empleado.BtieneUsuario == 0
-                                                          select new EmpleadoAF
+                                                          select new ComboAnidadoAF
                                                           {
-                                                              idempleado = empleado.IdEmpleado,
-                                                              nombres = empleado.Nombres + " " + empleado.Apellidos,
+                                                              id = empleado.IdEmpleado,
+                                                              nombre = empleado.Nombres + " " + empleado.Apellidos,
 
                                                           }).ToList();
                 return listarEmpleado;
@@ -364,6 +365,108 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+        [HttpGet]
+        [Route("api/TipoUsuario/eliminarUsuario/{idUsuario}")]
+        public int eliminarUsuario(int idUsuario)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == idUsuario).First();
+                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuario.IdEmpleado).FirstOrDefault();
+                    oEmpleado.BtieneUsuario = 0;
+                    oUsuario.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+        [HttpGet]
+        [Route("api/Usuario/listarEmpleadoAsistente/{idUsuario}")]
+        public IEnumerable<ComboAnidadoAF> listarEmpleadoAsistente(int idUsuario)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == idUsuario).FirstOrDefault();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuario.IdEmpleado).FirstOrDefault();
+                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).FirstOrDefault();
+                IEnumerable<ComboAnidadoAF> listarEmpleado = (from empleado in bd.Empleado
+                                                          where empleado.Dhabilitado == 1
+                                                          && empleado.BtieneUsuario == 0 && empleado.IdAreaDeNegocio==oEmpleado.IdAreaDeNegocio
+                                                          select new ComboAnidadoAF
+                                                          {
+                                                              id = empleado.IdEmpleado,
+                                                              nombre = empleado.Nombres + " " + empleado.Apellidos,
+
+                                                          }).ToList();
+                return listarEmpleado;
+
+            }
+        }
+        [HttpGet]
+        [Route("api/Usuario/ValidarEmpleadoAsistente/{idUsuario}")]
+        public int ValidarEmpleadoAsistente(int idUsuario)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == idUsuario).FirstOrDefault();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuario.IdEmpleado).FirstOrDefault();
+                //AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).FirstOrDefault();
+                IEnumerable<ComboAnidadoAF> listarEmpleado = (from empleado in bd.Empleado
+                                                              where empleado.Dhabilitado == 1
+                                                              && empleado.BtieneUsuario == 0 && empleado.IdAreaDeNegocio == oEmpleado.IdAreaDeNegocio
+                                                              select new ComboAnidadoAF
+                                                              {
+                                                                  id = empleado.IdEmpleado,
+                                                                  nombre = empleado.Nombres + " " + empleado.Apellidos,
+
+                                                              }).ToList();
+                if (listarEmpleado.Count() > 0) {
+                    rpta = 1;
+                } 
+
+            }
+            return rpta;
+        }
+        //public static Boolean Create(String p_server, String p_database, String p_backup_file)
+        //{
+        //    Boolean inesem_ok = true;
+        //    string sBackup = "BACKUP BDAcaassAF " + p_database +
+        //    " TO DISK = '" + p_backup_file + "'" +
+        //    " WITH FORMAT, " +
+        //    " MEDIA NAME ='Backup', NAME = 'Copia de la BD ';";
+
+        //    BDAcaassAFContext bd = new BDAcaassAFContext();
+        //    bd.DataSource = p_server;
+        //    bd.InitialCatalog = "master";
+        //    bd.IntegratedSecurity = true;
+        //    using (SqlConnection con = new SqlConnection(bd.ConnectionString))
+        //    {
+        //        try
+
+        //        {
+        //            con.Open();
+        //            SqlCommand cmdBackUp = new SqlCommand(sBackup, con);
+        //            cmdBackUp.ExecuteNonQuery();
+        //            con.Close();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            inesem_ok = false;
+        //            con.Close();
+        //        }
+        //    }
+
+        //    return inesem_ok;
+        //}
 
     }
 }

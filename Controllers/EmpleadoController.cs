@@ -70,6 +70,23 @@ namespace ASGARDAPI.Controllers
                 return oEmpleadoAF;
             }
         }
+        [HttpGet]
+        [Route("api/Empleado/EsEmpleadojefe/{idempleado}")]
+        public int EsEmpleadojefe(int idempleado)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                EmpleadoAF oEmpleadoAF = new EmpleadoAF();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado).First();
+                if (oEmpleado.IdCargo == 1) {
+                    rpta = 1;
+                 }
+
+
+                return rpta;
+            }
+        }
 
 
 

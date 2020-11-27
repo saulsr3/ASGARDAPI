@@ -96,15 +96,44 @@ namespace ASGARDAPI.Controllers
             {
                 CooperativaAF oCooperativaAF = new CooperativaAF();
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == id).First();
+                Periodo oPeriodo = bd.Periodo.Where(p => p.IdCooperativa == oCooperativa.IdCooperativa && p.Estado==1).FirstOrDefault();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.logo = oCooperativa.Logo;
+                oCooperativaAF.anio = (int)oPeriodo.Anio;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
 
                 return oCooperativaAF;
             }
 
         }
-
+        [HttpPost]
+        [Route("api/Configuracion/modificarCooperativa")]
+        public int modificarCooperativa([FromBody] CooperativaAF oCooperativaAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.IdCooperativa == oCooperativaAF.idcooperativa).First();
+                    Periodo oPeriodo= bd.Periodo.Where(p => p.IdCooperativa == oCooperativaAF.idcooperativa).First();
+                    oCooperativa.Nombre = oCooperativaAF.nombre;
+                    oCooperativa.Descripcion = oCooperativaAF.descripcion;
+                    if (oCooperativaAF.logo != "") {
+                        oCooperativa.Logo = oCooperativaAF.logo;
+                    }
+                    oPeriodo.Anio = oCooperativaAF.anio;
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
         //Recuperar logo de cooperativa
         [HttpGet]
         [Route("api/Cooperativa/recuperarLogoCooperativa")]
