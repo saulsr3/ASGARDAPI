@@ -246,10 +246,9 @@ namespace ASGARDAPI.Controllers
                                     select new UsuarioAF
                                     {
                                         iidusuario = usuario.IdUsuario,
+                                        nombreEmpleado = empleado.Nombres + " " + empleado.Apellidos,
                                         nombreusuario = usuario.NombreUsuario,
-                                        contra = usuario.Contra,
-                                        iidEmpleado = empleado.IdEmpleado,
-                                        iidTipousuario = tipoUsuario.IdTipoUsuario
+                                        nombreTipoUsuario=tipoUsuario.TipoUsuario1
 
                                     }).ToList();
 
@@ -264,19 +263,18 @@ namespace ASGARDAPI.Controllers
                                     on usuario.IdTipoUsuario equals tipoUsuario.IdTipoUsuario
                                     where usuario.Dhabilitado == 1
 
-                                    && ((usuario.IdUsuario).ToString().Contains(buscador)
-                                      || (usuario.NombreUsuario).ToLower().Contains(buscador.ToLower())
-                                      || (usuario.Contra).ToLower().Contains(buscador.ToLower())
-                                      //|| (usuario.IdEmpleado).Contains(buscador.ToLower())
-                                      //|| (usuario.IdTipoUsuario).ToLower().Contains(buscador.ToLower())
+                                    && ((usuario.NombreUsuario).ToLower().Contains(buscador.ToLower())
+                                     
+                                      || (empleado.Nombres).Contains(buscador.ToLower())
+                                      || (empleado.Apellidos).ToLower().Contains(buscador.ToLower())
+                                      || (tipoUsuario.TipoUsuario1).ToLower().Contains(buscador.ToLower())
                                       )
                                     select new UsuarioAF
                                     {
                                         iidusuario = usuario.IdUsuario,
+                                        nombreEmpleado = empleado.Nombres + " " + empleado.Apellidos,
                                         nombreusuario = usuario.NombreUsuario,
-                                        contra = usuario.Contra,
-                                        // iidEmpleado = empleado.Dui,
-                                        //iidTipousuario = tipoUsuario.TipoUsuario1
+                                        nombreTipoUsuario = tipoUsuario.TipoUsuario1
                                     }).ToList();
 
                     return listaUsuario;
