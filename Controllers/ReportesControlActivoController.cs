@@ -620,5 +620,270 @@ namespace ASGARDAPI.Controllers
         }
 
         //Fin reporte activos intangibles
+
+        //Reporte tarjeta
+
+        [HttpGet]
+        [Route("api/Reporte/tarjetaPdf/{idbien}")]
+        public async Task<IActionResult> tarjetaPdf(int idbien)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte tarjeta");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Fuente para tarjeta
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente8 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo8 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE TARJETA", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            doc.Add(new Paragraph("CONTROL DE EXISTENCIAS DE MOBILIARIO, EQUIPO E INSTALACIONES", parrafo2) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(Chunk.Newline);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                TarjetaDatosAF odatos = new TarjetaDatosAF();
+                ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                FormularioIngreso oformulario = bd.FormularioIngreso.Where(p => p.NoFormulario == oactivo.NoFormulario).First();
+                odatos.fechaAdquicicion = oformulario.FechaIngreso == null ? " " : ((DateTime)oformulario.FechaIngreso).ToString("dd-MM-yyyy");
+                odatos.Observaciones = oformulario.Observaciones;
+                odatos.codigo = oactivo.CorrelativoBien;
+                odatos.descripcion = oactivo.Desripcion;
+                odatos.valor = oactivo.ValorAdquicicion.ToString();
+                odatos.prima = oactivo.Prima.ToString();
+                odatos.plazo = oactivo.PlazoPago;
+                odatos.cuota = oactivo.CuotaAsignanda.ToString();
+                odatos.interes = oactivo.Intereses.ToString();
+                odatos.color = oactivo.Color;
+                odatos.modelo = oactivo.Modelo;
+                odatos.noSerie = oactivo.NoSerie;
+                int tasa = (int)(100 / oactivo.VidaUtil);
+                odatos.tasaAnual = tasa.ToString();
+                odatos.vidaUtil = oactivo.VidaUtil.ToString();
+                odatos.valorResidual = oactivo.ValorResidual.ToString();
+
+                //Cuerpo de la tarjeta
+                var tbl1 = new PdfPTable(new float[] { 36f, 35f, 29f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase("Fecha de adquisición: " + odatos.fechaAdquicicion, parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Denominación: " + oactivo.Desripcion, parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Código: " + oactivo.CorrelativoBien, parrafo6)) { Border = 0 });
+                //*****************************************************
+                if (oactivo.IdMarca != null)
+                {
+                    Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
+                    odatos.marca = oMarcas.Marca;
+                    tbl1.AddCell(new PdfPCell(new Phrase("Marca: " + oMarcas.Marca, parrafo6)) { Border = 0 });
+                }
+                else
+                {
+                    odatos.marca = " ";
+                }
+                tbl1.AddCell(new PdfPCell(new Phrase("Color: " + oactivo.Color, parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Modelo: " + oactivo.Modelo, parrafo6)) { Border = 0 });
+                //*****************************************************
+                tbl1.AddCell(new PdfPCell(new Phrase("No de serie: " + odatos.noSerie, parrafo6)) { Border = 0 });
+                if (oactivo.IdProveedor != null)
+                {
+                    Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
+                    string ProvDon;
+                    odatos.proveedor = oProveedor.Nombre;
+                    odatos.direccion = oProveedor.Direccion;
+                    odatos.telefono = oProveedor.Telefono;
+                    odatos.isProvDon = 1;
+                    if (odatos.isProvDon == 1)
+                    {
+                        ProvDon = "Proveedor: ";
+                    }
+                    else
+                    {
+                        ProvDon = "Donante: ";
+                    }
+                    tbl1.AddCell(new PdfPCell(new Phrase(ProvDon + oProveedor.Nombre, parrafo6)) { Border = 0 });
+                    tbl1.AddCell(new PdfPCell(new Phrase("Dirección: " + oProveedor.Direccion, parrafo6)) { Border = 0 });
+                    tbl1.AddCell(new PdfPCell(new Phrase("Teléfono: " + oProveedor.Telefono, parrafo6)) { Border = 0 });
+                }
+                else
+                {
+                    Donantes oDonante = bd.Donantes.Where(p => p.IdDonante == oactivo.IdDonante).First();
+                    string ProvDon;
+                    odatos.proveedor = oDonante.Nombre;
+                    odatos.direccion = oDonante.Direccion;
+                    odatos.telefono = oDonante.Telefono;
+                    odatos.isProvDon = 2;
+                    if (odatos.isProvDon == 1)
+                    {
+                        ProvDon = "Proveedor: ";
+                    }
+                    else
+                    {
+                        ProvDon = "Donante: ";
+                    }
+                    tbl1.AddCell(new PdfPCell(new Phrase(ProvDon + oDonante.Nombre, parrafo6)) { Border = 0 });
+                    tbl1.AddCell(new PdfPCell(new Phrase("Dirección: " + oDonante.Direccion, parrafo6)) { Border = 0 });
+                    tbl1.AddCell(new PdfPCell(new Phrase("Teléfono: " + oDonante.Telefono, parrafo6)) { Border = 0 });
+                }
+                tbl1.AddCell(new PdfPCell(new Phrase("Más interes del: " + odatos.interes + "%", parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Vida util segun referencia de fábrica: " + odatos.vidaUtil + " años", parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Tasa anual de depreciación: " + odatos.tasaAnual + "%", parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Valor residual: " + odatos.valorResidual, parrafo6)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Observaciones: " + odatos.Observaciones, parrafo6)) { Border = 0 });
+                doc.Add(tbl1);
+
+                //Tabla de transacciones
+                doc.Add(new Paragraph("MOVIMIENTO DEL VALOR - DEPRECIACIONES - GASTOS DE CONSEVACIÓN", parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(Chunk.Newline);
+
+                //Para el cuadro de transacciones
+                //Agregamos una tabla
+                var tbl = new PdfPTable(new float[] { 11f, 12f, 10f, 26f, 15f, 15f, 11f }) { WidthPercentage = 100f };
+                var c1 = new PdfPCell(new Phrase("FECHA", parrafo8));
+                var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo8));
+                var c3 = new PdfPCell(new Phrase("VALOR", parrafo8));
+                var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN Y MEJORAS", parrafo8));
+                var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo8));
+                var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo8));
+                var c7 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo8));
+                //Agregamos a la tabla las celdas 
+                tbl.AddCell(c1);
+                tbl.AddCell(c2);
+                tbl.AddCell(c3);
+                tbl.AddCell(c4);
+                tbl.AddCell(c5);
+                tbl.AddCell(c6);
+                tbl.AddCell(c7);
+
+                IEnumerable<TarjetaTransaccionesAF> ListaTransacciones = (from tarjeta in bd.TarjetaDepreciacion
+                                                                          where tarjeta.IdBien == idbien
+                                                                          orderby tarjeta.IdTarjeta
+                                                                          select new TarjetaTransaccionesAF
+                                                                          {
+                                                                              id = tarjeta.IdTarjeta,
+                                                                              idBien = (int)tarjeta.IdBien,
+                                                                              fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                                              concepto = tarjeta.Concepto,
+                                                                              montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                                              depreciacionAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                                              depreciacionAcumulada = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+                                                                              valorActual = Math.Round((double)tarjeta.ValorActual, 2),
+                                                                              valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2)
+                                                                          }).ToList();
+
+                foreach (var tarjeta in ListaTransacciones)
+                {
+                    c1.Phrase = new Phrase(tarjeta.fecha, parrafo5);
+                    c2.Phrase = new Phrase(tarjeta.concepto, parrafo5);
+
+                    c3.Phrase = new Phrase("$ " + tarjeta.valorTransaccion.ToString(), parrafo5);
+
+                    c4.Phrase = new Phrase("$ " + tarjeta.montoTransaccion.ToString(), parrafo5);
+
+                    c5.Phrase = new Phrase("$ " + tarjeta.depreciacionAnual.ToString(), parrafo5);
+
+                    c6.Phrase = new Phrase("$ " + tarjeta.depreciacionAcumulada.ToString(), parrafo5);
+
+                    c7.Phrase = new Phrase("$ " + tarjeta.valorActual.ToString(), parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                    tbl.AddCell(c7);
+                }
+                doc.Add(tbl);
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //Fin reporte tarjeta
     }
 }
