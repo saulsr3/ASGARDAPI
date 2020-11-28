@@ -7,9 +7,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Transactions;
-using Microsoft.AspNetCore.Session;
-using Microsoft.AspNetCore.Http;
-using System.Data.SqlClient;
 
 namespace ASGARDAPI.Controllers
 {
@@ -143,6 +140,28 @@ namespace ASGARDAPI.Controllers
                 oUsuarioAF.nombreusuario = oUsuario.NombreUsuario;
                 //oUsuarioAF.iidEmpleado = (int) oUsuario.IdEmpleado;
                 oUsuarioAF.iidTipousuario = (int)oUsuario.IdTipoUsuario;
+
+                return oUsuarioAF;
+            }
+        }
+        [HttpGet]
+        [Route("api/Usuario/RecuperarDetallesusuarios/{id}")]
+        public DetallesUsuariosAF RecuperarDetallesusuarios(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DetallesUsuariosAF oUsuarioAF = new DetallesUsuariosAF();
+                Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == id).First();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oUsuario.IdEmpleado).FirstOrDefault();
+                TipoUsuario oTipo = bd.TipoUsuario.Where(p => p.IdTipoUsuario == oUsuario.IdTipoUsuario).FirstOrDefault();
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).FirstOrDefault();
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).FirstOrDefault();
+
+                oUsuarioAF.nombre = oEmpleado.Nombres+ " "+oEmpleado.Apellidos;
+                oUsuarioAF.nombreusuario = oUsuario.NombreUsuario;
+                oUsuarioAF.tipousuario = oTipo.TipoUsuario1;
+                oUsuarioAF.sucursal = oSucursal.Nombre;
+                oUsuarioAF.area = oArea.Nombre;
 
                 return oUsuarioAF;
             }
