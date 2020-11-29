@@ -162,7 +162,7 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo bien = new ActivoFijo();
                     SolicitudBaja idSolicitud = bd.SolicitudBaja.Where(p => p.Estado == 1).First();
                     
-                    Console.WriteLine("IDBIEN" + oBaja.IdBien);
+                    //Console.WriteLine("IDBIEN" + oBaja.IdBien);
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oBaja.IdBien).First();
                     oActivo.EstadoActual = 4;
                    // bd.ActivoFijo.Update(bien);
@@ -729,55 +729,7 @@ namespace ASGARDAPI.Controllers
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Listar combo sucursal
-        [HttpGet]
-        [Route("api/SolicitudBaja/comboSucursal")]
-        public IEnumerable<SucursalAF> comboSucursal()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<SucursalAF> lista = (from sucursal in bd.Sucursal
-                                                 where sucursal.Dhabilitado == 1
-                                                 orderby sucursal.Ubicacion
-                                                 select new SucursalAF
-                                                 {
-                                                     IdSucursal = sucursal.IdSucursal,
-                                                     Nombre = sucursal.Nombre,
-                                                     Ubicacion = sucursal.Ubicacion
-
-                                                 }).ToList();
-                return lista;
-            }
-        }
-
-        //Listar área de negocio
-        [HttpGet]
-        [Route("api/SolicitudBaja/listarAreaCombo")]
-        public IEnumerable<AreasDeNegocioAF> listarAreaCombo()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<AreasDeNegocioAF> listarAreas = (from sucursal in bd.Sucursal
-                                                             join area in bd.AreaDeNegocio
-                                                             on sucursal.IdSucursal equals area.IdSucursal
-                                                             where area.Dhabilitado == 1
-                                                             select new AreasDeNegocioAF
-                                                             {
-                                                                 IdAreaNegocio = area.IdAreaNegocio,
-                                                                 Nombre = area.Nombre,
-                                                                 IdSucursal = sucursal.IdSucursal,
-                                                                 nombreSucursal = sucursal.Nombre,
-                                                                 ubicacion = sucursal.Ubicacion
-
-
-                                                             }).ToList();
-
-
-                return listarAreas;
-
-            }
-        }
-
+        
         //Activos para edificios e instalaciones
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosEdificios")]
@@ -791,7 +743,7 @@ namespace ASGARDAPI.Controllers
                                           on activo.NoFormulario equals noFormulario.NoFormulario
                                           join clasif in bd.Clasificacion
                                           on activo.IdClasificacion equals clasif.IdClasificacion
-                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                          where activo.EstadoActual == 1 && activo.TipoActivo == 1 && activo.EstadoActual == 1
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
                                           {
@@ -821,7 +773,7 @@ namespace ASGARDAPI.Controllers
                                           on activo.IdClasificacion equals clasif.IdClasificacion
                                           // Acá iría el área pero como está referenciada a empleado
 
-                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                          where activo.EstadoActual == 1  && activo.TipoActivo == 3 && activo.EstadoActual == 1
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
                                           {
@@ -838,11 +790,11 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosFiltro/{id}")]
-        public IEnumerable<RegistroAF> listarActivosFiltro(int id)
+        public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
                                                  join noFormulario in bd.FormularioIngreso
                                                  on activo.NoFormulario equals noFormulario.NoFormulario
                                                  join clasif in bd.Clasificacion
@@ -851,17 +803,17 @@ namespace ASGARDAPI.Controllers
                                                  on activo.IdResponsable equals resposable.IdEmpleado
                                                  join area in bd.AreaDeNegocio
                                                  on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                 where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
+                                                 where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
                                                  orderby activo.CorrelativoBien
-                                                 select new RegistroAF
+                                                 select new ActivoFijoAF
                                                  {
                                                      IdBien = activo.IdBien,
                                                      Codigo = activo.CorrelativoBien,
                                                      fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                     Descripcion = activo.Desripcion,
+                                                     Desripcion = activo.Desripcion,
                                                      Clasificacion = clasif.Clasificacion1,
                                                      AreaDeNegocio = area.Nombre,
-                                                     Responsable = resposable.Nombres + " " + resposable.Apellidos
+                                                     Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                                  }).ToList();
                 return lista;
 
@@ -869,76 +821,7 @@ namespace ASGARDAPI.Controllers
         }
 
         //BUSCADORES DE ACTIVOS
-        [HttpGet]
-        [Route("api/SolicitudBaja/buscarActivoAsig/{buscador?}")]
-        public IEnumerable<RegistroAF> buscarActivoAsig(string buscador = "")
-        {
-            List<RegistroAF> lista;
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                if (buscador == "")
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join noFormulario in bd.FormularioIngreso
-                             on activo.NoFormulario equals noFormulario.NoFormulario
-                             join resposable in bd.Empleado
-                             on activo.IdResponsable equals resposable.IdEmpleado
-                             join area in bd.AreaDeNegocio
-                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-                             orderby activo.CorrelativoBien
-                             select new RegistroAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 Codigo = activo.CorrelativoBien,
-                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
-                                 Descripcion = activo.Desripcion,
-                                 AreaDeNegocio = area.Nombre,
-                                 Responsable = resposable.Nombres + " " + resposable.Apellidos,
-
-
-                             }).ToList();
-
-                    return lista;
-                }
-                else
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join noFormulario in bd.FormularioIngreso
-                             on activo.NoFormulario equals noFormulario.NoFormulario
-                             join resposable in bd.Empleado
-                             on activo.IdResponsable equals resposable.IdEmpleado
-                             join area in bd.AreaDeNegocio
-                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                             join cargo in bd.Cargos
-                             on resposable.IdCargo equals cargo.IdCargo
-                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-
-                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
-                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
-                                    (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
-                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
-
-                                    )
-
-                             select new RegistroAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 Codigo = activo.CorrelativoBien,
-                                 Descripcion = activo.Desripcion,
-                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
-                                 AreaDeNegocio = area.Nombre,
-                                 Responsable = resposable.Nombres + " " + resposable.Apellidos,
-
-                             }).ToList();
-                    return lista;
-                }
-            }
-        }
+       
         [HttpGet]
         [Route("api/SolicitudBaja/buscarActivoEdificioAsig/{buscador?}")]
         public IEnumerable<RegistroAF> buscarActivoEdificioAsig(string buscador = "")
@@ -953,7 +836,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                   where activo.EstadoActual == 1 && activo.TipoActivo == 1 && activo.EstadoActual == 1
                                    orderby activo.CorrelativoBien
                                    select new RegistroAF
                                    {
@@ -974,7 +857,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                   where activo.EstadoActual == 1 && activo.TipoActivo == 1 && activo.EstadoActual == 1
 
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
@@ -1013,7 +896,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                   where activo.EstadoActual == 1  && activo.TipoActivo == 3 && activo.EstadoActual == 1
                                    orderby activo.CorrelativoBien
                                    select new RegistroAF
                                    {
@@ -1034,7 +917,7 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
-                                   where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                   where activo.EstadoActual == 1  && activo.TipoActivo == 3 && activo.EstadoActual == 1
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
                                       || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
