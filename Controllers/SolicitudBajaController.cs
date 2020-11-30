@@ -190,10 +190,7 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     SolicitudBaja oSolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == idsolicitud).First();
-                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
-                    //oActivo.EstadoActual = 0;
                     oSolicitud.Estado = 2;
-                   // oSolicitud.Acuerdo = ""; 
                     bd.SaveChanges();
                     rpta = 1;
                 }
@@ -358,6 +355,7 @@ namespace ASGARDAPI.Controllers
                 odatos.Codigo = obien.CorrelativoBien;
                 odatos.Descripcion = obien.Desripcion;
                 odatos.observaciones = osolicitud.Observaciones;
+                odatos.entidadbeneficiaria = osolicitud.EntidadBeneficiaria;
                 /////////////////////////////////////////////////
                 odatos.acuerdo = osolicitud.Acuerdo;
                 odatos.Codigo = obien.CorrelativoBien;
