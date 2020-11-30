@@ -247,7 +247,7 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
-                    //oActivo.EstaAsignado = 0;
+                    oActivo.EstaAsignado = 0;
                    
                    oSolic.Acuerdo = acuerdo;
                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
@@ -598,133 +598,6 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-       
-        [HttpGet]
-        [Route("api/SolicitudBaja/buscarBaja/{buscador?}")]
-        public IEnumerable<ActivoFijoAF> buscarBaja(string buscador = "")
-        {
-            List<ActivoFijoAF> lista;
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                if (buscador == "")
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join resposable in bd.Empleado
-                             on activo.IdResponsable equals resposable.IdEmpleado
-                             join area in bd.AreaDeNegocio
-                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                             join cargo in bd.Cargos
-                             on resposable.IdCargo equals cargo.IdCargo
-                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-                             orderby activo.CorrelativoBien
-                             select new ActivoFijoAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 Codigo = activo.CorrelativoBien,
-                                 Desripcion = activo.Desripcion,
-                                 AreaDeNegocio = area.Nombre,
-                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-                                 cargo = cargo.Cargo,
-
-                             }).ToList();
-
-                    return lista;
-                }
-                else
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join resposable in bd.Empleado
-                             on activo.IdResponsable equals resposable.IdEmpleado
-                             join area in bd.AreaDeNegocio
-                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                             join cargo in bd.Cargos
-                             on resposable.IdCargo equals cargo.IdCargo
-                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
-
-                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
-                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
-                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
-                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
-                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower()) ||
-                                    (cargo.Cargo).ToLower().Contains(buscador.ToLower())
-                                    )
-
-                             select new ActivoFijoAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 Codigo = activo.CorrelativoBien,
-                                 Desripcion = activo.Desripcion,
-                                 AreaDeNegocio = area.Nombre,
-                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-                                 cargo = cargo.Cargo,
-
-                             }).ToList();
-                    return lista;
-                }
-            }
-        }
-
-        
-
-        [HttpGet]
-        [Route("api/SolicitudBaja/buscarDescargos/{buscador?}")]
-        public IEnumerable<ActivoFijoAF> buscarDescargos(string buscador = "")
-        {
-            List<ActivoFijoAF> lista;
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                if (buscador == "")
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join noFormulario in bd.FormularioIngreso
-                             on activo.NoFormulario equals noFormulario.NoFormulario
-                             join clasif in bd.Clasificacion
-                             on activo.IdClasificacion equals clasif.IdClasificacion
-                             where activo.EstadoActual == 0
-
-                             select new ActivoFijoAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 NoFormulario = noFormulario.NoFormulario,
-                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                 Desripcion = activo.Desripcion,
-                                 Clasificacion = clasif.Clasificacion1
-
-                             }).ToList();
-
-                    return lista;
-                }
-                else
-                {
-                    lista = (from activo in bd.ActivoFijo
-                             join noFormulario in bd.FormularioIngreso
-                             on activo.NoFormulario equals noFormulario.NoFormulario
-                             join clasif in bd.Clasificacion
-                             on activo.IdClasificacion equals clasif.IdClasificacion
-                             join soli in bd.SolicitudBaja
-                             on activo.IdBien equals soli.IdBien
-                             where activo.EstadoActual == 0
-
-                                     && ((activo.IdBien).ToString().Contains(buscador)
-                                      || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
-                                      || (soli.Fecha).ToString().ToLower().Contains(buscador.ToLower())
-                                      || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
-                                      || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
-
-                                      )
-                             select new ActivoFijoAF
-                             {
-                                 IdBien = activo.IdBien,
-                                 NoFormulario = noFormulario.NoFormulario,
-                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                 Desripcion = activo.Desripcion,
-                                 Clasificacion = clasif.Clasificacion1
-
-                             }).ToList();
-                    return lista;
-                }
-            }
-        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
@@ -741,7 +614,7 @@ namespace ASGARDAPI.Controllers
                                           on activo.NoFormulario equals noFormulario.NoFormulario
                                           join clasif in bd.Clasificacion
                                           on activo.IdClasificacion equals clasif.IdClasificacion
-                                          where activo.EstadoActual == 1 && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                          where activo.EstadoActual == 1 && activo.TipoActivo == 1 
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
                                           {
@@ -771,7 +644,7 @@ namespace ASGARDAPI.Controllers
                                           on activo.IdClasificacion equals clasif.IdClasificacion
                                           // Acá iría el área pero como está referenciada a empleado
 
-                                          where activo.EstadoActual == 1  && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                          where activo.EstadoActual == 1  && activo.TipoActivo == 3 
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
                                           {
@@ -1055,6 +928,409 @@ namespace ASGARDAPI.Controllers
                     rpta = 1;
                 }
                 return rpta;
+            }
+        }
+        ///////////////////////METODOS PARAA DESACRGO
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarBienesBajas")]  //lista los bienes no asignados
+        public List<ActivoFijoAF> listarBienesBajas()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join clasif in bd.Clasificacion
+                                            on activo.IdClasificacion equals clasif.IdClasificacion
+                                            where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                NoFormulario = noFormulario.NoFormulario,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                Clasificacion = clasif.Clasificacion1
+
+                                            }).ToList();
+
+                return lista;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarBienesAsignadosBajas")]
+        public List<ActivoFijoAF> listarBienesAsignadosBajas()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                             on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join resposable in bd.Empleado
+                                            on activo.IdResponsable equals resposable.IdEmpleado
+                                            join area in bd.AreaDeNegocio
+                                            on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                            join cargo in bd.Cargos
+                                            on resposable.IdCargo equals cargo.IdCargo
+                                            where activo.EstadoActual == 0
+                                            orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                AreaDeNegocio = area.Nombre,
+                                                Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                                cargo = cargo.Cargo,
+
+                                            }).ToList();
+                return lista;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarActivosEdificiosBajas")]
+        public List<RegistroAF> listarActivosEdificiosBajas()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join clasif in bd.Clasificacion
+                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                          where activo.EstadoActual == 0 && activo.TipoActivo == 1
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              Clasificacion = clasif.Clasificacion1,
+                                          }).ToList();
+                return lista;
+
+            }
+        }
+
+        //Activos para intangibles
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarActivosIntangiblesBajas")]
+        public List<RegistroAF> listarActivosIntangiblesBajas()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join clasif in bd.Clasificacion
+                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                          // Acá iría el área pero como está referenciada a empleado
+
+                                          where activo.EstadoActual == 0 && activo.TipoActivo == 3
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              Clasificacion = clasif.Clasificacion1,
+                                          }).ToList();
+                return lista;
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/listarActivosFiltroBajas/{id}")]
+        public IEnumerable<ActivoFijoAF> listarActivosFiltroBajas(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                   join noFormulario in bd.FormularioIngreso
+                                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                                   join clasif in bd.Clasificacion
+                                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                                   join resposable in bd.Empleado
+                                                   on activo.IdResponsable equals resposable.IdEmpleado
+                                                   join area in bd.AreaDeNegocio
+                                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   where activo.EstadoActual == 0 && area.IdAreaNegocio == id
+                                                   orderby activo.CorrelativoBien
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activo.IdBien,
+                                                       Codigo = activo.CorrelativoBien,
+                                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                       Desripcion = activo.Desripcion,
+                                                       Clasificacion = clasif.Clasificacion1,
+                                                       AreaDeNegocio = area.Nombre,
+                                                       Resposnsable = resposable.Nombres + " " + resposable.Apellidos
+                                                   }).ToList();
+                return lista;
+
+            }
+        }
+
+        //BUSCADORES DE ACTIVOS
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarActivoEdificioAsigBajas/{buscador?}")]
+        public IEnumerable<RegistroAF> buscarActivoEdificioAsigBajas(string buscador = "")
+        {
+            List<RegistroAF> listaActivo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   where activo.EstadoActual == 0 && activo.TipoActivo == 1 
+                                   orderby activo.CorrelativoBien
+                                   select new RegistroAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
+                                       Clasificacion = clasif.Clasificacion1
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   where activo.EstadoActual == 0 && activo.TipoActivo == 1 
+
+
+                                     && ((activo.IdBien).ToString().Contains(buscador)
+                                      || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                      || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                      || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower()))
+                                   orderby activo.CorrelativoBien
+
+                                   select new RegistroAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
+                                       Clasificacion = clasif.Clasificacion1
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarActivoIntengibleAsigBajas/{buscador?}")]
+        public IEnumerable<RegistroAF> buscarActivoIntengibleAsigBajas(string buscador = "")
+        {
+            List<RegistroAF> listaActivo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   where activo.EstadoActual == 0 && activo.TipoActivo == 3 
+                                   orderby activo.CorrelativoBien
+                                   select new RegistroAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
+                                       Clasificacion = clasif.Clasificacion1
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from activo in bd.ActivoFijo
+                                   join noFormulario in bd.FormularioIngreso
+                                   on activo.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on activo.IdClasificacion equals clasif.IdClasificacion
+                                   where activo.EstadoActual == 0 && activo.TipoActivo == 3 
+
+                                     && ((activo.IdBien).ToString().Contains(buscador)
+                                      || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                      || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                      || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower()))
+
+                                   orderby activo.CorrelativoBien
+                                   select new RegistroAF
+                                   {
+                                       IdBien = activo.IdBien,
+                                       Codigo = activo.CorrelativoBien,
+                                       fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       Descripcion = activo.Desripcion,
+                                       vidautil = activo.VidaUtil,
+                                       Clasificacion = clasif.Clasificacion1
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+
+        //Buscadores no asignados
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarActivoNoAsigBajas/{buscador?}")]
+        public IEnumerable<NoAsignadosAF> buscarActivoBajas(string buscador = "")
+        {
+            List<NoAsignadosAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join clasif in bd.Clasificacion
+                             on activo.IdClasificacion equals clasif.IdClasificacion
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+
+                             select new NoAsignadosAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 NoFormulario = noFormulario.NoFormulario,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                 Desripcion = activo.Desripcion,
+                                 Clasificacion = clasif.Clasificacion1
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join clasif in bd.Clasificacion
+                             on activo.IdClasificacion equals clasif.IdClasificacion
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+
+                                     && ((activo.IdBien).ToString().Contains(buscador)
+                                      || (activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                      || (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower())
+                                      || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                      || (clasif.Clasificacion1).ToLower().Contains(buscador.ToLower())
+
+                                      )
+                             select new NoAsignadosAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 NoFormulario = noFormulario.NoFormulario,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                 Desripcion = activo.Desripcion,
+                                 Clasificacion = clasif.Clasificacion1
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/buscarBienesBajaAsigBajas/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarBienesBajaAsigBajas(string buscador = "")
+        {
+            List<ActivoFijoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+                             orderby activo.CorrelativoBien
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+
+                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                    (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+
+                                    )
+
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 //cargo = cargo.Cargo,
+
+                             }).ToList();
+                    return lista;
+                }
             }
         }
 
