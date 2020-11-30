@@ -45,7 +45,7 @@ namespace ASGARDAPI.Controllers
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
@@ -207,7 +207,7 @@ namespace ASGARDAPI.Controllers
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
@@ -357,7 +357,7 @@ namespace ASGARDAPI.Controllers
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
@@ -507,7 +507,7 @@ namespace ASGARDAPI.Controllers
             BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
@@ -670,9 +670,12 @@ namespace ASGARDAPI.Controllers
 
             //Fuente para tarjeta
             BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente7 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo7 = new iTextSharp.text.Font(fuente, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
             BaseFont fuente8 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo8 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo8 = new iTextSharp.text.Font(fuente2, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
 
 
             //Encabezado
@@ -696,7 +699,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE TARJETA", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE TARJETA DE DEPRECIACIÓN", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -728,25 +731,38 @@ namespace ASGARDAPI.Controllers
                 odatos.valorResidual = oactivo.ValorResidual.ToString();
 
                 //Cuerpo de la tarjeta
-                var tbl1 = new PdfPTable(new float[] { 36f, 35f, 29f }) { WidthPercentage = 100f };
-                tbl1.AddCell(new PdfPCell(new Phrase("Fecha de adquisición: " + odatos.fechaAdquicicion, parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Denominación: " + oactivo.Desripcion, parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Código: " + oactivo.CorrelativoBien, parrafo6)) { Border = 0 });
+                var tbl1 = new PdfPTable(new float[] { 7f, 5f, 5f, 10f, 3f, 7f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase("Fecha de adquisición: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(odatos.fechaAdquicicion, parrafo7)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Denominación: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oactivo.Desripcion, parrafo7)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Código: ",parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oactivo.CorrelativoBien, parrafo7)) { Border = 0 });
                 //*****************************************************
+
+                var tbl2 = new PdfPTable(new float[] { 2f, 7f, 2f, 8f, 2f, 5f }) { WidthPercentage = 100f };
                 if (oactivo.IdMarca != null)
                 {
                     Marcas oMarcas = bd.Marcas.Where(p => p.IdMarca == oactivo.IdMarca).First();
                     odatos.marca = oMarcas.Marca;
-                    tbl1.AddCell(new PdfPCell(new Phrase("Marca: " + oMarcas.Marca, parrafo6)) { Border = 0 });
+                    tbl2.AddCell(new PdfPCell(new Phrase("Marca: ", parrafo6)) { Border = 0, Rowspan = 2 } );
+                    tbl2.AddCell(new PdfPCell(new Phrase(oMarcas.Marca, parrafo7)) { Border = 0 } );
                 }
                 else
                 {
                     odatos.marca = " ";
                 }
-                tbl1.AddCell(new PdfPCell(new Phrase("Color: " + oactivo.Color, parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Modelo: " + oactivo.Modelo, parrafo6)) { Border = 0 });
+                    tbl2.AddCell(new PdfPCell(new Phrase("Color: ", parrafo6)) { Border = 0, Rowspan = 2 } );
+                    tbl2.AddCell(new PdfPCell(new Phrase(oactivo.Color, parrafo7)) { Border = 0 });
+
+
+                    tbl2.AddCell(new PdfPCell(new Phrase("Modelo: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl2.AddCell(new PdfPCell(new Phrase(oactivo.Modelo, parrafo7)) { Border = 0 });
                 //*****************************************************
-                tbl1.AddCell(new PdfPCell(new Phrase("No de serie: " + odatos.noSerie, parrafo6)) { Border = 0 });
+                var tbl3 = new PdfPTable(new float[] { 4f, 6f, 3f, 8f, 3f, 5f }) { WidthPercentage = 100f };
+                tbl3.AddCell(new PdfPCell(new Phrase("No de serie: ", parrafo6)) { Border = 0,Rowspan = 2 });
+                tbl3.AddCell(new PdfPCell(new Phrase(odatos.noSerie, parrafo7)) { Border = 0 });
+                var tbl4 = new PdfPTable(new float[] { 4f, 11f, 6f, 12f, 8f, 4f }) { WidthPercentage = 100f };
                 if (oactivo.IdProveedor != null)
                 {
                     Proveedor oProveedor = bd.Proveedor.Where(p => p.IdProveedor == oactivo.IdProveedor).First();
@@ -757,15 +773,18 @@ namespace ASGARDAPI.Controllers
                     odatos.isProvDon = 1;
                     if (odatos.isProvDon == 1)
                     {
-                        ProvDon = "Proveedor: ";
+                        ProvDon = "Proveedor:";
                     }
                     else
                     {
-                        ProvDon = "Donante: ";
+                        ProvDon = "Donante:";
                     }
-                    tbl1.AddCell(new PdfPCell(new Phrase(ProvDon + oProveedor.Nombre, parrafo6)) { Border = 0 });
-                    tbl1.AddCell(new PdfPCell(new Phrase("Dirección: " + oProveedor.Direccion, parrafo6)) { Border = 0 });
-                    tbl1.AddCell(new PdfPCell(new Phrase("Teléfono: " + oProveedor.Telefono, parrafo6)) { Border = 0 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(ProvDon, parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(oProveedor.Nombre, parrafo7)) { Border = 0 });
+                    tbl3.AddCell(new PdfPCell(new Phrase("Dirección: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(oProveedor.Direccion, parrafo7)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase("Teléfono:", parrafo6)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase(oProveedor.Telefono, parrafo7)) { Border = 0 });
                 }
                 else
                 {
@@ -777,22 +796,37 @@ namespace ASGARDAPI.Controllers
                     odatos.isProvDon = 2;
                     if (odatos.isProvDon == 1)
                     {
-                        ProvDon = "Proveedor: ";
+                        ProvDon = "Proveedor:";
                     }
                     else
                     {
-                        ProvDon = "Donante: ";
+                        ProvDon = "Donante:";
                     }
-                    tbl1.AddCell(new PdfPCell(new Phrase(ProvDon + oDonante.Nombre, parrafo6)) { Border = 0 });
-                    tbl1.AddCell(new PdfPCell(new Phrase("Dirección: " + oDonante.Direccion, parrafo6)) { Border = 0 });
-                    tbl1.AddCell(new PdfPCell(new Phrase("Teléfono: " + oDonante.Telefono, parrafo6)) { Border = 0 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(ProvDon, parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(oDonante.Nombre, parrafo7)) { Border = 0 });
+                    tbl1.AddCell(new PdfPCell(new Phrase("Dirección: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl3.AddCell(new PdfPCell(new Phrase(oDonante.Direccion, parrafo7)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase("Teléfono:", parrafo6)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase(oDonante.Telefono, parrafo7)) { Border = 0 });
                 }
-                tbl1.AddCell(new PdfPCell(new Phrase("Más interes del: " + odatos.interes + "%", parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Vida util segun referencia de fábrica: " + odatos.vidaUtil + " años", parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Tasa anual de depreciación: " + odatos.tasaAnual + "%", parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Valor residual: " + odatos.valorResidual, parrafo6)) { Border = 0 });
-                tbl1.AddCell(new PdfPCell(new Phrase("Observaciones: " + odatos.Observaciones, parrafo6)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase("Más interes del: ", parrafo6)) { Border = 0 } );
+                    tbl4.AddCell(new PdfPCell(new Phrase(odatos.interes + "%", parrafo7)) { Border = 0 });
+                    tbl4.AddCell(new PdfPCell(new Phrase("Vida util según referencia de fábrica: ", parrafo6)) { Border = 0 } );
+                    tbl4.AddCell(new PdfPCell(new Phrase(odatos.vidaUtil + " años", parrafo7)) { Border = 0 });
+
+                var tbl5 = new PdfPTable(new float[] { 9f, 3f, 5f, 10f, 5f, 5f }) { WidthPercentage = 100f };
+                    tbl5.AddCell(new PdfPCell(new Phrase("Tasa anual de depreciación: ", parrafo6)) { Border = 0 , Rowspan = 2 });
+                    tbl5.AddCell(new PdfPCell(new Phrase(odatos.tasaAnual + "%", parrafo7)) { Border = 0 });
+                    tbl5.AddCell(new PdfPCell(new Phrase("Valor residual: ", parrafo6)) { Border = 0 , Rowspan = 2 });
+                    tbl5.AddCell(new PdfPCell(new Phrase(odatos.valorResidual, parrafo7)) { Border = 0 });
+                    tbl5.AddCell(new PdfPCell(new Phrase("Observaciones: ", parrafo6)) { Border = 0 , Rowspan = 2 });
+                    tbl5.AddCell(new PdfPCell(new Phrase(odatos.Observaciones, parrafo7)) { Border = 0 });
+
                 doc.Add(tbl1);
+                doc.Add(tbl2);
+                doc.Add(tbl3);
+                doc.Add(tbl4);
+                doc.Add(tbl5);
 
                 //Tabla de transacciones
                 doc.Add(new Paragraph("MOVIMIENTO DEL VALOR - DEPRECIACIONES - GASTOS DE CONSEVACIÓN", parrafo2) { Alignment = Element.ALIGN_CENTER });
