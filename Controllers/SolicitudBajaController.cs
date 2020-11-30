@@ -250,7 +250,7 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
-                    oActivo.EstaAsignado = 0;
+                    //oActivo.EstaAsignado = 0;
                    
                    oSolic.Acuerdo = acuerdo;
                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
@@ -269,8 +269,8 @@ namespace ASGARDAPI.Controllers
 
         //si la solicitud es rechazada vuelve al estado normal que es 1
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}")] //  
-        public int cambiarEstadoDenegado(int idbien)//
+        [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}/{acuerdo}/{fecha2}")] //  
+        public int cambiarEstadoDenegado(int idbien, string acuerdo, string fecha2)//
         {
             int rpta = 0;
 
@@ -282,8 +282,8 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 1;
                     
-                   // oSolic.Acuerdo = acuerdo;
-                   // oSolic.Fechabaja = Convert.ToDateTime(fecha2);
+                   oSolic.Acuerdo = acuerdo;
+                   oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -997,6 +997,66 @@ namespace ASGARDAPI.Controllers
                              }).ToList();
                     return lista;
                 }
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarSolicitudesParaBaja")]
+        public int validarSolicitudesParaBaja()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<SolicitudBajaAF> lista = (from solicitud in bd.SolicitudBaja
+                                                                where solicitud.Estado == 1
+
+                                                                select new SolicitudBajaAF
+                                                                {
+                                                                    idsolicitud = solicitud.IdSolicitud,
+                                                                    folio = solicitud.Folio,
+                                                                    observaciones = solicitud.Observaciones,
+                                                                    fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy")
+
+                                                                }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarHistorialParaBaja")]
+        public int validarHistorialParaBaja()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                                   join formulario in bd.FormularioIngreso
+                                                   on activo.NoFormulario equals formulario.NoFormulario
+                                                   join clasi in bd.Clasificacion
+                                                   on activo.IdClasificacion equals clasi.IdClasificacion
+
+                                                   where activo.EstadoActual == 0
+
+                                                   select new ActivoFijoAF
+                                                   {
+                                                       IdBien = activo.IdBien,
+                                                       Desripcion = activo.Desripcion,
+                                                       fechacadena = formulario.FechaIngreso == null ? " " : ((DateTime)formulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                       Clasificacion = clasi.Clasificacion1
+                                                   }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
             }
         }
 

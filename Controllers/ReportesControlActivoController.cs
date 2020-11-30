@@ -883,7 +883,524 @@ namespace ASGARDAPI.Controllers
             ms.Seek(0, SeekOrigin.Begin);
             return File(ms, "application/pdf");
         }
-
         //Fin reporte tarjeta
+
+        //Reporte cuadro de control activos asignados
+
+        [HttpGet]
+        [Route("api/Reporte/cuadroControlActivosPdf")]
+        public async Task<IActionResult> cuadroControlActivosPdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte cuadro de control");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 7.5f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CUADRO DE CONTROL DE BIENES DE LA PROPIEDAD PLANTA Y EQUIPO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 10f, 15f, 11f, 11f, 12f, 12f, 8f, 10f, 13f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("FECHA DE ADQUISICIÓN", parrafo2));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo2));
+            var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN", parrafo2));
+            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo2));
+            var c7 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo2));
+            var c8 = new PdfPCell(new Phrase("UBICACIÓN", parrafo2));
+            var c9 = new PdfPCell(new Phrase("RESPONSABLE", parrafo2));
+
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+            tbl.AddCell(c7);
+            tbl.AddCell(c8);
+            tbl.AddCell(c9);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CuadroControlAF> listacuadro = (
+                                                             from tarjeta in bd.TarjetaDepreciacion
+                                                             group tarjeta by tarjeta.IdBien into bar
+                                                             join cuadro in bd.ActivoFijo
+                                                             on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                             join noFormulario in bd.FormularioIngreso
+                                                             on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                             join clasif in bd.Clasificacion
+                                                             on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                             join resposable in bd.Empleado
+                                                             on cuadro.IdResponsable equals resposable.IdEmpleado
+                                                             join area in bd.AreaDeNegocio
+                                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+
+                                                              //where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroControlAF()
+                                                             {
+                                                                 idbien = cuadro.IdBien,
+                                                                 codigo = cuadro.CorrelativoBien,
+                                                                 descripcion = cuadro.Desripcion,
+                                                                 valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                                                 fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                 valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                 depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                 depreciacionacumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+                                                                 ubicacion = area.Nombre,
+                                                                 responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                                             }).ToList();
+
+                foreach (var cuadro in listacuadro)
+                {
+                    c1.Phrase = new Phrase(cuadro.codigo, parrafo5);
+                    c2.Phrase = new Phrase(cuadro.descripcion, parrafo5);
+                    c3.Phrase = new Phrase(cuadro.fechaadquisicion, parrafo5);
+                    c4.Phrase = new Phrase("$" + cuadro.valoradquisicion.ToString(), parrafo5);
+                    c5.Phrase = new Phrase("$" + cuadro.depreciacion.ToString(), parrafo5);
+                    c6.Phrase = new Phrase("$" + cuadro.depreciacionacumulada.ToString(), parrafo5);
+                    c7.Phrase = new Phrase("$" + cuadro.valoractual.ToString(), parrafo5);
+                    c8.Phrase = new Phrase(cuadro.ubicacion, parrafo5);
+                    c9.Phrase = new Phrase(cuadro.responsable, parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                    tbl.AddCell(c7);
+                    tbl.AddCell(c8);
+                    tbl.AddCell(c9);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //Fin reporte cuadro de control activos asignados
+
+        //Reporte cuadro de control de edificios
+
+        [HttpGet]
+        [Route("api/Reporte/cuadroControlEdificiosPdf")]
+        public async Task<IActionResult> cuadroControlEdificiosPdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte cuadro de control");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CUADRO DE CONTROL DE BIENES DE LA PROPIEDAD PLANTA Y EQUIPO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 12f, 15f, 11f, 11f, 12f, 12f, 8f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("FECHA DE ADQUISICIÓN", parrafo2));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo2));
+            var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN", parrafo2));
+            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo2));
+            var c7 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo2));
+
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+            tbl.AddCell(c7);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CuadroControlAF> listacuadro = (
+                                                               from tarjeta in bd.TarjetaDepreciacion
+                                                               group tarjeta by tarjeta.IdBien into bar
+                                                               join cuadro in bd.ActivoFijo
+                                                               on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                               join noFormulario in bd.FormularioIngreso
+                                                               on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                               join clasif in bd.Clasificacion
+                                                               on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                               where (cuadro.EstadoActual == 1 || cuadro.EstadoActual == 2 || cuadro.EstadoActual == 3) && cuadro.TipoActivo == 1 && cuadro.EstaAsignado == 1
+                                                               select new CuadroControlAF()
+                                                               {
+                                                                   idbien = cuadro.IdBien,
+                                                                   codigo = cuadro.CorrelativoBien,
+                                                                   descripcion = cuadro.Desripcion,
+                                                                   valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                                                   fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                   valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                   depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                   depreciacionacumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+
+                                                               }).ToList();
+
+                foreach (var cuadro in listacuadro)
+                {
+                    c1.Phrase = new Phrase(cuadro.codigo, parrafo5);
+                    c2.Phrase = new Phrase(cuadro.descripcion, parrafo5);
+                    c3.Phrase = new Phrase(cuadro.fechaadquisicion, parrafo5);
+                    c4.Phrase = new Phrase("$" + cuadro.valoradquisicion.ToString(), parrafo5);
+                    c5.Phrase = new Phrase("$" + cuadro.depreciacion.ToString(), parrafo5);
+                    c6.Phrase = new Phrase("$" + cuadro.depreciacionacumulada.ToString(), parrafo5);
+                    c7.Phrase = new Phrase("$" + cuadro.valoractual.ToString(), parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                    tbl.AddCell(c7);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //Fin reporte cuadro de control de edificios
+
+        //Reporte cuadro de control intangibles
+
+
+
+        [HttpGet]
+        [Route("api/Reporte/cuadroControlIntangiblesPdf")]
+        public async Task<IActionResult> cuadroControlIntangiblesPdf()
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte cuadro de control");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                //Se agrega el encabezado
+                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
+                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE CUADRO DE CONTROL DE BIENES DE LA PROPIEDAD PLANTA Y EQUIPO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 12f, 15f, 11f, 11f, 12f, 12f, 8f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("FECHA DE ADQUISICIÓN", parrafo2));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo2));
+            var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN", parrafo2));
+            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo2));
+            var c7 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo2));
+
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+            tbl.AddCell(c7);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CuadroControlAF> listacuadro = (
+                                                             from tarjeta in bd.TarjetaDepreciacion
+                                                             group tarjeta by tarjeta.IdBien into bar
+                                                             join cuadro in bd.ActivoFijo
+                                                             on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                             join noFormulario in bd.FormularioIngreso
+                                                             on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                             join clasif in bd.Clasificacion
+                                                             on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                             where (cuadro.EstadoActual == 1 || cuadro.EstadoActual == 2 || cuadro.EstadoActual == 3) && cuadro.TipoActivo == 3 && cuadro.EstaAsignado == 1
+                                                             select new CuadroControlAF()
+                                                             {
+                                                                 idbien = cuadro.IdBien,
+                                                                 codigo = cuadro.CorrelativoBien,
+                                                                 descripcion = cuadro.Desripcion,
+                                                                 valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                                                 fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                 valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                 depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                 depreciacionacumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+
+                                                             }).ToList();
+
+                foreach (var cuadro in listacuadro)
+                {
+                    c1.Phrase = new Phrase(cuadro.codigo, parrafo5);
+                    c2.Phrase = new Phrase(cuadro.descripcion, parrafo5);
+                    c3.Phrase = new Phrase(cuadro.fechaadquisicion, parrafo5);
+                    c4.Phrase = new Phrase("$" + cuadro.valoradquisicion.ToString(), parrafo5);
+                    c5.Phrase = new Phrase("$" + cuadro.depreciacion.ToString(), parrafo5);
+                    c6.Phrase = new Phrase("$" + cuadro.depreciacionacumulada.ToString(), parrafo5);
+                    c7.Phrase = new Phrase("$" + cuadro.valoractual.ToString(), parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                    tbl.AddCell(c7);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //Fin reporte cuadro de control intangibles
     }
 }
