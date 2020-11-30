@@ -76,8 +76,12 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -222,8 +226,12 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -362,8 +370,12 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -504,8 +516,12 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -649,8 +665,12 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -783,11 +803,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -955,11 +978,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -1109,11 +1135,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -1247,11 +1276,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -1380,11 +1412,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -1513,11 +1548,14 @@ namespace ASGARDAPI.Controllers
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
                 oCooperativaAF.nombre = oCooperativa.Nombre;
                 oCooperativaAF.descripcion = oCooperativa.Descripcion;
-                oCooperativaAF.logo = oCooperativa.Logo;
 
                 //Se agrega el encabezado
-                doc.Add(new Paragraph(oCooperativa.Descripcion.ToUpper(), parrafo2) { Alignment = Element.ALIGN_CENTER });
-                doc.Add(new Paragraph(oCooperativa.Nombre, parrafo3) { Alignment = Element.ALIGN_CENTER });
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan =2});
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 } );
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
             }
 
             //Línea separadora
@@ -1527,7 +1565,6 @@ namespace ASGARDAPI.Controllers
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
-
             //Agregamos una tabla
             var tbl = new PdfPTable(new float[] { 35f, 65f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("NOMBRE", parrafo2));
