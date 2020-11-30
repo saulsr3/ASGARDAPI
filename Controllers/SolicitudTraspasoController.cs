@@ -457,11 +457,20 @@ namespace ASGARDAPI.Controllers
                         oActivoC = oActivoC + 1;
                         oCodigo.Correlativo = oActivoC.ToString();
                     }
+                  
 
                     oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
+
+                    if (oCodigo.Correlativo == oActivo.CorrelativoBien)
+                    {
+                        oActivoC = oActivoC + 1;
+                        oCodigo.Correlativo = oActivoC.ToString();
+
+
+                    }
                     //Guardamos en la tabla activo fijo7u8
                     //oActivo.CorrelativoBien = "";
-                   
+
                     oActivo.EstadoActual = 1;
                    // oActivo.EstaAsignado = 1;
                     //guardamos el acuerdo y la fecha
