@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -43,6 +44,29 @@ namespace ASGARDAPI.Controllers
                 }
             }
             return oUsuario;
+        }
+        [HttpGet]
+        [Route("api/Seguridad/listarBitacora")]
+        public IEnumerable<TablaBitacoraAF> listarBitacora()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TablaBitacoraAF> listaProveedores = (from bitacora in bd.Bitacora
+                                                                 join usuario in bd.Usuario
+                                                                  on bitacora.IdUsuario equals usuario.IdUsuario
+                                                                 join empleado in bd.Empleado
+                                                                 on usuario.IdEmpleado equals empleado.IdEmpleado
+                                                                 orderby bitacora.Fecha descending
+                                                                 select new TablaBitacoraAF
+                                                               {
+                                                                   idBitacora = bitacora.IdBitacora,
+                                                                   nombreEmpleado = empleado.Nombres+ " " +empleado.Apellidos,
+                                                                   nombreUsuario = usuario.NombreUsuario,
+                                                                   fecha = bitacora. Fecha == null ? " " : ((DateTime)bitacora.Fecha).ToString("dd-MM-yyyy : HH:mm:ss"),
+                                                                   descripcion = bitacora.Descripcion,
+                                                               }).ToList();
+                return listaProveedores;
+            }
         }
         //[HttpGet]
         //[Route("api/Usuario/obtenervariableSession")]
@@ -88,7 +112,7 @@ namespace ASGARDAPI.Controllers
         //    return oSeguridad;
         //}
         ////cierra aqui
-        
+
         //[HttpGet]
         //[Route("api/Usuario/CerrarSesion")]
         //public SeguridadAF CerrarSesion()
