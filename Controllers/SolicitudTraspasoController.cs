@@ -559,7 +559,7 @@ namespace ASGARDAPI.Controllers
                                                             on responsable.IdAreaDeNegocio equals area.IdAreaNegocio
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
-                                                            where responsable.IdEmpleado == id
+                                                            where responsable.IdEmpleado == id 
                                                             select new ActivoFijoAF
                                                             {
 
@@ -584,8 +584,8 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
                                                  join area in bd.AreaDeNegocio
                                                  on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                       where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == id
-                                                       orderby empleado.Nombres
+                                                       where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == id && empleado.IdEmpleado != id
+                                                 //orderby empleado.Nombres
                                                        select new EmpleadoAF
                                                        {                                                     
                                                            idempleado = empleado.IdEmpleado,
