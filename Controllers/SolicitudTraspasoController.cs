@@ -413,78 +413,46 @@ namespace ASGARDAPI.Controllers
         [Route("api/SolicitudTraspaso/cambiarEstadoAceptoTraspaso")]
         public int cambiarEstadoAceptoTraspaso([FromBody] TraspasoAF oTraspasoAF)
         {
-           
-        
             int respuesta = 0;
-
             try
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    //primero cambiamos el el estado del activo para hacer notar que ya no está en solicitud (UNA VEZ SEA APROBADA)
                     SolicitudTraspaso oSolicitudT = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == oTraspasoAF.idsolicitud).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitudT.IdBien).First();
-                    // proceso de cambio de codigo
                     CodigoAF oCodigo = new CodigoAF();
-                    //Extraer los datos padres de la base
-                    //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
-                    Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == oTraspasoAF.idEmpleado).First();
-                    //Utilizar los datos padres para extraer loc correlativos
-                    AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                    Empleado oEmpleadoNuevo = bd.Empleado.Where(p => p.IdEmpleado == oTraspasoAF.idEmpleado).First();
+                    Empleado oEmpleadoAnterior = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
+                    AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleadoNuevo.IdAreaDeNegocio).First();
                     Sucursal osucursal = bd.Sucursal.Where(p => p.IdSucursal == oarea.IdSucursal).First();
                     Clasificacion oclasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == oActivo.IdClasificacion).First();
-
-                    //LLenado de objeto
-                    oCodigo.CorrelativoSucursal = osucursal.Correlativo;
-                    oCodigo.CorrelativoArea = oarea.Correlativo;
-                    oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
-                    //selccionar cuantos hay de esa clasificacion
-                    int oActivoC = bd.ActivoFijo.Where(p => p.EstaAsignado == 1 && p.IdClasificacion == oclasificacion.IdClasificacion).Count();
-
-                    //comparar para la concatenacion correspondiente 
-                    if (oActivoC >= 0 && oActivoC <= 9)
+                    if (oEmpleadoNuevo.IdAreaDeNegocio == oEmpleadoAnterior.IdAreaDeNegocio)
                     {
-                        oActivoC = oActivoC + 1;
-                        oCodigo.Correlativo = "00" + oActivoC.ToString();
+                        oActivo.EstadoActual = 1;
+                        oSolicitudT.Acuerdo = oTraspasoAF.acuerdo;
+                        oSolicitudT.Fechatraspaso = Convert.ToDateTime(oTraspasoAF.fechasolicitud);
+                        oActivo.IdResponsable = (int)oSolicitudT.IdResponsable;
+                        bd.SaveChanges();
+                        respuesta = 1;
                     }
-                    else if (oActivoC >= 10 && oActivoC <= 99)
-                    {
-                        oActivoC = oActivoC + 1;
-                        oCodigo.Correlativo = "0" + oActivoC.ToString();
+                    else {
+                        string corre = oActivo.CorrelativoBien;
+                        string[] slices = corre.Split("-");
+                        oCodigo.CorrelativoSucursal = osucursal.Correlativo;
+                        oCodigo.CorrelativoArea = oarea.Correlativo;
+                        oCodigo.CorrelativoClasificacion = oclasificacion.Correlativo;
+                        oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion + "-" + slices[3];
+                        oActivo.EstadoActual = 1;
+                        oSolicitudT.Acuerdo = oTraspasoAF.acuerdo;
+                        oSolicitudT.Fechatraspaso = Convert.ToDateTime(oTraspasoAF.fechasolicitud);
+                        oActivo.IdResponsable = (int)oSolicitudT.IdResponsable; //para hacer el cambio de ids
+                        bd.SaveChanges();
+                        respuesta = 1;
                     }
-                    else
-                    {
-                        oActivoC = oActivoC + 1;
-                        oCodigo.Correlativo = oActivoC.ToString();
-                    }
-                  
-
-                    oActivo.CorrelativoBien = oCodigo.CorrelativoSucursal + "-" + oCodigo.CorrelativoArea + "-" + oCodigo.CorrelativoClasificacion + "-" + oCodigo.Correlativo;
-
-                    if (oCodigo.Correlativo == oActivo.CorrelativoBien)
-                    {
-                        oActivoC = oActivoC + 1;
-                        oCodigo.Correlativo = oActivoC.ToString();
-
-
-                    }
-                    //Guardamos en la tabla activo fijo7u8
-                    //oActivo.CorrelativoBien = "";
-
-                    oActivo.EstadoActual = 1;
-                   // oActivo.EstaAsignado = 1;
-                    //guardamos el acuerdo y la fecha
-                    oSolicitudT.Acuerdo = oTraspasoAF.acuerdo;
-                    oSolicitudT.Fechatraspaso = Convert.ToDateTime(oTraspasoAF.fechasolicitud);
-                    oActivo.IdResponsable = (int)oSolicitudT.IdResponsable; //para hacer el cambio de ids
-                    bd.SaveChanges();
-                    respuesta = 1;
-
                 }
             }
             catch (Exception ex)
             {
-
                 respuesta = 0;
             }
             return respuesta;
