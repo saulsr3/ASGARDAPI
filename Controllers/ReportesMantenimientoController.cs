@@ -32,7 +32,7 @@ namespace ASGARDAPI.Controllers
 
         //INICIO DE REPORTE DE SOLICITUDES EN MANTENIMIENTO
         [HttpGet]
-        [Route("api/ReporteMantenimiento/solicitudesmantenimientopdf")]
+        [Route("api/ReportesMantenimiento/solicitudesmantenimientopdf")]
         public async Task<IActionResult> solicitudesmantenimientopdf()
         {
             Document doc = new Document(PageSize.Letter);
@@ -179,7 +179,7 @@ namespace ASGARDAPI.Controllers
 
         //INICIO DE REPORTE DE ACTIVOS EN MANTENIMIENTO
         [HttpGet]
-        [Route("api/ReporteMantenimiento/activosenmantenimientopdf")]
+        [Route("api/ReportesMantenimiento/activosenmantenimientopdf")]
         public async Task<IActionResult> activosenmantenimientopdf()
         {
             Document doc = new Document(PageSize.Letter);
@@ -342,7 +342,7 @@ namespace ASGARDAPI.Controllers
 
         //INCIO DE REPORTE DE INFORMES (PARA DAR REVALORIZACIÓN)
         [HttpGet]
-        [Route("api/ReporteMantenimiento/informesmantenimientopdf")]
+        [Route("api/ReportesMantenimiento/informesmantenimientopdf")]
         public async Task<IActionResult> informesmantenimientopdf()
         {
             Document doc = new Document(PageSize.Letter);
@@ -525,7 +525,7 @@ namespace ASGARDAPI.Controllers
 
         //INICIO DE REPORTE DE HISTORIAL DE MANTENIMIENTO
         [HttpGet]
-        [Route("api/ReporteMantenimiento/historialmantenimientopdf")]
+        [Route("api/ReportesMantenimiento/historialmantenimientopdf")]
         public async Task<IActionResult> historialmantenimientopdf()
         {
             Document doc = new Document(PageSize.Letter);
@@ -540,6 +540,7 @@ namespace ASGARDAPI.Controllers
             doc.AddAuthor("Asgard");
             doc.AddTitle("Reporte de historial de mantenimiento");
             doc.Open();
+
 
             //Inicia cuerpo del reporte
 
@@ -579,7 +580,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE INFORMES DE MANTENIMIENTO", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE DE HISTORIAL DE MANTENIMIENTO", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -613,8 +614,8 @@ namespace ASGARDAPI.Controllers
                                                                         on informemante.IdMantenimiento equals bienmante.IdMantenimiento
                                                                         join bienes in bd.ActivoFijo
                                                                         on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado==0 || informemante.Estado==2
-                                                                        orderby bienes.CorrelativoBien
+                                                                        where informemante.Estado==0 || informemante.Estado==2 || informemante.Estado == 1
+                                                            orderby bienes.CorrelativoBien
 
                                                                         select new InformeMatenimientoAF
                                                                         {
@@ -701,7 +702,7 @@ namespace ASGARDAPI.Controllers
             return File(ms, "application/pdf");
         }
 
-        //FIN DE REPORTE DE HOSTORIAL DE MANTENIMIENTO
+        //FIN DE REPORTE DE HISTORIAL DE MANTENIMIENTO
 
     }
 }

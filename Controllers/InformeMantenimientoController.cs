@@ -457,6 +457,7 @@ namespace ASGARDAPI.Controllers
 
                 odatos.descripcion = oActivo.Desripcion;
                 odatos.codigo = oActivo.CorrelativoBien;
+                odatos.idBien = oActivo.IdBien;
                 Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
                 AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
                 odatos.encargado = oempleado.Nombres + " " + oempleado.Apellidos;

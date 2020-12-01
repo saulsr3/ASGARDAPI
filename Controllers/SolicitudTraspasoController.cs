@@ -576,17 +576,17 @@ namespace ASGARDAPI.Controllers
 
         //COMBO empleado DE NEGOCIO CON ID 
         [HttpGet]
-        [Route("api/SolicitudTraspaso/comboEmpleados/{id}")]
-        public IEnumerable<EmpleadoAF> comboEmpleados(int id)
+        [Route("api/SolicitudTraspaso/comboEmpleados/{id}/{idresponsable}")]
+        public IEnumerable<EmpleadoAF> comboEmpleados(int id, int idresponsable)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 IEnumerable<EmpleadoAF> lista = (from empleado in bd.Empleado
                                                  join area in bd.AreaDeNegocio
                                                  on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                       where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == id && empleado.IdEmpleado != id
+                                                 where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == id && empleado.IdEmpleado != idresponsable
                                                  //orderby empleado.Nombres
-                                                       select new EmpleadoAF
+                                                 select new EmpleadoAF
                                                        {                                                     
                                                            idempleado = empleado.IdEmpleado,
                                                            nombres = empleado.Nombres,
