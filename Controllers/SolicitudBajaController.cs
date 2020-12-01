@@ -18,9 +18,9 @@ namespace ASGARDAPI.Controllers
             return View();
         }
 
-
+        //LISTA LOS ACTIVOS NO ASIGNADOS
         [HttpGet]
-        [Route("api/SolicitudBaja/listarBienes")]  //lista los bienes no asignados
+        [Route("api/SolicitudBaja/listarBienes")]  
         public List<ActivoFijoAF> listarBienes()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -46,7 +46,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+        //LISTA LOS ACTIVOS ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienesAsignados")]
         public List<ActivoFijoAF> listarBienesAsignados()
@@ -118,7 +118,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-
+        //LISTA LAS SOLICITUDES REALIZADAS
         [HttpGet]
         [Route("api/SolicitudBaja/listarSolicitudBaja")]
         public IEnumerable<SolicitudBajaAF> listarSolicitud()
@@ -295,7 +295,7 @@ namespace ASGARDAPI.Controllers
         }
 
       
-
+        //MUESTRA LOS DETALLES DE LA SOLICITUD PARA DAR DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/verSolicitudBaja/{idSolicitud}")]
         public SolicitadosABajaAF verSolicitud(int idSolicitud)
@@ -323,6 +323,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //MUESTRA LOS DATOS DE LOS ACTIVOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/verDescargos/{id}")]
         public SolicitadosABajaAF verDescargos(int id)
@@ -372,31 +373,6 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("api/SolicitudBaja/listarBajas")]
-        public List<ActivoFijoAF> listarBajas()
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
-                                            join formulario in bd.FormularioIngreso
-                                            on activo.NoFormulario equals formulario.NoFormulario
-                                            join clasi in bd.Clasificacion
-                                            on activo.IdClasificacion equals clasi.IdClasificacion
-                                            
-                                            where activo.EstadoActual == 0
-                                            //orderby activo.CorrelativoBien
-                                            select new ActivoFijoAF
-                                            {
-                                                IdBien = activo.IdBien,
-                                                Desripcion = activo.Desripcion,
-                                                fechacadena = formulario.FechaIngreso == null ? " " : ((DateTime)formulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                                Clasificacion = clasi.Clasificacion1
-                                            }).ToList();
-                return lista;
-
-            }
-        }
 
         [HttpGet]
         [Route("api/SolicitudBaja/validarFolio/{idsolicitud}/{folio}")]
@@ -464,7 +440,7 @@ namespace ASGARDAPI.Controllers
 
         }
 
-
+        //BUSCA LOS ACTIVOS ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudBaja/buscarBienesBajaAsig/{buscador?}")]
         public IEnumerable<ActivoFijoAF> buscarBienesBajaAsig(string buscador = "")
@@ -537,7 +513,7 @@ namespace ASGARDAPI.Controllers
             }
         }
                                                                                                                                                                                                                                                  
-
+//BUSCA LAS SOLICITUDES
         [HttpGet]
         [Route("api/SolicitudBaja/buscarSolicitud/{buscador?}")]
         public IEnumerable<SolicitudBajaAF> buscarSolicitud(string buscador = "")
@@ -601,7 +577,7 @@ namespace ASGARDAPI.Controllers
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-        //Activos para edificios e instalaciones
+        //LISTA LOS ACTIVOS DE EDIFICIOS
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosEdificios")]
         public List<RegistroAF> listarActivosEdificios()
@@ -629,7 +605,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        //Activos para intangibles
+        //LISTA LOS ACTIVOS INTANGIBLES
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosIntangibles")]
         public List<RegistroAF> listarActivosIntangibles()
@@ -658,7 +634,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+        //LISTA LOS ACTIVOS ASIGNADOS PARA EL FILTRO DE LAS TABLAS
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosFiltro/{id}")]
         public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
@@ -931,8 +907,9 @@ namespace ASGARDAPI.Controllers
             }
         }
         ///////////////////////METODOS PARAA DESACRGO
+        //LISTA LOS BIENES NO ASIGNADOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
-        [Route("api/SolicitudBaja/listarBienesBajas")]  //lista los bienes no asignados
+        [Route("api/SolicitudBaja/listarBienesBajas")]  
         public List<ActivoFijoAF> listarBienesBajas()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -958,7 +935,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+        //LISTA LOS ACTIVOS ASIGNADOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienesAsignadosBajas")]
         public List<ActivoFijoAF> listarBienesAsignadosBajas()
@@ -991,7 +968,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+        //LISTA LOS ACTIVOS DE EDIFICIO QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosEdificiosBajas")]
         public List<RegistroAF> listarActivosEdificiosBajas()
@@ -1019,7 +996,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        //Activos para intangibles
+        //LISTA LOS ACTIVOS INTANGIBLES QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosIntangiblesBajas")]
         public List<RegistroAF> listarActivosIntangiblesBajas()
@@ -1048,7 +1025,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+        //LISTA LOS ACTIVOS ASIGNADOS PARA EL FILTRO DE LOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosFiltroBajas/{id}")]
         public IEnumerable<ActivoFijoAF> listarActivosFiltroBajas(int id)
@@ -1081,7 +1058,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        //BUSCADORES DE ACTIVOS
+        //BUSCADORES DE ACTIVOS PARA ACTIVOS QUE HAN SIDO DADOS DE BAJA
 
         [HttpGet]
         [Route("api/SolicitudBaja/buscarActivoEdificioAsigBajas/{buscador?}")]
