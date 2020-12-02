@@ -247,7 +247,7 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
-                    oActivo.EstaAsignado = 0;
+                    //oActivo.EstaAsignado = 0;
                    
                    oSolic.Acuerdo = acuerdo;
                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
@@ -266,8 +266,8 @@ namespace ASGARDAPI.Controllers
 
         //si la solicitud es rechazada vuelve al estado normal que es 1
         [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}/{acuerdo}/{fecha2}")] //  
-        public int cambiarEstadoDenegado(int idbien, string acuerdo, string fecha2)//
+        [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}")] //  
+        public int cambiarEstadoDenegado(int idbien)//
         {
             int rpta = 0;
 
@@ -279,8 +279,8 @@ namespace ASGARDAPI.Controllers
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 1;
                     
-                   oSolic.Acuerdo = acuerdo;
-                   oSolic.Fechabaja = Convert.ToDateTime(fecha2);
+                   //oSolic.Acuerdo = acuerdo;
+                   //oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -951,7 +951,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 0
+                                            where activo.EstadoActual == 0 
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
@@ -961,7 +961,7 @@ namespace ASGARDAPI.Controllers
                                                 Desripcion = activo.Desripcion,
                                                 AreaDeNegocio = area.Nombre,
                                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-                                                cargo = cargo.Cargo,
+                                                //cargo = cargo.Cargo,
 
                                             }).ToList();
                 return lista;
