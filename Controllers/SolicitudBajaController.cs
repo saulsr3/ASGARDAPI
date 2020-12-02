@@ -247,7 +247,7 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
-                    //oActivo.EstaAsignado = 0;
+                    oActivo.EstaAsignado = 2;
                    
                    oSolic.Acuerdo = acuerdo;
                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
@@ -951,7 +951,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 0 
+                                            where activo.EstadoActual == 0 && activo.EstaAsignado == 2
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
