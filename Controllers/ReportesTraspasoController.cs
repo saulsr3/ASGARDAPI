@@ -448,7 +448,7 @@ namespace ASGARDAPI.Controllers
                 var tbl1 = new PdfPTable(new float[] { 4f, 7f, 5f, 7f }) { WidthPercentage = 100f };
                 tbl1.AddCell(new PdfPCell(new Phrase("Correlativo: ", parrafo6)) { Border = 0, Rowspan = 2 });
                 tbl1.AddCell(new PdfPCell(new Phrase(odatos.codigo, parrafo7)) { Border = 0 });        
-                tbl1.AddCell(new PdfPCell(new Phrase("Descripción: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Descripción de activo: ", parrafo6)) { Border = 0, Rowspan = 2 });
                 tbl1.AddCell(new PdfPCell(new Phrase(odatos.descripcion, parrafo7)) { Border = 0 });
 
 
