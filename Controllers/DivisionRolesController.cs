@@ -223,5 +223,128 @@ namespace ASGARDAPI.Controllers
             
         }
         }
+        //Metodo listar cuadro de control
+        [HttpGet]
+        [Route("api/CuadroControl/listarCuadroControlJefe/{idJefe}")]
+        public IEnumerable<CuadroControlAF> listarCuadroControlJefe(int idJefe)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                IEnumerable<CuadroControlAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              join resposable in bd.Empleado
+                                                              on cuadro.IdResponsable equals resposable.IdEmpleado
+                                                              join area in bd.AreaDeNegocio
+                                                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                              where area.IdAreaNegocio == oarea.IdAreaNegocio
+                                                              //where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroControlAF()
+                                                              {
+                                                                  idbien = cuadro.IdBien,
+                                                                  codigo = cuadro.CorrelativoBien,
+                                                                  descripcion = cuadro.Desripcion,
+                                                                  valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                                                  fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                  valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                  depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                  depreciacionacumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+                                                                  ubicacion = area.Nombre,
+                                                                  responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                                              }).ToList();
+                return listacuadro;
+
+            }
+        }
+        //Método buscar
+        [HttpGet]
+        [Route("api/CuadroControl/buscarCuadroJefe/{idJefe}/{buscador?}")]
+        public IEnumerable<CuadroControlAF> buscarCuadroJefe(int idJefe,string buscador = "")
+        {
+            List<CuadroControlAF> listaCuadro;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                if (buscador == "")
+                {
+                    listaCuadro = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join cuadro in bd.ActivoFijo
+                                   on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                   join noFormulario in bd.FormularioIngreso
+                                   on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                   join resposable in bd.Empleado
+                                   on cuadro.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   where area.IdAreaNegocio == oarea.IdAreaNegocio
+                                   select new CuadroControlAF
+                                   {
+
+                                       idbien = cuadro.IdBien,
+                                       codigo = cuadro.CorrelativoBien,
+                                       descripcion = cuadro.Desripcion,
+                                       valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoractual = (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
+                                       depreciacion = (double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual,
+                                       depreciacionacumulada = (double)bar.Sum(x => x.DepreciacionAnual),
+                                       ubicacion = area.Nombre,
+                                       responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                   }).ToList();
+
+                    return listaCuadro;
+                }
+                else
+                {
+                    listaCuadro = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join cuadro in bd.ActivoFijo
+                                   on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                   join noFormulario in bd.FormularioIngreso
+                                   on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                   join clasif in bd.Clasificacion
+                                   on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                   join resposable in bd.Empleado
+                                   on cuadro.IdResponsable equals resposable.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+
+                                   where cuadro.IdBien.ToString().Contains(buscador) || (cuadro.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    cuadro.Desripcion.ToLower().Contains(buscador.ToLower())
+                                   && area.IdAreaNegocio == oarea.IdAreaNegocio
+
+                                   select new CuadroControlAF
+                                   {
+                                       idbien = cuadro.IdBien,
+                                       codigo = cuadro.CorrelativoBien,
+                                       descripcion = cuadro.Desripcion,
+                                       valoradquisicion = (double)cuadro.ValorAdquicicion,
+                                       fechaadquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                       valoractual = (double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual,
+                                       depreciacion = (double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual,
+                                       depreciacionacumulada = (double)bar.Sum(x => x.DepreciacionAnual),
+                                       ubicacion = area.Nombre,
+                                       responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                   }).ToList();
+                    return listaCuadro;
+                }
+            }
+        }
+
     }
 }
