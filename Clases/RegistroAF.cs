@@ -17,6 +17,8 @@ namespace ASGARDAPI.Clases
         public string sucursal { get; set; }
         public string Responsable { get; set; }
 
+        public string valoradquicicion { get; set; }
+
         //para actualizar la vida util despues de buscar
 
         public int? vidautil { get; set; }

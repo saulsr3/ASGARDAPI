@@ -546,33 +546,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
-        //MÉTODO PARA FILTRAR LOS EMPLEADOS SEGUN SU AREA DE NEGOCIO (AUN NO LO UTILIZO)
-        [HttpGet]
-        [Route("api/SolicitudTraspaso/listarEmpleadosFiltro/{id}")]
-        public IEnumerable<ActivoFijoAF> listarEmpleadosFiltro(int id)
-        {
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-               
-                IEnumerable<ActivoFijoAF> listaActivos = (from responsable in bd.Empleado                                                          
-                                                            join area in bd.AreaDeNegocio
-                                                            on responsable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                            join sucursal in bd.Sucursal
-                                                            on area.IdSucursal equals sucursal.IdSucursal
-                                                            where responsable.IdEmpleado == id 
-                                                            select new ActivoFijoAF
-                                                            {
-
-                                                                //AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
-                                                                idresponsable = responsable.IdEmpleado,
-                                                                Resposnsable = responsable.Nombres + " " + responsable.Apellidos
-                                                                
-
-
-                                                            }).ToList();
-                return listaActivos;
-            }
-        }
+  
 
         //COMBO empleado DE NEGOCIO CON ID 
         [HttpGet]
