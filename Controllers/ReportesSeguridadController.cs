@@ -240,7 +240,7 @@ namespace ASGARDAPI.Controllers
         //INICIO DE REPORTE DE ACTIVOS SEGÚN SU CLASIFICACIÓN
         [HttpGet]
         [Route("api/ReportesSeguridad/activosclasificacionpdf/{idclasificacion}")]
-        public async Task<IActionResult> historialmantenimientopdf(int idclasificacion)
+        public async Task<IActionResult> activosclasificacionpdf(int idclasificacion)
         {
             Document doc = new Document(PageSize.Letter);
             doc.SetMargins(40f, 40f, 40f, 40f);
@@ -252,7 +252,7 @@ namespace ASGARDAPI.Controllers
             writer.PageEvent = pe;
 
             doc.AddAuthor("Asgard");
-            doc.AddTitle("Reporte activos según su clasficiación");
+            doc.AddTitle("Reporte activos por clasficiación");
             doc.Open();
 
             //Inicia cuerpo del reporte
@@ -302,7 +302,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE ACTIVOS SEGÚN CLASIFICACIÓN ", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE ACTIVOS POR CLASIFICACIÓN ", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -320,13 +320,7 @@ namespace ASGARDAPI.Controllers
                 odatos.categoria = oCategoria.Categoria;
                 odatos.descripcion = oClasificacion.Descripcion;
 
-                //odatos.descripcion = oActivo.Desripcion;
-               // odatos.codigo = oActivo.CorrelativoBien;
-                //Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
-               // AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
-               // odatos.encargado = oempleado.Nombres + " " + oempleado.Apellidos;
-               // odatos.areadenegocio = oArea.Nombre;
-                // return odatos;
+                
 
 
                 //Cuerpo de la tarjeta
