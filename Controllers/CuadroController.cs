@@ -59,6 +59,118 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Listar datos para el archivo excel activos
+        [HttpGet]
+        [Route("api/CuadroControl/DatosCuadroExcel")]
+        public IEnumerable<CuadroControlExcelAF> DatosCuadroExcel()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+
+                IEnumerable<CuadroControlExcelAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              join resposable in bd.Empleado
+                                                              on cuadro.IdResponsable equals resposable.IdEmpleado
+                                                              join area in bd.AreaDeNegocio
+                                                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+
+                                                              //where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroControlExcelAF()
+                                                              {
+                                                                  codigo = cuadro.CorrelativoBien,
+                                                                  descripcion = cuadro.Desripcion,
+                                                                  valorAdquisicion = (double)cuadro.ValorAdquicicion,
+                                                                  fechaAdquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                  valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                  depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                  depreciacionAcumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+                                                                  ubicacion = area.Nombre,
+                                                                  responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                                              }).ToList();
+                return listacuadro;
+
+            }
+        }
+
+        //Cuadro edificios Excel
+        [HttpGet]
+        [Route("api/CuadroControl/CuadroEdificiosExcel")]
+        public IEnumerable<CuadroExcelEdiAF> CuadroEdificiosExcel()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+
+                IEnumerable<CuadroExcelEdiAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              where (cuadro.EstadoActual == 1 || cuadro.EstadoActual == 2 || cuadro.EstadoActual == 3) && cuadro.TipoActivo == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroExcelEdiAF()
+                                                              {
+                                                                  codigo = cuadro.CorrelativoBien,
+                                                                  descripcion = cuadro.Desripcion,
+                                                                  valorAdquisicion = (double)cuadro.ValorAdquicicion,
+                                                                  fechaAdquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                  valorActual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                  depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                  depreciacionAcumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+
+                                                              }).ToList();
+                return listacuadro;
+
+            }
+        }
+
+        //Cuadro intangibles excel
+        [HttpGet]
+        [Route("api/CuadroControl/CuadroIntangiblesExcel")]
+        public IEnumerable<CuadroExcelEdiAF> CuadroIntangiblesExcel()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+
+                IEnumerable<CuadroExcelEdiAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              where (cuadro.EstadoActual == 1 || cuadro.EstadoActual == 2 || cuadro.EstadoActual == 3) && cuadro.TipoActivo == 3 && cuadro.EstaAsignado == 1
+                                                              select new CuadroExcelEdiAF()
+                                                              {
+                                                                  codigo = cuadro.CorrelativoBien,
+                                                                  descripcion = cuadro.Desripcion,
+                                                                  valorAdquisicion = (double)cuadro.ValorAdquicicion,
+                                                                  fechaAdquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                  valorActual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                  depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                  depreciacionAcumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+
+                                                              }).ToList();
+                return listacuadro;
+
+            }
+        }
+
         //Listar para edificios
         [HttpGet]
         [Route("api/CuadroControl/listarCuadroEdificios")]
