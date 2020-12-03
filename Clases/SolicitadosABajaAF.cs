@@ -33,7 +33,8 @@ namespace ASGARDAPI.Clases
         public string prove { get; set; }
         public string dona { get; set; }
         public double valor { get; set; }
-
+        public double valoractual { get; set; }
+        public double depreciacion { get; set; }
 
 
         //public string domicilio { get; set; }

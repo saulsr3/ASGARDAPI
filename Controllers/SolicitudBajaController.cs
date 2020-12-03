@@ -247,7 +247,7 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 0;
-                    oActivo.EstaAsignado = 2;
+                    //oActivo.EstaAsignado = 2;
                    
                    oSolic.Acuerdo = acuerdo;
                    oSolic.Fechabaja = Convert.ToDateTime(fecha2);
@@ -318,6 +318,7 @@ namespace ASGARDAPI.Controllers
                 odatos.Codigo = obien.CorrelativoBien;
                 odatos.Descripcion = obien.Desripcion;
                 odatos.observaciones = osolicitud.Observaciones;
+                odatos.entidadbeneficiaria = osolicitud.EntidadBeneficiaria;
 
                 return odatos;
             }
@@ -341,6 +342,8 @@ namespace ASGARDAPI.Controllers
                 Marcas omarca = (obien.IdMarca != null) ? bd.Marcas.Where(p => p.IdMarca == obien.IdMarca).First() : null;
                 Proveedor oprov = (obien.IdProveedor != null) ? bd.Proveedor.Where(p => p.IdProveedor == obien.IdProveedor).First() : null;
                 Donantes odona = (obien.IdDonante != null) ? bd.Donantes.Where(p => p.IdDonante == obien.IdDonante).First() : null;
+                TarjetaDepreciacion tarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == obien.IdBien).First();
+               
                 if (omarca == null)
                 {
                     odatos.marca = "";
@@ -367,6 +370,8 @@ namespace ASGARDAPI.Controllers
                 odatos.fechacadena2 = osolicitud.Fechabaja == null ? " " : ((DateTime)osolicitud.Fechabaja).ToString("dd-MM-yyyy");
                 odatos.color = obien.Color;
                 odatos.clasificacion = oclasi.Clasificacion1;
+                odatos.valoractual = Math.Round(((double)tarjeta.ValorActual), 2);
+                odatos.depreciacion = (double)tarjeta.DepreciacionAcumulada;
                 return odatos;
 
 
@@ -951,7 +956,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 0 && activo.EstaAsignado == 2
+                                            where activo.EstadoActual == 0 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
                                             select new ActivoFijoAF
                                             {
