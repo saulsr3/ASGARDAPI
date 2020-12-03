@@ -3,6 +3,8 @@ using ASGARDAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -453,36 +455,30 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
-        //public static Boolean Create(String p_server, String p_database, String p_backup_file)
+        //[HttpGet]
+        //[Route("api/Usuario/CreateBackup")]
+        //public int CreateBackup()
         //{
-        //    Boolean inesem_ok = true;
-        //    string sBackup = "BACKUP BDAcaassAF " + p_database +
-        //    " TO DISK = '" + p_backup_file + "'" +
-        //    " WITH FORMAT, " +
-        //    " MEDIA NAME ='Backup', NAME = 'Copia de la BD ';";
-
-        //    BDAcaassAFContext bd = new BDAcaassAFContext();
-        //    bd.DataSource = p_server;
-        //    bd.InitialCatalog = "master";
-        //    bd.IntegratedSecurity = true;
-        //    using (SqlConnection con = new SqlConnection(bd.ConnectionString))
+        //    int res = 0;
+        //            try
         //    {
-        //        try
-
-        //        {
-        //            con.Open();
-        //            SqlCommand cmdBackUp = new SqlCommand(sBackup, con);
-        //            cmdBackUp.ExecuteNonQuery();
-        //            con.Close();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            inesem_ok = false;
-        //            con.Close();
-        //        }
+        //        string fileName = @"C:\Backup\test.bak";
+        //        string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
+        //        SqlCommand oCommand = null;
+        //        SqlConnection oConnection = null;
+        //        oConnection = new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
+        //        if (oConnection.State != ConnectionState.Open)
+        //        oConnection.Open();
+        //        oCommand = new SqlCommand("BACKUP DATABASE DBAcaassAF TO DISK=C:\Backup\test.bak", oConnection);
+        //        oCommand.ExecuteNonQuery();
+        //        res = 1;
         //    }
-
-        //    return inesem_ok;
+        //    catch (Exception ex)
+        //    {
+        //        res = 0;
+                
+        //    }
+        //    return res;
         //}
 
     }

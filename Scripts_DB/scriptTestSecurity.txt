@@ -1,0 +1,398 @@
+--use master
+--drop database BDAcaassAF
+--go
+
+CREATE DATABASE BDAcaassAF
+GO
+use BDAcaassAF
+CREATE TABLE Cooperativa(
+IdCooperativa int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre VARCHAR(75),
+Logo varchar(max),
+Descripcion VARCHAR(150),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Periodo(
+IdPeriodo int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Anio int,
+IdCooperativa int,
+Estado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Sucursal(
+IdSucursal int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre VARCHAR(50),
+Ubicacion VARCHAR(50),
+Correlativo varchar(10),
+IdCooperativa int,
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE AreaDeNegocio(
+IdAreaNegocio int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre VARCHAR(50),
+IdSucursal int,
+Correlativo varchar(10),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Categorias(
+IdCategoria int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Categoria varchar(50),
+VidaUtil int,
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Clasificacion(
+IdClasificacion int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Clasificacion varchar(50),
+Correlativo varchar(10),
+Descripcion varchar(100),
+IdCategoria int,
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Marcas(
+IdMarca int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Marca varchar(25),
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Tecnicos(
+IdTecnico int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre varchar(50),
+Empresa varchar(50),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Donantes(
+IdDonante int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre varchar(75),
+Telefono varchar(20),
+Direccion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Cargos(
+IdCargo int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Cargo varchar(25),
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Empleado(
+IdEmpleado int NOT NULL PRIMARY KEY IDENTITY(1,1),
+DUI varchar(10),
+Nombres varchar(50),
+Apellidos varchar(50),
+Direccion varchar(100),
+Telefono varchar(25),
+TelefonoPersonal varchar(25),
+IdAreaDeNegocio int,
+IdCargo int,
+BTieneUsuario int,
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Proveedor(
+IdProveedor int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre varchar(50),
+Direccion varchar(100),
+Telefono varchar(25),
+Rubro varchar(50),
+Encargado varchar(75),
+TelefonoEncargado varchar(25),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE TipoTraspaso(
+IdTipo int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre varchar(50),
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE TipoDescargo(
+IdTipo int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Nombre varchar(50),
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE TipoUsuario(
+IdTipoUsuario int NOT NULL PRIMARY KEY IDENTITY(1,1),
+TipoUsuario varchar(50),
+Descripcion varchar(100),
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Usuario(
+IdUsuario int NOT NULL PRIMARY KEY IDENTITY(1,1),
+NombreUsuario varchar(50),
+Contra varchar(150),
+IdEmpleado int,
+IdTipoUsuario int,
+Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Bitacora(
+IdBitacora int NOT NULL PRIMARY KEY IDENTITY(1,1),
+IdUsuario int,
+Fecha datetime,
+Descripcion varchar(50)
+)
+GO
+use BDAcaassAF
+CREATE TABLE FormularioIngreso(
+NoFormulario int NOT NULL PRIMARY KEY IDENTITY(1,1),
+NoFactura varchar(30),
+FechaIngreso date,
+PersonaEntrega varchar(100),
+PersonaRecibe varchar(100),
+Observaciones varchar(100)
+)
+GO
+use BDAcaassAF
+CREATE TABLE ActivoFijo(
+IdBien int NOT NULL PRIMARY KEY IDENTITY(1,1),
+FechaAsignacion date,
+CorrelativoBien varchar(20), 
+NoFormulario int,
+Desripcion varchar(100),
+Modelo varchar(50),
+TipoAdquicicion int, 
+Color varchar(15),
+NoSerie varchar(50),
+IdMarca int,
+IdClasificacion int,
+IdProveedor int,
+IdDonante int,
+VidaUtil int,
+IdResponsable int,
+EstadoIngreso varchar(20),
+ValorAdquicicion float,
+PlazoPago varchar(50),
+Prima float,
+CuotaAsignanda float,
+Intereses float,
+ValorResidual float,
+Foto varchar(max),
+EstaAsignado int,
+EnSolicitud int,
+DestinoInicial varchar(50),
+UltimoAnioDepreciacion int,
+EstadoActual int,
+TipoActivo int
+)
+go
+use BDAcaassAF
+CREATE TABLE TarjetaDepreciacion(
+IdTarjeta int NOT NULL PRIMARY KEY IDENTITY(1,1), 
+IdBien int,
+Fecha date,
+Concepto varchar(100),
+Valor float,
+DepreciacionAnual float,
+DepreciacionAcumulada float,
+ValorActual float,
+ValorTransaccion float
+)
+GO
+use BDAcaassAF
+CREATE TABLE SolicitudMantenimiento(
+IdSolicitud int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha date,
+Folio varchar(10),
+Descripcion varchar(250),
+Estado int
+)
+go
+use BDAcaassAF
+CREATE TABLE Bien_Mantenimiento(
+IdMantenimiento int NOT NULL PRIMARY KEY IDENTITY(1,1), 
+IdSolicitud int,
+IdBien int,
+RazonMantenimiento varchar(100),
+PeriodoMantenimiento varchar(25),
+Estado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE InformeMantenimiento(
+IdInformeMantenimiento int NOT NULL PRIMARY KEY IDENTITY(1,1), 
+IdMantenimiento int,
+IdTecnico int,
+Fecha date,
+Descripcion varchar(100),
+CostoMateriales float,
+CostoMO float,
+CostoTotal float,
+Estado int
+)
+GO
+
+use BDAcaassAF
+CREATE TABLE SolicitudBaja(
+IdSolicitud int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha date,
+Folio varchar(10),
+Observaciones varchar(250),
+IdTipoDescargo int,
+IdBien int,
+Estado int,
+EntidadBeneficiaria varchar(100),
+Domicilio varchar(100),
+Contacto varchar(100),
+Telefono varchar(20),
+Acuerdo varchar(50),
+Fechabaja date
+)
+
+
+use BDAcaassAF
+CREATE TABLE SolicitudTraspaso(
+IdSolicitud int NOT NULL PRIMARY KEY IDENTITY(1,1),
+Fecha date,
+Fechatraspaso date,
+Folio varchar(10),
+Descripcion varchar(250),
+IdBien int,
+Estado int,
+ResponsableAnterior varchar(100),
+AreadenegocioAnterior varchar(100),
+Acuerdo varchar(50),
+NuevoResponsable varchar(100),
+NuevaAreadenegocio varchar(100),
+IdResponsable int
+)
+
+GO
+USE BDAcaassAF
+ALTER TABLE Periodo
+ADD FOREIGN KEY(IdCooperativa) REFERENCES Cooperativa
+GO
+USE BDAcaassAF
+ALTER TABLE Sucursal
+ADD FOREIGN KEY(IdCooperativa) REFERENCES Cooperativa
+GO
+USE BDAcaassAF
+ALTER TABLE AreaDeNegocio
+ADD FOREIGN KEY(IdSucursal) REFERENCES Sucursal
+GO
+USE BDAcaassAF
+ALTER TABLE Clasificacion
+ADD FOREIGN KEY(IdCategoria) REFERENCES Categorias
+GO
+USE BDAcaassAF
+ALTER TABLE Empleado
+ADD FOREIGN KEY(IdCargo) REFERENCES Cargos
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(IdClasificacion) REFERENCES Clasificacion
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(NoFormulario) REFERENCES FormularioIngreso
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(IdMarca) REFERENCES Marcas
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(IdDonante) REFERENCES Donantes
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(IdProveedor) REFERENCES Proveedor
+GO
+USE BDAcaassAF
+ALTER TABLE ActivoFijo
+ADD FOREIGN KEY(IdResponsable) REFERENCES Empleado
+GO
+USE BDAcaassAF
+ALTER TABLE TarjetaDepreciacion
+ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
+GO
+USE BDAcaassAF
+ALTER TABLE Usuario
+ADD FOREIGN KEY(IdEmpleado) REFERENCES Empleado
+GO
+USE BDAcaassAF
+ALTER TABLE Usuario
+ADD FOREIGN KEY(IdTipoUsuario) REFERENCES TipoUsuario
+GO
+USE BDAcaassAF
+ALTER TABLE Bitacora
+ADD FOREIGN KEY(IdUsuario) REFERENCES Usuario
+GO
+USE BDAcaassAF
+ALTER TABLE Bien_Mantenimiento
+ADD FOREIGN KEY(IdSolicitud) REFERENCES SolicitudMantenimiento
+GO
+USE BDAcaassAF
+ALTER TABLE Bien_mantenimiento
+ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
+GO
+USE BDAcaassAF
+ALTER TABLE SolicitudBaja
+ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
+GO
+USE BDAcaassAF
+ALTER TABLE SolicitudTraspaso
+ADD FOREIGN KEY(IdBien) REFERENCES ActivoFijo
+GO
+USE BDAcaassAF
+ALTER TABLE SolicitudBaja
+ADD FOREIGN KEY(IdTipoDescargo) REFERENCES TipoDescargo
+GO
+ALTER TABLE Empleado
+ADD FOREIGN KEY(IdAreaDeNegocio) REFERENCES AreaDeNegocio
+GO
+ALTER TABLE InformeMantenimiento
+ADD FOREIGN KEY(IdMantenimiento) REFERENCES Bien_Mantenimiento
+GO
+ALTER TABLE InformeMantenimiento
+ADD FOREIGN KEY(IdTecnico) REFERENCES Tecnicos
+GO
+
+SET IDENTITY_INSERT Categorias ON
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(1,'Edificios',20,'Categoria de edificios',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(2,'Maquinaria',5,'Categoria de Maquinaria',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(3,'Bienes muebles',2,'Bienes muebles para administrar el quipo',1)
+INSERT INTO [Categorias] ([IdCategoria],[Categoria],[VidaUtil],[Descripcion],[Dhabilitado])VALUES(4,'Intagibles',2,'Bienes intangibles de PPYEQ',1)
+SET IDENTITY_INSERT Categorias OFF
+
+SET IDENTITY_INSERT Cargos  ON
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(1,'Jefe','Jefe de areas de negocio',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(2,'Gerente','Gerente general',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(3,'Contador','administrador de la contaduria',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(4,'Seguridad','vigilante',1)
+INSERT INTO [Cargos] ([IdCargo],[Cargo],[Descripcion],[Dhabilitado])VALUES(5,'Oficios varios','aseo de areas',1)
+SET IDENTITY_INSERT Cargos OFF
+
+SET IDENTITY_INSERT TipoUsuario  ON
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(1,'Administrador','Administrador',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(2,'Jefe de area','Jefe de área de negocios',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(3,'Asistente','Asistente de jefe',1)
+SET IDENTITY_INSERT TipoUsuario OFF

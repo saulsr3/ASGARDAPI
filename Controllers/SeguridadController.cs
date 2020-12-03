@@ -68,6 +68,7 @@ namespace ASGARDAPI.Controllers
                 return listaProveedores;
             }
         }
+
         //[HttpGet]
         //[Route("api/Usuario/obtenervariableSession")]
         //public SeguridadAF obtenervariableSession()
