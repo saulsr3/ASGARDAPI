@@ -525,6 +525,39 @@ namespace ASGARDAPI.Controllers
                 return ListaTransacciones;
             }
         }
+
+        //Metodo para extraer datos en archivo excel
+        [HttpGet]
+        [Route("api/Depreciacion/TarjetaTrasaccionesExcel/{id}")]
+        public IEnumerable<TarjetaExcelAF> TarjetaTrasaccionesExcel(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                TarjetaExcelAF odatos = new TarjetaExcelAF();
+                ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+
+              //  odatos.descripcion = oactivo.Desripcion;
+               // odatos.codigo = oactivo.CorrelativoBien;
+
+                IEnumerable<TarjetaExcelAF> ListaTransacciones = (from tarjeta in bd.TarjetaDepreciacion
+                                                                          where tarjeta.IdBien == id
+                                                                          orderby tarjeta.IdTarjeta
+                                                                          select new TarjetaExcelAF
+                                                                          {
+                                                                              codigo = oactivo.CorrelativoBien,
+                                                                              fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                                              concepto = tarjeta.Concepto,
+                                                                              montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                                              depreciacionAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                                              depreciacionAcumulada = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+                                                                              valorActual = Math.Round((double)tarjeta.ValorActual, 2),
+                                                                              valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                                              descripcion=oactivo.Desripcion
+            }).ToList();
+                return ListaTransacciones;
+            }
+        }
+
         //Metodo con el que se guarda la transaccion de la depreciacion que se realiza.
         [HttpPost]
         [Route("api/Depreciacion/transaccionDepreciacion")]
