@@ -58,7 +58,7 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-
+       
         //Listar datos para el archivo excel activos
         [HttpGet]
         [Route("api/CuadroControl/DatosCuadroExcel")]
