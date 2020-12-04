@@ -13,6 +13,9 @@ namespace ASGARDAPI.Clases
         public int idEmpleado { get; set; }
         public string Codigo { get; set; }
         public DateTime fecha { get; set; }
+        public int realvidautil { get; set; }
+
+        
 
     }
 }

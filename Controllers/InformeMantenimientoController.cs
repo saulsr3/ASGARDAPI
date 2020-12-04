@@ -482,13 +482,13 @@ namespace ASGARDAPI.Controllers
                                                             join sucursal in bd.Sucursal
                                                             on area.IdSucursal equals sucursal.IdSucursal
 
-                                                            where activo.EstaAsignado==1
+                                                            where activo.EstaAsignado==1 && activo.EstadoActual != 0
                                                             select new DepreciacionAF
                                                             {
                                                                 idBien = activo.IdBien,
                                                                 codigo = activo.CorrelativoBien,
                                                                 descripcion = activo.Desripcion,
-                                                                areanegocio = area.Nombre,
+                                                                areanegocio = area.Nombre +" - "+ sucursal.Nombre +" - "+ sucursal.Ubicacion,
                                                                 sucursal = sucursal.Nombre,
                                                                 responsable = empleado.Nombres + " " + empleado.Apellidos
 
