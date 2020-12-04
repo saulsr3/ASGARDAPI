@@ -477,14 +477,22 @@ namespace ASGARDAPI.Controllers
                     listaBienesMantenimiento = (from bienMtto in bd.BienMantenimiento
                                                 join activo in bd.ActivoFijo
                                                 on bienMtto.IdBien equals activo.IdBien
-                                                where activo.EstadoActual == 3
+                                                join solicitud in bd.SolicitudMantenimiento
+                                                on bienMtto.IdSolicitud equals solicitud.IdSolicitud
+                                                //  join informe in bd.InformeMantenimiento
+                                                // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
+                                                where activo.EstadoActual == 3 && bienMtto.Estado == 1 //ELEMENTO 2 LISTA
                                                 select new BienesSolicitadosMttoAF
-                                                   {
-                                               
+                                                {
+                                                    idBien = activo.IdBien,
+                                                    idmantenimiento = bienMtto.IdMantenimiento,
+                                                    estadoActual = (int)activo.EstadoActual,
                                                     Codigo = activo.CorrelativoBien,
                                                     Descripcion = activo.Desripcion,
                                                     Periodo = bienMtto.PeriodoMantenimiento,
-                                                    Razon = bienMtto.RazonMantenimiento
+                                                    Razon = bienMtto.RazonMantenimiento,
+                                                    fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+
 
                                                 }).ToList();
                     return listaBienesMantenimiento;
@@ -494,20 +502,29 @@ namespace ASGARDAPI.Controllers
                     listaBienesMantenimiento = (from bienMtto in bd.BienMantenimiento
                                                 join activo in bd.ActivoFijo
                                                 on bienMtto.IdBien equals activo.IdBien
-                                                where activo.EstadoActual == 3
+                                                join solicitud in bd.SolicitudMantenimiento
+                                                on bienMtto.IdSolicitud equals solicitud.IdSolicitud
+                                                //  join informe in bd.InformeMantenimiento
+                                                // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
+                                                where activo.EstadoActual == 3 && bienMtto.Estado == 1 //ELEMENTO 2 LISTA
 
                                                      && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
                                      (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
                                      (bienMtto.PeriodoMantenimiento).ToString().ToLower().Contains(buscador.ToLower()) ||
                                      (bienMtto.RazonMantenimiento).ToLower().Contains(buscador.ToLower()))
+                                                select new BienesSolicitadosMttoAF
+                                                {
+                                                    idBien = activo.IdBien,
+                                                    idmantenimiento = bienMtto.IdMantenimiento,
+                                                    estadoActual = (int)activo.EstadoActual,
+                                                    Codigo = activo.CorrelativoBien,
+                                                    Descripcion = activo.Desripcion,
+                                                    Periodo = bienMtto.PeriodoMantenimiento,
+                                                    Razon = bienMtto.RazonMantenimiento,
+                                                    fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
 
-                                                   select new BienesSolicitadosMttoAF
-                                                   {
-                                                       Codigo = activo.CorrelativoBien,
-                                                       Descripcion = activo.Desripcion,
-                                                       Periodo = bienMtto.PeriodoMantenimiento,
-                                                       Razon = bienMtto.RazonMantenimiento
-                                                   }).ToList();
+
+                                                }).ToList();
                     return listaBienesMantenimiento;
                 }
             }
