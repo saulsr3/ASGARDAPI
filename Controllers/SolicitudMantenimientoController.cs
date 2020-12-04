@@ -542,7 +542,7 @@ namespace ASGARDAPI.Controllers
                 if (buscador == "")
                 {
                     listaBienesCodigo = (from activo in bd.ActivoFijo
-                                         where activo.EstaAsignado == 1 && activo.EstadoActual == 1 && activo.EstadoActual != 2
+                                         where activo.EstaAsignado == 1 && activo.TipoActivo==2 && activo.EstadoActual == 1 && activo.EstadoActual != 2
                                          select new SolicitudMantenimientoAF
                                                 {
 
@@ -555,7 +555,7 @@ namespace ASGARDAPI.Controllers
                 else
                 {
                     listaBienesCodigo = (from activo in bd.ActivoFijo
-                                         where activo.EstaAsignado == 1 && activo.EstadoActual == 1 && activo.EstadoActual != 2
+                                         where activo.EstaAsignado == 1 && activo.TipoActivo == 2 && activo.EstadoActual == 1 && activo.EstadoActual != 2
 
 
                                               && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
