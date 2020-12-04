@@ -517,5 +517,221 @@ namespace ASGARDAPI.Controllers
                 }
             }
         }
+        //Metodo que lista los activos en el historial de mantenimiento
+        [HttpGet]
+        [Route("api/Division/listarActivosHistorialJefe/{idJefe}")]
+        public IEnumerable<DepreciacionAF> listarActivosHistorialJefe(int idJefe)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                //Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
+                                                            join empleado in bd.Empleado
+                                                            on activo.IdResponsable equals empleado.IdEmpleado
+                                                            join area in bd.AreaDeNegocio
+                                                            on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                            join sucursal in bd.Sucursal
+                                                            on area.IdSucursal equals sucursal.IdSucursal
+                                                            where activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+                                                            select new DepreciacionAF
+                                                            {
+                                                                idBien = activo.IdBien,
+                                                                codigo = activo.CorrelativoBien,
+                                                                descripcion = activo.Desripcion,
+                                                                areanegocio = area.Nombre,
+                                                                sucursal = sucursal.Nombre,
+                                                                responsable = empleado.Nombres + " " + empleado.Apellidos
+                                                            }).ToList();
+                return listaActivos;
+            }
+        }
+        //Para buscar los activos en el historial.
+        [HttpGet]
+        [Route("api/Division/buscarActivoHistorialJefe/{idJefe}/{buscador?}")]
+        public IEnumerable<DepreciacionAF> buscarActivoHistorialJefe(int idJefe,string buscador = "")
+        {
+            List<DepreciacionAF> listaActivo;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                if (buscador == "")
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+                                   where activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+
+                                   select new DepreciacionAF
+                                   {
+
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+                else
+                {
+                    listaActivo = (from tarjeta in bd.TarjetaDepreciacion
+                                   group tarjeta by tarjeta.IdBien into bar
+                                   join activo in bd.ActivoFijo
+                                  on bar.FirstOrDefault().IdBien equals activo.IdBien
+                                   join empleado in bd.Empleado
+                                   on activo.IdResponsable equals empleado.IdEmpleado
+                                   join area in bd.AreaDeNegocio
+                                   on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                   join sucursal in bd.Sucursal
+                                   on area.IdSucursal equals sucursal.IdSucursal
+
+                                   where activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+
+                                   && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
+                                    || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
+                                    || (area.Nombre).ToLower().Contains(buscador.ToLower())
+                                    || (empleado.Nombres).ToLower().Contains(buscador.ToLower())
+                                    || (empleado.Apellidos).ToLower().Contains(buscador.ToLower()))
+
+                                   select new DepreciacionAF
+                                   {
+
+                                       idBien = activo.IdBien,
+                                       codigo = activo.CorrelativoBien,
+                                       descripcion = activo.Desripcion,
+                                       areanegocio = area.Nombre,
+                                       sucursal = sucursal.Nombre,
+                                       responsable = empleado.Nombres + " " + empleado.Apellidos
+
+                                   }).ToList();
+
+                    return listaActivo;
+                }
+            }
+        }
+        [HttpGet]
+        [Route("api/Division/listarActivosTraspasosJefe/{idJefe}")]
+        public List<ActivoFijoAF> listarActivosTraspasosJefe(int idJefe)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                                            join noFormulario in bd.FormularioIngreso
+                                            on activo.NoFormulario equals noFormulario.NoFormulario
+                                            join resposable in bd.Empleado
+                                            on activo.IdResponsable equals resposable.IdEmpleado
+                                            join area in bd.AreaDeNegocio
+                                            on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                            join cargo in bd.Cargos
+                                            on resposable.IdCargo equals cargo.IdCargo
+                                            join sucursal in bd.Sucursal
+                                            on area.IdSucursal equals sucursal.IdSucursal
+                                            where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+                                            orderby activo.CorrelativoBien
+                                            select new ActivoFijoAF
+                                            {
+                                                IdBien = activo.IdBien,
+                                                idarea = area.IdAreaNegocio,
+                                                Codigo = activo.CorrelativoBien,
+                                                fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                Desripcion = activo.Desripcion,
+                                                AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
+                                                Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                                idresponsable = resposable.IdEmpleado,
+                                                cargo = cargo.Cargo,
+
+                                            }).ToList();
+                return lista;
+
+            }
+        }
+        [HttpGet]
+        [Route("api/Division/buscarBienesTraspasojefe/{idJefe}/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarBienesTraspasojefe(int idJefe,string buscador = "")
+        {
+            List<ActivoFijoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+                             orderby activo.CorrelativoBien
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+
+                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                    (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+
+                                    )
+
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+
+                                 AreaDeNegocio = area.Nombre,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
     }
 }
