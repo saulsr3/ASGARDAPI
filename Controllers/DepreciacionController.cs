@@ -526,6 +526,43 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+
+        //PRUEBA DE REPORTE ACTIVOS ADQUIRIDOS POR AÑO
+        [HttpGet]
+        [Route("api/ActivoFIjo/listarActivos/{anio}")]
+        public List<RegistroAF> listarActivos(int anio)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                FormularioIngreso oformulario = new FormularioIngreso();
+              //  var anioI = oformulario.FechaIngreso == null ? " " : ((DateTime)oformulario.FechaIngreso).ToString("yyyy");
+
+                //Acacreo las variables 
+                string fechaMin = "1/1/"+ anio;
+                string fechaMax = "31/12/"+ anio;
+
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
+                                          //Lo comenté porque me da error
+                                       //   && (noFormulario.FechaIngreso >= fechaMin && noFormulario.FechaIngreso.ToString() <= fechaMax)
+
+                                          orderby activo.IdBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("yyyy"),
+                                              Descripcion = activo.Desripcion
+
+                                          }).ToList();
+                return lista;
+
+            }
+        }
+
         //Metodo para extraer datos en archivo excel
         [HttpGet]
         [Route("api/Depreciacion/TarjetaTrasaccionesExcel/{id}")]
