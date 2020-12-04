@@ -240,7 +240,7 @@ namespace ASGARDAPI.Controllers
         //INICIO DE REPORTE DE ACTIVOS SEGÚN SU CLASIFICACIÓN
         [HttpGet]
         [Route("api/ReportesSeguridad/activosclasificacionpdf/{idclasificacion}")]
-        public async Task<IActionResult> historialmantenimientopdf(int idclasificacion)
+        public async Task<IActionResult> activosclasificacionpdf(int idclasificacion)
         {
             Document doc = new Document(PageSize.Letter);
             doc.SetMargins(40f, 40f, 40f, 40f);
@@ -252,7 +252,7 @@ namespace ASGARDAPI.Controllers
             writer.PageEvent = pe;
 
             doc.AddAuthor("Asgard");
-            doc.AddTitle("Reporte activos según su clasficiación");
+            doc.AddTitle("Reporte activos por clasficiación");
             doc.Open();
 
             //Inicia cuerpo del reporte
@@ -302,7 +302,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE ACTIVOS SEGÚN CLASIFICACIÓN ", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE ACTIVOS POR CLASIFICACIÓN ", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -320,13 +320,7 @@ namespace ASGARDAPI.Controllers
                 odatos.categoria = oCategoria.Categoria;
                 odatos.descripcion = oClasificacion.Descripcion;
 
-                //odatos.descripcion = oActivo.Desripcion;
-               // odatos.codigo = oActivo.CorrelativoBien;
-                //Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == oActivo.IdResponsable).First();
-               // AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).First();
-               // odatos.encargado = oempleado.Nombres + " " + oempleado.Apellidos;
-               // odatos.areadenegocio = oArea.Nombre;
-                // return odatos;
+                
 
 
                 //Cuerpo de la tarjeta
@@ -451,5 +445,224 @@ namespace ASGARDAPI.Controllers
         }
 
         //FIN DE REPORTES DE ACTIVOS SEGÚN SU CLASIFICACIÓN
+
+
+        //LISTAR MARCAS 
+        [HttpGet]
+        [Route("api/ReportesSeguridad/comboMarcas")]
+        public IEnumerable<MarcasAF> comboMarcas()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<MarcasAF> lista = (from marca in bd.Marcas
+                                                      where marca.Dhabilitado == 1 
+                                                      select new MarcasAF
+                                                      {
+                                                          IdMarca = marca.IdMarca,
+                                                          Marca = marca.Marca,
+
+                                                      }).ToList();
+                return lista;
+            }
+        }
+
+        //INICIO DE REPORTE DE ACTIVOS POR MARCA
+        [HttpGet]
+        [Route("api/ReportesSeguridad/activospormarcapdf/{idmarca}")]
+        public async Task<IActionResult> activospormarcapdf(int idmarca)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte activos por marca");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Fuente para tarjeta
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente7 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo7 = new iTextSharp.text.Font(fuente, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            BaseFont fuente8 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo8 = new iTextSharp.text.Font(fuente2, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE ACTIVOS POR MARCA ", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                MarcasAF odatos = new MarcasAF();
+                //ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == idmarca).First();
+                //Categorias oCategoria = bd.Categorias.Where(p => p.IdCategoria == oClasificacion.IdCategoria).First();
+
+                odatos.Marca = oMarca.Marca;
+                odatos.Descripcion = oMarca.Descripcion;
+               
+
+
+
+                //Cuerpo de la tarjeta
+                var tbl1 = new PdfPTable(new float[] { 3f, 7f, 3f, 7f }) { WidthPercentage = 80f };
+                tbl1.AddCell(new PdfPCell(new Phrase("Marca: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(odatos.Marca, parrafo7)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Descripción: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(odatos.Descripcion, parrafo7)) { Border = 0 });
+
+
+
+
+
+                doc.Add(tbl1);
+                doc.Add(Chunk.Newline);
+
+
+                //Tabla de transacciones
+                // doc.Add(new Paragraph("TABLA HISTORIAL DE TRASPASOS", parrafo2) { Alignment = Element.ALIGN_CENTER });
+
+
+                //Agregamos una tabla
+                //Agregamos una tabla
+                var tbl = new PdfPTable(new float[] { 17f, 15f, 25f, 25f }) { WidthPercentage = 100f };
+                var c1 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+                var c2 = new PdfPCell(new Phrase("FECHA INGRESO", parrafo2));
+                var c3 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+                var c4 = new PdfPCell(new Phrase("VALOR DE ADQUICISIÓN", parrafo2));
+                //var c5 = new PdfPCell(new Phrase("RESPONSABLE", parrafo2));
+                //Agregamos a la tabla las celdas
+                tbl.AddCell(c1);
+                tbl.AddCell(c2);
+                tbl.AddCell(c3);
+                tbl.AddCell(c4);
+                //tbl.AddCell(c5);
+
+
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join marca in bd.Marcas
+                                          on activo.IdMarca equals marca.IdMarca
+
+                                          where activo.EstaAsignado == 1 && marca.IdMarca == idmarca && (activo.EstadoActual != 0)
+
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              valoradquicicion = activo.ValorAdquicicion.ToString(),
+                                          }).ToList();
+
+                foreach (var activoasignado in lista)
+                {
+
+                    c1.Phrase = new Phrase(activoasignado.Codigo, parrafo5);
+                    c2.Phrase = new Phrase(activoasignado.fechacadena, parrafo5);
+                    c3.Phrase = new Phrase(activoasignado.Descripcion, parrafo5);
+                    c4.Phrase = new Phrase("$" + activoasignado.valoradquicicion, parrafo5);
+                    //  c5.Phrase = new Phrase(activoasignado.Responsable, parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    //  tbl.AddCell(c5);
+
+
+                }
+                doc.Add(tbl);
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        // FIN DE REPORTE DE ACTIVOS POR MARCA
     }
 }
