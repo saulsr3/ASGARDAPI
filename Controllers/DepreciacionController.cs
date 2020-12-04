@@ -536,13 +536,18 @@ namespace ASGARDAPI.Controllers
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 FormularioIngreso oformulario = new FormularioIngreso();
+
                 string fechaMin = "1/1/"+ anio;
-                string fechaMax = "31/12/"+ anio;
+                string fechaMax = "12/31/"+ anio;
+
+                DateTime oDate = Convert.ToDateTime(fechaMax);
+                oDate.ToString("dd-MM-yyyy");
+
                 List<RegistroAF> lista = (from activo in bd.ActivoFijo
                                           join noFormulario in bd.FormularioIngreso
                                           on activo.NoFormulario equals noFormulario.NoFormulario
                                           where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
-                                        && (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= DateTime.Parse( fechaMax))
+                                        && (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= oDate)
                                           orderby activo.IdBien
                                           select new RegistroAF
                                           {
