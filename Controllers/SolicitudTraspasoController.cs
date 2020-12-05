@@ -55,6 +55,81 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //BUSCAR ACTIVOS ASIGANDOS EN TRASPASO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/buscarActivosTraspaso/{buscador?}")]
+        public IEnumerable<ActivoFijoAF> buscarActivosTraspaso(string buscador = "")
+        {
+            List<ActivoFijoAF> lista;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                if (buscador == "")
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join sucursal in bd.Sucursal
+                             on area.IdSucursal equals sucursal.IdSucursal
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+                             orderby activo.CorrelativoBien
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                 Desripcion = activo.Desripcion,
+                                 AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+
+
+                             }).ToList();
+
+                    return lista;
+                }
+                else
+                {
+                    lista = (from activo in bd.ActivoFijo
+                             join noFormulario in bd.FormularioIngreso
+                             on activo.NoFormulario equals noFormulario.NoFormulario
+                             join resposable in bd.Empleado
+                             on activo.IdResponsable equals resposable.IdEmpleado
+                             join area in bd.AreaDeNegocio
+                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join cargo in bd.Cargos
+                             on resposable.IdCargo equals cargo.IdCargo
+                             join sucursal in bd.Sucursal
+                             on area.IdSucursal equals sucursal.IdSucursal
+                             where activo.EstadoActual == 1 && activo.EstaAsignado == 1
+
+                                 && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
+                                    (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
+                                    (noFormulario.FechaIngreso).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (area.Nombre).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Nombres).ToLower().Contains(buscador.ToLower()) ||
+                                    (resposable.Apellidos).ToLower().Contains(buscador.ToLower())
+
+                                    )
+
+                             select new ActivoFijoAF
+                             {
+                                 IdBien = activo.IdBien,
+                                 Codigo = activo.CorrelativoBien,
+                                 Desripcion = activo.Desripcion,
+                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                 AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,                             
+                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
+                                 cargo = cargo.Cargo,
+
+                             }).ToList();
+                    return lista;
+                }
+            }
+        }
+
         //VALIDAR LISTAR ACTIVOS ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudTraspaso/validarActivosAsignados")]
@@ -117,7 +192,7 @@ namespace ASGARDAPI.Controllers
                                                              select new AreasDeNegocioAF
                                                              {
                                                                  IdAreaNegocio = area.IdAreaNegocio,
-                                                                 Nombre = area.Nombre,
+                                                                 Nombre = area.Nombre +" - "+ sucursal.Nombre + " - " + sucursal.Ubicacion,
                                                                  IdSucursal = sucursal.IdSucursal,
                                                                  nombreSucursal = sucursal.Nombre,
                                                                  ubicacion = sucursal.Ubicacion
@@ -390,7 +465,7 @@ namespace ASGARDAPI.Controllers
                                                           responsableanterior= solicitud.ResponsableAnterior,
                                                           areaanterior=solicitud.AreadenegocioAnterior, 
                                                           nuevoresponsable= empleado.Nombres +" "+ empleado.Apellidos,
-                                                          nuevaarea= area.Nombre +" "+ sucursal.Nombre +" "+sucursal.Ubicacion,
+                                                          nuevaarea= area.Nombre +" - "+ sucursal.Nombre +" - "+sucursal.Ubicacion,
                                                       }).ToList();
                 return lista;
 
@@ -715,7 +790,9 @@ namespace ASGARDAPI.Controllers
                                                  on activo.IdResponsable equals resposable.IdEmpleado
                                                  join area in bd.AreaDeNegocio
                                                  on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                                                 where (activo.EstadoActual == 1) && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
+                                                 join sucursal in bd.Sucursal
+                                                 on area.IdSucursal equals sucursal.IdSucursal
+                                                   where (activo.EstadoActual == 1) && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
                                                  orderby activo.CorrelativoBien
                                                  select new ActivoFijoAF
                                                  {
@@ -724,7 +801,7 @@ namespace ASGARDAPI.Controllers
                                                      fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                      Desripcion = activo.Desripcion,
                                                      Clasificacion = clasif.Clasificacion1,
-                                                     AreaDeNegocio = area.Nombre,
+                                                     AreaDeNegocio = area.Nombre + " - " +  sucursal.Nombre +" - "+ sucursal.Ubicacion,
                                                      Resposnsable = resposable.Nombres + " " + resposable.Apellidos
                                                  }).ToList();
 

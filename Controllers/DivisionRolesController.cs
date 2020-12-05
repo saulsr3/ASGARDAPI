@@ -678,6 +678,8 @@ namespace ASGARDAPI.Controllers
                              on activo.IdResponsable equals resposable.IdEmpleado
                              join area in bd.AreaDeNegocio
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join sucursal in bd.Sucursal
+                            on area.IdSucursal equals sucursal.IdSucursal
                              where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
                              orderby activo.CorrelativoBien
                              select new ActivoFijoAF
@@ -685,9 +687,8 @@ namespace ASGARDAPI.Controllers
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
+                                 AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                  Desripcion = activo.Desripcion,
-                                 AreaDeNegocio = area.Nombre,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
 
 
@@ -706,6 +707,8 @@ namespace ASGARDAPI.Controllers
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                              join cargo in bd.Cargos
                              on resposable.IdCargo equals cargo.IdCargo
+                             join sucursal in bd.Sucursal
+                            on area.IdSucursal equals sucursal.IdSucursal
                              where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
 
                                  && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
@@ -723,8 +726,7 @@ namespace ASGARDAPI.Controllers
                                  Codigo = activo.CorrelativoBien,
                                  Desripcion = activo.Desripcion,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
-                                 AreaDeNegocio = area.Nombre,
+                                 AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
                                  cargo = cargo.Cargo,
 
