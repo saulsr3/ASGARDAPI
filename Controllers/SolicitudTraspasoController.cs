@@ -612,7 +612,7 @@ namespace ASGARDAPI.Controllers
                 IEnumerable<SolicitudTraspasoAF> lista = (from solicitud in bd.SolicitudTraspaso
                                                                       join activo in bd.ActivoFijo
                                                                       on solicitud.IdBien equals activo.IdBien
-                                                                      where activo.EstadoActual != 0 && solicitud.Estado==2
+                                                                      where solicitud.Estado==2
                                                                                                                                    
                                                                         select new SolicitudTraspasoAF
                                                                         {
