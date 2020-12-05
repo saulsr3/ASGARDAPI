@@ -14,5 +14,6 @@ namespace ASGARDAPI.Clases
         public double valoractual { get; set; }
         public string ubicacion { get; set; }
         public string responsable { get; set; }
+        public string concepto { get; set; }
     }
 }

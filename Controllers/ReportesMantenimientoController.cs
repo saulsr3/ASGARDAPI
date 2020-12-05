@@ -82,7 +82,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -229,7 +229,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -392,7 +392,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -765,7 +765,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);

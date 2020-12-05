@@ -535,8 +535,7 @@ namespace ASGARDAPI.Controllers
 
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                FormularioIngreso oformulario = new FormularioIngreso();
-
+   
                 string fechaMin = "1-1-"+ anio;
                 string fechaMax = "31-12-"+ anio;
 
@@ -558,6 +557,7 @@ namespace ASGARDAPI.Controllers
                                               Descripcion = activo.Desripcion
 
                                           }).ToList();
+                
                 return lista;
 
             }
