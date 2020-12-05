@@ -73,7 +73,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -234,7 +234,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -384,7 +384,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -534,7 +534,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -633,6 +633,160 @@ namespace ASGARDAPI.Controllers
 
         //Fin reporte activos intangibles
 
+        //Reporte activos adquiridos por año
+        [HttpGet]
+        [Route("api/Reporte/activosPorAnioPdf/{anio}")]
+        public async Task<IActionResult> activosPorAnioPdf(int anio)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte activos por año");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+            doc.Add(new Phrase("\n"));
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE ACTIVOS ADQUIRIDOS POR AÑO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 24f, 20f, 25f, 36f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("FECHA ADQUISICIÓN", parrafo2));
+            var c2 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+            var c3 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo2));
+            var c4 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
+                                        && (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= uDate)
+                                          orderby activo.IdBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              valoradquicicion=activo.ValorAdquicicion.ToString()
+
+
+                                          }).ToList();
+
+                foreach (var activos in lista)
+                {
+                    c1.Phrase = new Phrase(activos.fechacadena, parrafo5);
+                    c2.Phrase = new Phrase(activos.Codigo, parrafo5);
+                    c3.Phrase = new Phrase("$"+activos.valoradquicicion, parrafo5);
+                    c4.Phrase = new Phrase(activos.Descripcion, parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //Fin activos adquiridos por año
+
         //Reporte tarjeta
 
         [HttpGet]
@@ -695,7 +849,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -990,7 +1144,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -1179,7 +1333,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
@@ -1355,7 +1509,7 @@ namespace ASGARDAPI.Controllers
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
             }
-
+            doc.Add(new Phrase("\n"));
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
