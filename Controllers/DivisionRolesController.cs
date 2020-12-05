@@ -569,7 +569,7 @@ namespace ASGARDAPI.Controllers
                                    on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                    join sucursal in bd.Sucursal
                                    on area.IdSucursal equals sucursal.IdSucursal
-                                   where activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+                                   where activo.EstaAsignado == 1 && activo.EstadoActual != 0 && area.IdAreaNegocio == oarea.IdAreaNegocio
 
                                    select new DepreciacionAF
                                    {
@@ -577,7 +577,7 @@ namespace ASGARDAPI.Controllers
                                        idBien = activo.IdBien,
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
-                                       areanegocio = area.Nombre,
+                                       areanegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
 
@@ -598,7 +598,7 @@ namespace ASGARDAPI.Controllers
                                    join sucursal in bd.Sucursal
                                    on area.IdSucursal equals sucursal.IdSucursal
 
-                                   where activo.EstaAsignado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio
+                                   where activo.EstaAsignado == 1 && activo.EstadoActual != 0 && area.IdAreaNegocio == oarea.IdAreaNegocio
 
                                    && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
                                     || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
@@ -612,7 +612,7 @@ namespace ASGARDAPI.Controllers
                                        idBien = activo.IdBien,
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
-                                       areanegocio = area.Nombre,
+                                       areanegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
 

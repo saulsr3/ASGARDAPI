@@ -193,7 +193,7 @@ namespace ASGARDAPI.Controllers
                                    on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
                                    join sucursal in bd.Sucursal
                                    on area.IdSucursal equals sucursal.IdSucursal
-                                   where activo.EstaAsignado == 1
+                                   where activo.EstaAsignado == 1 && activo.EstadoActual != 0
 
                                    select new DepreciacionAF
                                    {
@@ -201,7 +201,7 @@ namespace ASGARDAPI.Controllers
                                        idBien = activo.IdBien,
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
-                                       areanegocio = area.Nombre,
+                                       areanegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
 
@@ -222,7 +222,7 @@ namespace ASGARDAPI.Controllers
                                    join sucursal in bd.Sucursal
                                    on area.IdSucursal equals sucursal.IdSucursal
 
-                                   where activo.EstaAsignado == 1
+                                   where activo.EstaAsignado == 1 && activo.EstadoActual != 0
 
                                    && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower())
                                     || (activo.Desripcion).ToLower().Contains(buscador.ToLower())
@@ -236,7 +236,7 @@ namespace ASGARDAPI.Controllers
                                        idBien = activo.IdBien,
                                        codigo = activo.CorrelativoBien,
                                        descripcion = activo.Desripcion,
-                                       areanegocio = area.Nombre,
+                                       areanegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                        sucursal = sucursal.Nombre,
                                        responsable = empleado.Nombres + " " + empleado.Apellidos
 
@@ -473,7 +473,6 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                //Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                 IEnumerable<DepreciacionAF> listaActivos = (from activo in bd.ActivoFijo
                                                             join empleado in bd.Empleado
                                                             on activo.IdResponsable equals empleado.IdEmpleado
@@ -514,7 +513,7 @@ namespace ASGARDAPI.Controllers
                                                      join sucursal in bd.Sucursal
                                                      on area.IdSucursal equals sucursal.IdSucursal
 
-                                                     where activo.EstaAsignado == 1
+                                                     where activo.EstaAsignado == 1 && activo.EstadoActual != 0
 
                                                      select new DepreciacionAF
                                                                 {
