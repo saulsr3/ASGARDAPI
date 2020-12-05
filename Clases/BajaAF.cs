@@ -7,8 +7,17 @@ namespace ASGARDAPI.Clases
 {
     public class BajaAF
     {
-        public int idBienBaja { get; set; }
-        public int idSolicitud { get; set; }
-        public int idBien { get; set; }
+        public int IdBien { get; set; }
+        public int NoFormulario { get; set; }
+        public string Codigo { get; set; }
+        public DateTime? FechaIngreso { get; set; }
+        public string fechacadena { get; set; }
+        public string Desripcion { get; set; }
+        public string Clasificacion { get; set; }
+       
+        public string AreaDeNegocio { get; set; }
+        public string Resposnsable { get; set; }
+       
+
     }
 }

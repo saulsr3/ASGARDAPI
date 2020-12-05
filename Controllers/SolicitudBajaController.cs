@@ -21,18 +21,18 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS ACTIVOS NO ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienes")]  
-        public List<ActivoFijoAF> listarBienes()
+        public List<BajaAF> listarBienes()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                List<BajaAF> lista = (from activo in bd.ActivoFijo
                                              join noFormulario in bd.FormularioIngreso
                                              on activo.NoFormulario equals noFormulario.NoFormulario
                                              join clasif in bd.Clasificacion
                                              on activo.IdClasificacion equals clasif.IdClasificacion
                                              where activo.EstadoActual == 1 && activo.EstaAsignado == 0
                                             
-                                             select new ActivoFijoAF
+                                             select new BajaAF
                                              {
                                                  IdBien = activo.IdBien,
                                                  NoFormulario = noFormulario.NoFormulario,
@@ -49,11 +49,11 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS ACTIVOS ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienesAsignados")]
-        public List<ActivoFijoAF> listarBienesAsignados()
+        public List<BajaAF> listarBienesAsignados()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                List<BajaAF> lista = (from activo in bd.ActivoFijo
                                             join noFormulario in bd.FormularioIngreso
                                              on activo.NoFormulario equals noFormulario.NoFormulario
                                             join resposable in bd.Empleado
@@ -64,7 +64,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdCargo equals cargo.IdCargo
                                             where activo.EstadoActual == 1 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
-                                            select new ActivoFijoAF
+                                            select new BajaAF
                                             {
                                                 IdBien = activo.IdBien,
                                                 Codigo = activo.CorrelativoBien,
@@ -72,7 +72,7 @@ namespace ASGARDAPI.Controllers
                                                 Desripcion = activo.Desripcion,
                                                 AreaDeNegocio = area.Nombre,
                                                 Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-                                                cargo = cargo.Cargo,
+                                                //cargo = cargo.Cargo,
 
                                             }).ToList();
                 return lista;
@@ -371,7 +371,7 @@ namespace ASGARDAPI.Controllers
                 odatos.color = obien.Color;
                 odatos.clasificacion = oclasi.Clasificacion1;
                 odatos.valoractual = Math.Round(((double)tarjeta.ValorActual), 2);
-                odatos.depreciacion = (double)tarjeta.DepreciacionAcumulada;
+                //odatos.depreciacion = (double)tarjeta.DepreciacionAcumulada;
                 return odatos;
 
 
@@ -448,9 +448,9 @@ namespace ASGARDAPI.Controllers
         //BUSCA LOS ACTIVOS ASIGNADOS
         [HttpGet]
         [Route("api/SolicitudBaja/buscarBienesBajaAsig/{buscador?}")]
-        public IEnumerable<ActivoFijoAF> buscarBienesBajaAsig(string buscador = "")
+        public IEnumerable<BajaAF> buscarBienesBajaAsig(string buscador = "")
         {
-            List<ActivoFijoAF> lista;
+            List<BajaAF> lista;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 if (buscador == "")
@@ -464,12 +464,11 @@ namespace ASGARDAPI.Controllers
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                              where activo.EstadoActual == 1 && activo.EstaAsignado == 1
                              orderby activo.CorrelativoBien
-                             select new ActivoFijoAF
+                             select new BajaAF
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
                                  Desripcion = activo.Desripcion,
                                  AreaDeNegocio = area.Nombre,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
@@ -501,7 +500,7 @@ namespace ASGARDAPI.Controllers
                                     
                                     )
 
-                             select new ActivoFijoAF
+                             select new BajaAF
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
@@ -510,7 +509,7 @@ namespace ASGARDAPI.Controllers
 
                                  AreaDeNegocio = area.Nombre,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-                                 cargo = cargo.Cargo,
+                                 //cargo = cargo.Cargo,
 
                              }).ToList();
                     return lista;
@@ -642,11 +641,11 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS ACTIVOS ASIGNADOS PARA EL FILTRO DE LAS TABLAS
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosFiltro/{id}")]
-        public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
+        public IEnumerable<BajaAF> listarActivosFiltro(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                IEnumerable<BajaAF> lista = (from activo in bd.ActivoFijo
                                                  join noFormulario in bd.FormularioIngreso
                                                  on activo.NoFormulario equals noFormulario.NoFormulario
                                                  join clasif in bd.Clasificacion
@@ -657,7 +656,7 @@ namespace ASGARDAPI.Controllers
                                                  on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                                  where activo.EstadoActual == 1 && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
                                                  orderby activo.CorrelativoBien
-                                                 select new ActivoFijoAF
+                                                 select new BajaAF
                                                  {
                                                      IdBien = activo.IdBien,
                                                      Codigo = activo.CorrelativoBien,
@@ -889,7 +888,7 @@ namespace ASGARDAPI.Controllers
 
             {
 
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                IEnumerable<BajaAF> lista = (from activo in bd.ActivoFijo
                                                    join formulario in bd.FormularioIngreso
                                                    on activo.NoFormulario equals formulario.NoFormulario
                                                    join clasi in bd.Clasificacion
@@ -897,7 +896,7 @@ namespace ASGARDAPI.Controllers
 
                                                    where activo.EstadoActual == 0
 
-                                                   select new ActivoFijoAF
+                                                   select new BajaAF
                                                    {
                                                        IdBien = activo.IdBien,
                                                        Desripcion = activo.Desripcion,
@@ -915,18 +914,18 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS BIENES NO ASIGNADOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienesBajas")]  
-        public List<ActivoFijoAF> listarBienesBajas()
+        public List<BajaAF> listarBienesBajas()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                List<BajaAF> lista = (from activo in bd.ActivoFijo
                                             join noFormulario in bd.FormularioIngreso
                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                             join clasif in bd.Clasificacion
                                             on activo.IdClasificacion equals clasif.IdClasificacion
                                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
 
-                                            select new ActivoFijoAF
+                                            select new BajaAF
                                             {
                                                 IdBien = activo.IdBien,
                                                 NoFormulario = noFormulario.NoFormulario,
@@ -943,11 +942,11 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS ACTIVOS ASIGNADOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarBienesAsignadosBajas")]
-        public List<ActivoFijoAF> listarBienesAsignadosBajas()
+        public List<BajaAF> listarBienesAsignadosBajas()
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                List<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                List<BajaAF> lista = (from activo in bd.ActivoFijo
                                             join noFormulario in bd.FormularioIngreso
                                              on activo.NoFormulario equals noFormulario.NoFormulario
                                             join resposable in bd.Empleado
@@ -958,7 +957,7 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdCargo equals cargo.IdCargo
                                             where activo.EstadoActual == 0 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
-                                            select new ActivoFijoAF
+                                            select new BajaAF
                                             {
                                                 IdBien = activo.IdBien,
                                                 Codigo = activo.CorrelativoBien,
@@ -1033,11 +1032,11 @@ namespace ASGARDAPI.Controllers
         //LISTA LOS ACTIVOS ASIGNADOS PARA EL FILTRO DE LOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/listarActivosFiltroBajas/{id}")]
-        public IEnumerable<ActivoFijoAF> listarActivosFiltroBajas(int id)
+        public IEnumerable<BajaAF> listarActivosFiltroBajas(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<ActivoFijoAF> lista = (from activo in bd.ActivoFijo
+                IEnumerable<BajaAF> lista = (from activo in bd.ActivoFijo
                                                    join noFormulario in bd.FormularioIngreso
                                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                                    join clasif in bd.Clasificacion
@@ -1048,7 +1047,7 @@ namespace ASGARDAPI.Controllers
                                                    on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                                    where activo.EstadoActual == 0 && area.IdAreaNegocio == id
                                                    orderby activo.CorrelativoBien
-                                                   select new ActivoFijoAF
+                                                   select new BajaAF
                                                    {
                                                        IdBien = activo.IdBien,
                                                        Codigo = activo.CorrelativoBien,
@@ -1246,9 +1245,9 @@ namespace ASGARDAPI.Controllers
 
         [HttpGet]
         [Route("api/SolicitudBaja/buscarBienesBajaAsigBajas/{buscador?}")]
-        public IEnumerable<ActivoFijoAF> buscarBienesBajaAsigBajas(string buscador = "")
+        public IEnumerable<BajaAF> buscarBienesBajaAsigBajas(string buscador = "")
         {
-            List<ActivoFijoAF> lista;
+            List<BajaAF> lista;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 if (buscador == "")
@@ -1260,18 +1259,16 @@ namespace ASGARDAPI.Controllers
                              on activo.IdResponsable equals resposable.IdEmpleado
                              join area in bd.AreaDeNegocio
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
-                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 1
                              orderby activo.CorrelativoBien
-                             select new ActivoFijoAF
+                             select new BajaAF
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
                                  Desripcion = activo.Desripcion,
                                  AreaDeNegocio = area.Nombre,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
-
 
                              }).ToList();
 
@@ -1288,7 +1285,7 @@ namespace ASGARDAPI.Controllers
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                              join cargo in bd.Cargos
                              on resposable.IdCargo equals cargo.IdCargo
-                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+                             where activo.EstadoActual == 0 && activo.EstaAsignado == 1
 
                                  && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
                                     (activo.Desripcion).ToLower().Contains(buscador.ToLower()) ||
@@ -1299,13 +1296,12 @@ namespace ASGARDAPI.Controllers
 
                                     )
 
-                             select new ActivoFijoAF
+                             select new BajaAF
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
                                  Desripcion = activo.Desripcion,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-
                                  AreaDeNegocio = area.Nombre,
                                  Resposnsable = resposable.Nombres + " " + resposable.Apellidos,
                                  //cargo = cargo.Cargo,
