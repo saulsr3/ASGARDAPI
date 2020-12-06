@@ -76,7 +76,7 @@ namespace ASGARDAPI.Controllers
                 Clasificacion oClas = bd.Clasificacion.Where(p => p.IdClasificacion == oactivo.IdClasificacion).First();
                 Categorias oCategoria  = bd.Categorias.Where(p => p.IdCategoria == oClas.IdCategoria).First();
                 oVidaUtil.vidaUtil =(int) oCategoria.VidaUtil;
-                oVidaUtil.realvidautil=(int) oactivo.VidaUtil;
+                //oVidaUtil.realvidautil=(int) oactivo.VidaUtil;
                 return oVidaUtil;
             }
         }
