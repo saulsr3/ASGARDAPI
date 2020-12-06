@@ -54,6 +54,23 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/Revalorizar/VidaUtilRevalorizar/{idbien}")]
+        public AsignacionAF VidaUtilRevalorizar(int idbien)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                AsignacionAF oVidaUtil = new AsignacionAF();
+                ActivoFijo oactivo = bd.ActivoFijo.Where(p => p.IdBien == idbien).First();
+                Clasificacion oClas = bd.Clasificacion.Where(p => p.IdClasificacion == oactivo.IdClasificacion).First();
+                Categorias oCategoria = bd.Categorias.Where(p => p.IdCategoria == oClas.IdCategoria).First();
+                oVidaUtil.vidaUtil = (int)oCategoria.VidaUtil;
+                oVidaUtil.realvidautil=(int) oactivo.VidaUtil;
+                return oVidaUtil;
+            }
+        }
+
+
         //VALIDACION DE TABLA VACIÍA
         [HttpGet]
         [Route("api/Revalorizar/validarActivosRevalorizar")]
@@ -144,6 +161,42 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //LISTAR ACTIVOS PARA FILTRO
+        [HttpGet]
+        [Route("api/Revalorizar/listarActivosFiltroRev/{id}")]
+        public IEnumerable<RegistroAF> listarActivosFiltroRev(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                                 join noFormulario in bd.FormularioIngreso
+                                                 on activo.NoFormulario equals noFormulario.NoFormulario
+                                                 join clasif in bd.Clasificacion
+                                                 on activo.IdClasificacion equals clasif.IdClasificacion
+                                                 join resposable in bd.Empleado
+                                                 on activo.IdResponsable equals resposable.IdEmpleado
+                                                 join area in bd.AreaDeNegocio
+                                                 on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                 where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 1 && area.IdAreaNegocio == id
+                                                 orderby activo.CorrelativoBien
+                                                 select new RegistroAF
+                                                 {
+                                                     IdBien = activo.IdBien,
+                                                     Codigo = activo.CorrelativoBien,
+                                                     fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                     Descripcion = activo.Desripcion,
+                                                     Clasificacion = clasif.Clasificacion1,
+                                                     AreaDeNegocio = area.Nombre,
+                                                     vidautil=activo.VidaUtil,
+                                                     Responsable = resposable.Nombres + " " + resposable.Apellidos
+                                                 }).ToList();
+                return lista;
+
+            }
+        }
+
+
+
         //BUSCAR ACTIVOS ASIGNADOS
 
         [HttpGet]
@@ -175,6 +228,7 @@ namespace ASGARDAPI.Controllers
                                        Descripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
                                        AreaDeNegocio = area.Nombre,
+                                       vidautil = activo.VidaUtil,
                                        Responsable = resposable.Nombres + " " + resposable.Apellidos
                                    }).ToList();
 
@@ -211,6 +265,7 @@ namespace ASGARDAPI.Controllers
                                        Descripcion = activo.Desripcion,
                                        Clasificacion = clasif.Clasificacion1,
                                        AreaDeNegocio = area.Nombre,
+                                       vidautil = activo.VidaUtil,
                                        Responsable = resposable.Nombres + " " + resposable.Apellidos
                                    }).ToList();
 

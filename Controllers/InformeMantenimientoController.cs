@@ -112,14 +112,15 @@ namespace ASGARDAPI.Controllers
             {
                 if (buscador == "")
                 {
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                     listarInformeMantenimiento = (from tecnico in bd.Tecnicos
                                                   join informemante in bd.InformeMantenimiento
-                                                  on tecnico.IdTecnico equals informemante.IdTecnico
+                                                    on tecnico.IdTecnico equals informemante.IdTecnico
                                                   join bienmante in bd.BienMantenimiento
                                                   on informemante.IdMantenimiento equals bienmante.IdMantenimiento
-                                                  join bienes in bd.ActivoFijo
-                                                  on bienmante.IdBien equals bienes.IdBien
-                                                  where informemante.Estado == 1
+                                                  join activo in bd.ActivoFijo
+                                                  on bienmante.IdBien equals activo.IdBien
+                                                  where informemante.Estado == 1 && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
 
 
                                                   select new InformeMatenimientoAF
@@ -132,25 +133,28 @@ namespace ASGARDAPI.Controllers
                                                       costomateriales = (double)informemante.CostoMateriales,
                                                       costomo = (double)informemante.CostoMo,
                                                       costototal = (double)informemante.CostoTotal,
-                                                      bienes = bienes.Desripcion
+                                                      vidautil = activo.VidaUtil,
+                                                      bienes = activo.Desripcion
 
                                                   }).ToList();
                     return listarInformeMantenimiento;
                 }
                 else
                 {
+                    Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
                     listarInformeMantenimiento = (from tecnico in bd.Tecnicos
                                                   join informemante in bd.InformeMantenimiento
                                                   on tecnico.IdTecnico equals informemante.IdTecnico
                                                   join bienmante in bd.BienMantenimiento
                                                   on informemante.IdMantenimiento equals bienmante.IdMantenimiento
-                                                  join bienes in bd.ActivoFijo
-                                                  on bienmante.IdBien equals bienes.IdBien
-                                                  where informemante.Estado == 1
+                                                  join activo in bd.ActivoFijo
+                                                  on bienmante.IdBien equals activo.IdBien
+                                                  where informemante.Estado == 1 && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion < (anioActual.Anio)))
+
 
                                       && ((informemante.Fecha).ToString().Contains(buscador.ToString()) ||
                                      (tecnico.Nombre).ToLower().Contains(buscador.ToLower()) ||
-                                     (bienes.Desripcion).ToString().ToLower().Contains(buscador.ToLower()) ||
+                                     (activo.Desripcion).ToString().ToLower().Contains(buscador.ToLower()) ||
                                      (informemante.CostoMateriales).ToString().Contains(buscador.ToString()) ||
                                      (informemante.CostoMo).ToString().Contains(buscador.ToString()) ||
                                      (informemante.CostoTotal).ToString().Contains(buscador.ToString()) ||
@@ -166,7 +170,8 @@ namespace ASGARDAPI.Controllers
                                                       costomateriales = (double)informemante.CostoMateriales,
                                                       costomo = (double)informemante.CostoMo,
                                                       costototal = (double)informemante.CostoTotal,
-                                                      bienes = bienes.Desripcion
+                                                      vidautil = activo.VidaUtil,
+                                                      bienes = activo.Desripcion
                                                   }).ToList();
                     return listarInformeMantenimiento;
                 }
