@@ -884,8 +884,7 @@ namespace ASGARDAPI.Controllers
                                                     on activo.NoFormulario equals noFormulario.NoFormulario
                                                     join tarjeta in bd.TarjetaDepreciacion
                                                     on activo.IdBien equals tarjeta.IdBien
-                                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
-                                                     && (tarjeta.Fecha == uDate)
+                                                    where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
                                                     && tarjeta.Concepto == "Depreciación"
                                                     orderby activo.IdBien
                                                     select new ActivoRevalorizadoAF
@@ -1072,7 +1071,7 @@ namespace ASGARDAPI.Controllers
                                                     on activo.NoFormulario equals noFormulario.NoFormulario
                                                     join tarjeta in bd.TarjetaDepreciacion
                                                     on activo.IdBien equals tarjeta.IdBien
-                                                    where (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= uDate)
+                                                    where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
                                                     && tarjeta.Concepto == "Revalorización"
                                                     orderby activo.IdBien
                                                     select new ActivoRevalorizadoAF
