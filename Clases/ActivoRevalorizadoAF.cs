@@ -11,6 +11,8 @@ namespace ASGARDAPI.Clases
         public double valorTransaccion { get; set; }
         public string valorAdquirido { get; set; }
         public double valorActual { get; set; }
+        public double depreAcum { get; set; }
+        public double depreAnual { get; set; }
         public double montoTransaccion { get; set; }
         public string descripcion { get; set; }
     }

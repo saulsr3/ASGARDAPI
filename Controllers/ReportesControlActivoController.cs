@@ -654,7 +654,7 @@ namespace ASGARDAPI.Controllers
             //Inicia cuerpo del reporte
 
             //Estilo y fuente personalizada
-            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1252, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
@@ -787,6 +787,196 @@ namespace ASGARDAPI.Controllers
         }
         //Fin activos adquiridos por año
 
+        //Reporte de depreciación anual
+        [HttpGet]
+        [Route("api/Reporte/depreciacionAnualPdf/{anio}")]
+        public async Task<IActionResult> depreciacionAnualPdf(int anio)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte activos depreciados por año");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+            doc.Add(new Phrase("\n"));
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE ACTIVOS DEPRECIADOS POR AÑO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f, 10f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
+            var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
+            var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
+            var c5 = new PdfPCell(new Phrase("VALOR DE MEJORA", parrafo6));
+            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo6));
+            var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
+            var c8 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+            tbl.AddCell(c7);
+            tbl.AddCell(c8);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+
+                //  DateTime oDate = Convert.ToDateTime(fechaMax);
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+                // oDate.ToString("dd-MM-yyyy");
+
+                List<ActivoRevalorizadoAF> lista = (from activo in bd.ActivoFijo
+                                                    join noFormulario in bd.FormularioIngreso
+                                                    on activo.NoFormulario equals noFormulario.NoFormulario
+                                                    join tarjeta in bd.TarjetaDepreciacion
+                                                    on activo.IdBien equals tarjeta.IdBien
+                                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
+                                                     && (tarjeta.Fecha == uDate)
+                                                    && tarjeta.Concepto == "Depreciación"
+                                                    orderby activo.IdBien
+                                                    select new ActivoRevalorizadoAF
+                                                    {
+                                                        idBien = activo.IdBien,
+                                                        //Código
+                                                        codigo = activo.CorrelativoBien,
+                                                        //Fecha
+                                                        fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                        //Concepto
+                                                        concepto = tarjeta.Concepto,
+                                                        //Valor adquirido
+                                                        valorAdquirido = activo.ValorAdquicicion.ToString(),
+                                                        //Valor de mejora
+                                                        montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                        //Depreciación anual
+                                                        depreAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                        //Depreciación Acumulada
+                                                        depreAcum = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+
+                                                        //     valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                        //Valor actual
+                                                        valorActual = Math.Round((double)tarjeta.ValorActual, 2)
+
+                                                    }).ToList();
+
+                foreach (var activos in lista)
+                {
+                    c1.Phrase = new Phrase(activos.fecha, parrafo5);
+                    c2.Phrase = new Phrase(activos.concepto, parrafo5);
+                    c3.Phrase = new Phrase(activos.codigo, parrafo5);
+                    c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
+                    c5.Phrase = new Phrase("$" + activos.montoTransaccion, parrafo5);
+                    c6.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+                    c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);
+                    c8.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                    tbl.AddCell(c7);
+                    tbl.AddCell(c8);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //Fin reporte de depreciación anual 
+
         //Reporte activos revalorizados por año
         [HttpGet]
         [Route("api/Reporte/activosRevalorizadosAnioPdf/{anio}")]
@@ -808,7 +998,7 @@ namespace ASGARDAPI.Controllers
             //Inicia cuerpo del reporte
 
             //Estilo y fuente personalizada
-            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1252, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
