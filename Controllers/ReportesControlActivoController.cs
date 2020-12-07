@@ -787,6 +787,180 @@ namespace ASGARDAPI.Controllers
         }
         //Fin activos adquiridos por año
 
+        //Reporte activos revalorizados por año
+        [HttpGet]
+        [Route("api/Reporte/activosRevalorizadosAnioPdf/{anio}")]
+        public async Task<IActionResult> activosRevalorizadosAnioPdf(int anio)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte activos revalorizados por año");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 8.5f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+            doc.Add(new Phrase("\n"));
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE ACTIVOS REVALORIZADOS POR AÑO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 12f, 15f, 18f, 13f, 14f, 13f, 19 }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
+            var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
+            var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
+            var c5 = new PdfPCell(new Phrase("VALOR DE TRANSACCIÓN", parrafo6));
+            var c6 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
+            var c7 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo6));
+            //Agregamos a la tabla las celdas 
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+            tbl.AddCell(c7);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+
+                //  DateTime oDate = Convert.ToDateTime(fechaMax);
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+                // oDate.ToString("dd-MM-yyyy");
+
+                List<ActivoRevalorizadoAF> lista = (from activo in bd.ActivoFijo
+                                                    join noFormulario in bd.FormularioIngreso
+                                                    on activo.NoFormulario equals noFormulario.NoFormulario
+                                                    join tarjeta in bd.TarjetaDepreciacion
+                                                    on activo.IdBien equals tarjeta.IdBien
+                                                    where (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= uDate)
+                                                    && tarjeta.Concepto == "Revalorización"
+                                                    orderby activo.IdBien
+                                                    select new ActivoRevalorizadoAF
+                                                    {
+                                                        idBien = activo.IdBien,
+                                                        codigo = activo.CorrelativoBien,
+                                                        fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                        concepto = tarjeta.Concepto,
+                                                        valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                        valorActual = Math.Round((double)tarjeta.ValorActual, 2),
+                                                        valorAdquirido=activo.ValorAdquicicion.ToString(),
+                                                        descripcion = activo.Desripcion
+
+                                                    }).ToList();
+
+                  foreach (var activos in lista)
+                   {
+                       c1.Phrase = new Phrase(activos.fecha, parrafo5); 
+                       c2.Phrase = new Phrase(activos.concepto, parrafo5);
+                       c3.Phrase = new Phrase(activos.codigo, parrafo5);
+                       c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
+                       c5.Phrase = new Phrase("$" + activos.valorTransaccion, parrafo5);
+                       c6.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
+                       c7.Phrase = new Phrase(activos.descripcion, parrafo5);
+                //Agregamos a la tabla
+                       tbl.AddCell(c1);
+                       tbl.AddCell(c2);
+                       tbl.AddCell(c3);
+                       tbl.AddCell(c4);
+                       tbl.AddCell(c5);
+                       tbl.AddCell(c6);
+                       tbl.AddCell(c7);
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        //Fin reporte activos revalorizados por año
+
         //Reporte tarjeta
 
         [HttpGet]
