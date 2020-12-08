@@ -455,31 +455,34 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
-        //[HttpGet]
-        //[Route("api/Usuario/CreateBackup")]
-        //public int CreateBackup()
-        //{
-        //    int res = 0;
-        //            try
-        //    {
-        //        string fileName = @"C:\Backup\test.bak";
-        //        string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
-        //        SqlCommand oCommand = null;
-        //        SqlConnection oConnection = null;
-        //        oConnection = new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
-        //        if (oConnection.State != ConnectionState.Open)
-        //        oConnection.Open();
-        //        oCommand = new SqlCommand("BACKUP DATABASE DBAcaassAF TO DISK=C:\Backup\test.bak", oConnection);
-        //        oCommand.ExecuteNonQuery();
-        //        res = 1;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        res = 0;
-                
-        //    }
-        //    return res;
-        //}
+        [HttpGet]
+        [Route("api/Usuario/CreateBackup")]
+        public int CreateBackup()
+        {
+            int res = 0;
+            try
+            {
+                string Fecha=DateTime.Now.ToString("dd-MM-yyyy");
+                //string fileName = @"C:\Backup\test.bak";
+                //string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
+                SqlCommand oCommand = null;
+                SqlConnection oConnection = null;
+                oConnection = new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
+                if (oConnection.State != ConnectionState.Open)
+                    oConnection.Open();
+                oCommand = new SqlCommand("Backup", oConnection);
+                oCommand.CommandType=CommandType.StoredProcedure;
+                oCommand.Parameters.AddWithValue("@fecha", SqlDbType.VarChar).Value = Fecha;
+                oCommand.ExecuteNonQuery();
+                res = 1;
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+
+            }
+            return res;
+        }
 
     }
 }
