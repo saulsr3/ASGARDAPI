@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iTextSharp.text;
+using System;
 namespace ASGARDAPI.Clases
 {
     public class ActivoRevalorizadoAF
@@ -15,5 +16,11 @@ namespace ASGARDAPI.Clases
         public double depreAnual { get; set; }
         public double montoTransaccion { get; set; }
         public string descripcion { get; set; }
+        public double total { get; set; }
+
+        internal Phrase Select()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

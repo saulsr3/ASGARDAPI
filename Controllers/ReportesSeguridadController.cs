@@ -13,6 +13,7 @@ using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
 using System.Drawing;
 using Microsoft.AspNetCore.Hosting;
+using System.ComponentModel;
 
 namespace ASGARDAPI.Controllers
 {
@@ -665,13 +666,13 @@ namespace ASGARDAPI.Controllers
             writer.PageEvent = pe;
 
             doc.AddAuthor("Asgard");
-            doc.AddTitle("Reporte provisión anual");
+            doc.AddTitle("Reporte de provisión de activos por año");
             doc.Open();
 
             //Inicia cuerpo del reporte
 
             //Estilo y fuente personalizada
-            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1252, true);
             iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
@@ -682,7 +683,9 @@ namespace ASGARDAPI.Controllers
 
             //Para las celdas
             BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
-            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 8f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
 
             //Encabezado
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -700,27 +703,43 @@ namespace ASGARDAPI.Controllers
                 tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
                 doc.Add(tbl1);
                 doc.Add(new Phrase("\n"));
+
             }
             doc.Add(new Phrase("\n"));
+          
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE PROVISIÓN ANUAL", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE DE PROVISIÓN DE ACTIVOS POR AÑO", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 24f, 20f, 25f, 36f }) { WidthPercentage = 100f };
-            var c1 = new PdfPCell(new Phrase("FECHA ADQUISICIÓN", parrafo2));
-            var c2 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
-            var c3 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo2));
-            var c4 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
+            var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
+            var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
+            var c5 = new PdfPCell(new Phrase("VALOR DE MEJORA", parrafo6));
+            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo6));
+          //  var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
+            var c8 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
             //Agregamos a la tabla las celdas 
             tbl.AddCell(c1);
             tbl.AddCell(c2);
             tbl.AddCell(c3);
             tbl.AddCell(c4);
+            tbl.AddCell(c5);
+            tbl.AddCell(c6);
+         //   tbl.AddCell(c7);
+            tbl.AddCell(c8);
+
+         //  doc.Add(new Phrase("\n"));
+
+           
+
+
 
             //Extraemos de la base y llenamos las celdas
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -728,80 +747,167 @@ namespace ASGARDAPI.Controllers
                 string fechaMin = "1-1-" + anio;
                 string fechaMax = "31-12-" + anio;
 
+                double valortotal =0;
+                //  DateTime oDate = Convert.ToDateTime(fechaMax);
                 DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+                // oDate.ToString("dd-MM-yyyy");
 
-                List<RegistroAF> lista = (from activo in bd.ActivoFijo
-                                          join noFormulario in bd.FormularioIngreso
-                                          on activo.NoFormulario equals noFormulario.NoFormulario
-                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3)
-                                        && (noFormulario.FechaIngreso >= DateTime.Parse(fechaMin) && noFormulario.FechaIngreso <= uDate)
-                                          orderby activo.IdBien
-                                          select new RegistroAF
-                                          {
-                                              IdBien = activo.IdBien,
-                                              Codigo = activo.CorrelativoBien,
-                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                              Descripcion = activo.Desripcion,
-                                              valoradquicicion = activo.ValorAdquicicion.ToString()
-                                              //agregar datos de provisión
+                List<ActivoRevalorizadoAF> lista = (from activo in bd.ActivoFijo
+                                                    join noFormulario in bd.FormularioIngreso
+                                                    on activo.NoFormulario equals noFormulario.NoFormulario
+                                                    join tarjeta in bd.TarjetaDepreciacion
+                                                    on activo.IdBien equals tarjeta.IdBien
+                                                    where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
+                                                    && tarjeta.Concepto == "Depreciación"
+                                                    orderby activo.IdBien
+                                                    select new ActivoRevalorizadoAF
+                                                    {
+                                                        idBien = activo.IdBien,
+                                                        //Código
+                                                        codigo = activo.CorrelativoBien,
+                                                        //Fecha
+                                                        fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                        //Concepto
+                                                        concepto = tarjeta.Concepto,
+                                                        //Valor adquirido
+                                                        valorAdquirido = activo.ValorAdquicicion.ToString(),
+                                                        //Valor de mejora
+                                                        montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                        //Depreciación anual
+                                                        depreAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                        //Depreciación Acumulada
+                                                       // depreAcum = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+                                                        
 
+                                                        //     valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                        //Valor actual
+                                                        valorActual = Math.Round((double)tarjeta.ValorActual, 2)
 
-                                          }).ToList();
+                                                    }).ToList();
 
                 foreach (var activos in lista)
                 {
-                    c1.Phrase = new Phrase(activos.fechacadena, parrafo5);
-                    c2.Phrase = new Phrase(activos.Codigo, parrafo5);
-                    c3.Phrase = new Phrase("$" + activos.valoradquicicion, parrafo5);
-                    c4.Phrase = new Phrase(activos.Descripcion, parrafo5);
+                    c1.Phrase = new Phrase(activos.fecha, parrafo5);
+                    c2.Phrase = new Phrase(activos.concepto, parrafo5);
+                    c3.Phrase = new Phrase(activos.codigo, parrafo5);
+                    c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
+                    c5.Phrase = new Phrase("$" + activos.montoTransaccion, parrafo5);
+                    c6.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+                   // c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);
+                    c8.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
                     //Agregamos a la tabla
                     tbl.AddCell(c1);
                     tbl.AddCell(c2);
                     tbl.AddCell(c3);
                     tbl.AddCell(c4);
+                    tbl.AddCell(c5);
+                    tbl.AddCell(c6);
+                   // tbl.AddCell(c7);
+                    tbl.AddCell(c8);
+                 
+
                 }
+                
+
+                //AGREGAMOS NUEVA TABLA
+                //Espacio en blanco
+                doc.Add(Chunk.Newline);
+
+                //Agregamos una tabla
+                var tbl11 = new PdfPTable(new float[] { 50f,50f}) { WidthPercentage = 100f };
+                var c9 = new PdfPCell(new Phrase("TOTAL"));
+               // var c10 = new PdfPCell(new Phrase("",parrafo6));
+              
+                //Agregamos a la tabla las celdas 
+                tbl11.AddCell(c9);
+               // tbl11.AddCell(c10);
+       
+
+                doc.Add(new Phrase("\n"));
+
+                //PARA LA NUEVA TABLA
+
+
+                
+                ActivoRevalorizadoAF activototal = new ActivoRevalorizadoAF();
+
+                    List<ActivoRevalorizadoAF> lista1 = (from activo in bd.ActivoFijo
+                                                         join noFormulario in bd.FormularioIngreso
+                                                         on activo.NoFormulario equals noFormulario.NoFormulario
+                                                         join tarjeta in bd.TarjetaDepreciacion
+                                                         on activo.IdBien equals tarjeta.IdBien
+                                                         where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
+                                                         && tarjeta.Concepto == "Depreciación"
+                                                         orderby activo.IdBien
+                                                         select new ActivoRevalorizadoAF
+                                                         {
+                                                             idBien = activo.IdBien,                                
+                                         
+                                                             montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                             //Depreciación anual
+                                                             depreAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                             //Depreciación Acumulada
+                                                             depreAcum = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+
+                                                                                                                
+                                                               }).ToList();  
+
+                foreach (var activos in lista1)
+                {
+
+                  //  c9.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+                   // c9.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+
+                    valortotal = valortotal + activos.depreAnual;
+
+                    // tbl11.AddCell(activos.total.ToString());
+                    // tbl11.AddCell(c9);
+                }
+                tbl11.AddCell("$" + valortotal.ToString());
 
                 //INICIO DE ADICIÓN DE LOGO
                 CooperativaAF oCooperativaAF = new CooperativaAF();
 
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                    Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                    oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
 
 
-                try
-                {
-                    iTextSharp.text.Image logo = null;
-                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
-                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
-                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
-                    logo.BorderColor = iTextSharp.text.BaseColor.White;
-                    logo.ScaleToFit(170f, 100f);
+                    try
+                    {
+                        iTextSharp.text.Image logo = null;
+                        logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                        logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                        logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                        logo.BorderColor = iTextSharp.text.BaseColor.White;
+                        logo.ScaleToFit(170f, 100f);
 
-                    float ancho = logo.Width;
-                    float alto = logo.Height;
-                    float proporcion = alto / ancho;
+                        float ancho = logo.Width;
+                        float alto = logo.Height;
+                        float proporcion = alto / ancho;
 
-                    logo.ScaleAbsoluteWidth(80);
-                    logo.ScaleAbsoluteHeight(80 * proporcion);
+                        logo.ScaleAbsoluteWidth(80);
+                        logo.ScaleAbsoluteHeight(80 * proporcion);
 
-                    logo.SetAbsolutePosition(40f, 695f);
+                        logo.SetAbsolutePosition(40f, 695f);
 
-                    doc.Add(logo);
+                        doc.Add(logo);
 
-                }
-                catch (DocumentException dex)
-                {
-                    //log exception here
-                }
+                    }
+                    catch (DocumentException dex)
+                    {
+                        //log exception here
+                    }
 
-                //FIN DE ADICIÓN DE LOGO
+                    //FIN DE ADICIÓN DE LOGO
 
+                
+                doc.Add(tbl);
+                doc.Add(tbl11);
+                writer.Close();
+                doc.Close();
+                ms.Seek(0, SeekOrigin.Begin);
+                return File(ms, "application/pdf");
             }
-            doc.Add(tbl);
-            writer.Close();
-            doc.Close();
-            ms.Seek(0, SeekOrigin.Begin);
-            return File(ms, "application/pdf");
         }
 
         //FIN DE REPORTE DE PROVISIÓN ANUAL
