@@ -1674,6 +1674,10 @@ namespace ASGARDAPI.Controllers
             //Para las celdas
             BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
             iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente6 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo6 = new iTextSharp.text.Font(fuente2, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente7 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo7 = new iTextSharp.text.Font(fuente, 9f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
 
 
             //Encabezado
@@ -1697,34 +1701,60 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE EMPLEADOS", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("REPORTE DE EMPLEADOS POR ÁREA DE NEGOCIO", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
 
-            //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 30f, 55f, 45f, 30f, 50f, 30f }) { WidthPercentage = 100f };
-            var c1 = new PdfPCell(new Phrase("DUI", parrafo2));
-            var c2 = new PdfPCell(new Phrase("NOMBRE COMPLETO", parrafo2));
-            var c3 = new PdfPCell(new Phrase("DIRECCIÓN", parrafo2));
-            var c4 = new PdfPCell(new Phrase("TELÉFONO", parrafo2));
-            var c5 = new PdfPCell(new Phrase("ÁREA DE NEGOCIO", parrafo2));
-            var c6 = new PdfPCell(new Phrase("CARGO", parrafo2));
-            // var c8 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
-
-            //Agregamos a la tabla las celdas
-            tbl.AddCell(c1);
-            tbl.AddCell(c2);
-            tbl.AddCell(c3);
-            tbl.AddCell(c4);
-            tbl.AddCell(c5);
-            tbl.AddCell(c6);
-
-            //tbl.AddCell(c8);
-
             //Extraemos de la base y llenamos las celdas
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+
+                AreaDeNegocio oArea1 = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == idempleado).First();
+                AreasDeNegocioAF oDatos = new AreasDeNegocioAF();
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea1.IdSucursal).First();
+                SucursalAF oDatosS = new SucursalAF();
+
+                oDatos.Correlativo = oArea1.Correlativo;
+                oDatos.Nombre = oArea1.Nombre;
+                oDatos.nombreSucursal = oSucursal.Nombre;
+                oDatos.ubicacion = oSucursal.Ubicacion;
+
+                //Cuerpo de la tarjeta
+                var tbl1 = new PdfPTable(new float[] { 3f, 7f, 3f, 7f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase("Correlativo: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oDatos.Correlativo, parrafo7)) { Border = 0 });
+                tbl1.AddCell(new PdfPCell(new Phrase("Nombre de área: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oDatos.Nombre, parrafo7)) { Border = 0 });
+
+
+                var tbl2 = new PdfPTable(new float[] { 3f, 7f, 3f, 7f }) { WidthPercentage = 100f };
+                tbl2.AddCell(new PdfPCell(new Phrase("Sucursal: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl2.AddCell(new PdfPCell(new Phrase(oDatos.nombreSucursal, parrafo7)) { Border = 0 });
+                tbl2.AddCell(new PdfPCell(new Phrase("Ubicación: ", parrafo6)) { Border = 0, Rowspan = 2 });
+                tbl2.AddCell(new PdfPCell(new Phrase(oDatos.ubicacion, parrafo7)) { Border = 0 });
+
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+                doc.Add(tbl2);
+                doc.Add(new Phrase("\n"));
+
+                //Agregamos una tabla
+                var tbl = new PdfPTable(new float[] { 30f, 55f, 45f, 30f, 35f }) { WidthPercentage = 100f };
+                var c1 = new PdfPCell(new Phrase("DUI", parrafo2));
+                var c2 = new PdfPCell(new Phrase("NOMBRE COMPLETO", parrafo2));
+                var c3 = new PdfPCell(new Phrase("DIRECCIÓN", parrafo2));
+                var c4 = new PdfPCell(new Phrase("TELÉFONO", parrafo2));
+                var c5 = new PdfPCell(new Phrase("CARGO", parrafo2));
+                // var c8 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+
+                //Agregamos a la tabla las celdas
+                tbl.AddCell(c1);
+                tbl.AddCell(c2);
+                tbl.AddCell(c3);
+                tbl.AddCell(c4);
+                tbl.AddCell(c5);
+
                 AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == idempleado).First();
                 IEnumerable<EmpleadoAF> listaEmpleado = (from sucursal in bd.Sucursal
                                                          join area in bd.AreaDeNegocio
@@ -1754,10 +1784,7 @@ namespace ASGARDAPI.Controllers
                     c2.Phrase = new Phrase(empleado.nombres, parrafo5);
                     c3.Phrase = new Phrase(empleado.direccion, parrafo5);
                     c4.Phrase = new Phrase(empleado.telefono, parrafo5);
-                    c5.Phrase = new Phrase(empleado.nombrearea, parrafo5);
-                    c6.Phrase = new Phrase(empleado.cargo, parrafo5);
-
-
+                    c5.Phrase = new Phrase(empleado.cargo, parrafo5);
 
                     //Agregamos a la tabla
                     tbl.AddCell(c1);
@@ -1765,9 +1792,8 @@ namespace ASGARDAPI.Controllers
                     tbl.AddCell(c3);
                     tbl.AddCell(c4);
                     tbl.AddCell(c5);
-                    tbl.AddCell(c6);
                 }
-
+                doc.Add(tbl);
                 //INICIO DE ADICIÓN DE LOGO
                 CooperativaAF oCooperativaAF = new CooperativaAF();
 
@@ -1803,7 +1829,7 @@ namespace ASGARDAPI.Controllers
                 //FIN DE ADICIÓN DE LOGO
 
             }
-            doc.Add(tbl);
+            
             writer.Close();
             doc.Close();
             ms.Seek(0, SeekOrigin.Begin);
