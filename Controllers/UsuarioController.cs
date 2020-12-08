@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -462,6 +463,11 @@ namespace ASGARDAPI.Controllers
             int res = 0;
             try
             {
+                string ruta = @"C:\BackupsASGARD";
+                if (!Directory.Exists(ruta))
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(ruta);
+                }
                 string Fecha=DateTime.Now.ToString("dd-MM-yyyy");
                 //string fileName = @"C:\Backup\test.bak";
                 //string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
