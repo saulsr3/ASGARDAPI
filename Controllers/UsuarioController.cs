@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Transactions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ASGARDAPI.Controllers
 {
@@ -463,11 +464,16 @@ namespace ASGARDAPI.Controllers
             int res = 0;
             try
             {
-                string ruta = @"C:\BackupsASGARD";
-                if (!Directory.Exists(ruta))
+                
+                //string ruta = @"";
+                string wwwPath = Environment.CurrentDirectory+ @"\Backups";
+                //string contentPath = Environment.GetFolderPath.ToString();
+                //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                if (!Directory.Exists(wwwPath))
                 {
-                    DirectoryInfo di = Directory.CreateDirectory(ruta);
+                    DirectoryInfo di = Directory.CreateDirectory(wwwPath);
                 }
+                
                 string Fecha=DateTime.Now.ToString("dd-MM-yyyy");
                 //string fileName = @"C:\Backup\test.bak";
                 //string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
@@ -478,6 +484,7 @@ namespace ASGARDAPI.Controllers
                     oConnection.Open();
                 oCommand = new SqlCommand("Backup", oConnection);
                 oCommand.CommandType=CommandType.StoredProcedure;
+                oCommand.Parameters.AddWithValue("@ruta", SqlDbType.VarChar).Value = wwwPath;
                 oCommand.Parameters.AddWithValue("@fecha", SqlDbType.VarChar).Value = Fecha;
                 oCommand.ExecuteNonQuery();
                 res = 1;
