@@ -58,7 +58,49 @@ namespace ASGARDAPI.Controllers
 
             }
         }
-       
+
+        //Cuadro control en archivo excel para jefe
+        [HttpGet]
+        [Route("api/CuadroControl/listarCuadroControlJefeExcel/{idJefe}")]
+        public IEnumerable<CuadroControlExcelAF> listarCuadroControlJefeExcel(int idJefe)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                IEnumerable<CuadroControlExcelAF> listacuadro = (
+                                                              from tarjeta in bd.TarjetaDepreciacion
+                                                              group tarjeta by tarjeta.IdBien into bar
+                                                              join cuadro in bd.ActivoFijo
+                                                              on bar.FirstOrDefault().IdBien equals cuadro.IdBien
+                                                              join noFormulario in bd.FormularioIngreso
+                                                              on cuadro.NoFormulario equals noFormulario.NoFormulario
+                                                              join clasif in bd.Clasificacion
+                                                              on cuadro.IdClasificacion equals clasif.IdClasificacion
+                                                              join resposable in bd.Empleado
+                                                              on cuadro.IdResponsable equals resposable.IdEmpleado
+                                                              join area in bd.AreaDeNegocio
+                                                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                              where area.IdAreaNegocio == oarea.IdAreaNegocio
+                                                              //where cuadro.EstadoActual == 1 && cuadro.EstaAsignado == 1
+                                                              select new CuadroControlExcelAF()
+                                                              {
+                                                                  codigo = cuadro.CorrelativoBien,
+                                                                  descripcion = cuadro.Desripcion,
+                                                                  valorAdquisicion = (double)cuadro.ValorAdquicicion,
+                                                                  fechaAdquisicion = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                                  valoractual = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().ValorActual), 2),
+                                                                  depreciacion = Math.Round(((double)bar.OrderByDescending(x => x.IdTarjeta).First().DepreciacionAnual), 2),
+                                                                  depreciacionAcumulada = Math.Round(((double)bar.Sum(x => x.DepreciacionAnual)), 2),
+                                                                  ubicacion = area.Nombre,
+                                                                  responsable = resposable.Nombres + " " + resposable.Apellidos
+
+                                                              }).ToList();
+                return listacuadro;
+
+            }
+        }
+
         //Listar datos para el archivo excel activos
         [HttpGet]
         [Route("api/CuadroControl/DatosCuadroExcel")]

@@ -107,6 +107,26 @@ namespace ASGARDAPI.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("api/Cooperativa/recuperarCoop")]
+        public CooperativaAF recuperarCoop()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+                oCooperativaAF.logo = oCooperativa.Logo;
+
+                return oCooperativaAF;
+            }
+
+        }
+
         [HttpPost]
         [Route("api/Configuracion/modificarCooperativa")]
         public int modificarCooperativa([FromBody] CooperativaAF oCooperativaAF)
