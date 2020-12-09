@@ -523,185 +523,6 @@ namespace ASGARDAPI.Controllers
 
         //FIN DE REPORTE  DE INFORMES (PARA DAR REVALORIZACIÓN)
 
-        //INICIO DE REPORTE DE HISTORIAL DE MANTENIMIENTO
-       /* [HttpGet]
-        [Route("api/ReportesMantenimiento/historialmantenimientoSSpdf")]
-        public async Task<IActionResult> historialmantenimientoSSpdf()
-        {
-            Document doc = new Document(PageSize.Letter);
-            doc.SetMargins(40f, 40f, 40f, 40f);
-            MemoryStream ms = new MemoryStream();
-            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
-
-            //Instanciamos la clase para el paginado y la fecha de impresión
-            var pe = new PageEventHelper();
-            writer.PageEvent = pe;
-
-            doc.AddAuthor("Asgard");
-            doc.AddTitle("Reporte de historial de mantenimiento");
-            doc.Open();
-
-
-            //Inicia cuerpo del reporte
-
-            //Estilo y fuente personalizada
-            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
-            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
-            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
-            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
-
-            //Para las celdas
-            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
-            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
-
-
-            //Encabezado
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-                oCooperativaAF.nombre = oCooperativa.Nombre;
-                oCooperativaAF.descripcion = oCooperativa.Descripcion;
-
-                //Se agrega el encabezado
-                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
-                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
-                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
-                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
-                doc.Add(tbl1);
-                doc.Add(new Phrase("\n"));
-            }
-
-            //Línea separadora
-            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
-            doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE HISTORIAL DE MANTENIMIENTO", parrafo) { Alignment = Element.ALIGN_CENTER });
-
-            //Espacio en blanco
-            doc.Add(Chunk.Newline);
-
-            //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 35f, 25f, 30f, 25f, 30f, 20f, 40f }) { WidthPercentage = 100f };
-            var c1 = new PdfPCell(new Phrase("CORRELATIVO", parrafo2));
-            var c2 = new PdfPCell(new Phrase("FECHA", parrafo2));
-            var c3 = new PdfPCell(new Phrase("TÉCNICO", parrafo2));
-            var c4 = new PdfPCell(new Phrase("MANO DE OBRA", parrafo2));
-            var c5 = new PdfPCell(new Phrase("MATERIALES", parrafo2));
-            var c6 = new PdfPCell(new Phrase("COSTO TOTAL", parrafo2));
-            var c7 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
-
-            //Agregamos a la tabla las celdas
-            tbl.AddCell(c1);
-            tbl.AddCell(c2);
-            tbl.AddCell(c3);
-            tbl.AddCell(c4);
-            tbl.AddCell(c5);
-            tbl.AddCell(c6);
-            tbl.AddCell(c7);
-
-            //Extraemos de la base y llenamos las celdas
-            using (BDAcaassAFContext bd = new BDAcaassAFContext())
-            {
-                IEnumerable<InformeMatenimientoAF> lista = (from tecnico in bd.Tecnicos
-                                                                        join informemante in bd.InformeMantenimiento
-                                                                        on tecnico.IdTecnico equals informemante.IdTecnico
-                                                                        join bienmante in bd.BienMantenimiento
-                                                                        on informemante.IdMantenimiento equals bienmante.IdMantenimiento
-                                                                        join bienes in bd.ActivoFijo
-                                                                        on bienmante.IdBien equals bienes.IdBien
-                                                                        where informemante.Estado==0 || informemante.Estado==2 || informemante.Estado == 1
-                                                            orderby bienes.CorrelativoBien
-
-                                                                        select new InformeMatenimientoAF
-                                                                        {
-                                                                            idinformematenimiento = informemante.IdInformeMantenimiento,
-                                                                            idBien = bienes.IdBien,
-                                                                            idmantenimiento = (int)informemante.IdMantenimiento,
-                                                                            fechacadena = informemante.Fecha == null ? " " : ((DateTime)informemante.Fecha).ToString("dd-MM-yyyy"),
-                                                                            nombretecnico = tecnico.Nombre,
-                                                                            codigo = bienes.CorrelativoBien,
-                                                                            descripcion = informemante.Descripcion,
-                                                                            costomateriales = (double)informemante.CostoMateriales,
-                                                                            costomo = (double)informemante.CostoMo,
-                                                                            costototal = (double)informemante.CostoTotal,
-                                                                            bienes = bienes.Desripcion
-
-                                                                        }).ToList();
-
-                foreach (var historialmante in lista)
-                {
-                    c1.Phrase = new Phrase(historialmante.codigo, parrafo5);
-                    c2.Phrase = new Phrase(historialmante.fechacadena, parrafo5);
-                    c3.Phrase = new Phrase(historialmante.nombretecnico, parrafo5);
-                    c4.Phrase = new Phrase(historialmante.costomo.ToString(), parrafo5);
-                    c5.Phrase = new Phrase(historialmante.costomateriales.ToString(), parrafo5);
-                    c6.Phrase = new Phrase(historialmante.costototal.ToString(), parrafo5);
-                    c7.Phrase = new Phrase(historialmante.descripcion, parrafo5);
-
-
-
-                    //Agregamos a la tabla
-                    tbl.AddCell(c1);
-                    tbl.AddCell(c2);
-                    tbl.AddCell(c3);
-                    tbl.AddCell(c4);
-                    tbl.AddCell(c5);
-                    tbl.AddCell(c6);
-                    tbl.AddCell(c7);
-
-
-                }
-
-                //INICIO DE ADICIÓN DE LOGO
-                CooperativaAF oCooperativaAF = new CooperativaAF();
-
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-
-
-                try
-                {
-                    iTextSharp.text.Image logo = null;
-                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
-                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
-                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
-                    logo.BorderColor = iTextSharp.text.BaseColor.White;
-                    logo.ScaleToFit(170f, 100f);
-
-                    float ancho = logo.Width;
-                    float alto = logo.Height;
-                    float proporcion = alto / ancho;
-
-                    logo.ScaleAbsoluteWidth(80);
-                    logo.ScaleAbsoluteHeight(80 * proporcion);
-
-                    logo.SetAbsolutePosition(40f, 695f);
-
-                    doc.Add(logo);
-
-                }
-                catch (DocumentException dex)
-                {
-                    //log exception here
-                }
-
-                //FIN DE ADICIÓN DE LOGO
-
-
-
-            }
-            doc.Add(tbl);
-            writer.Close();
-            doc.Close();
-            ms.Seek(0, SeekOrigin.Begin);
-            return File(ms, "application/pdf");
-        }*/
-
         //FIN DE REPORTE DE HISTORIAL DE MANTENIMIENTO
 
         //INICIO DE REPORTE DE HISTORIAL DE MANTENIMIENTO CON ID 
@@ -927,6 +748,174 @@ namespace ASGARDAPI.Controllers
         }
 
         //FIN DE REPORTES DE HISTORIAL DE MANTENIMIENTO CON ID
+
+        //INICIO DE REPORTE DE ACTIVOS EN MANTENIMIENTO PARA USUARIO JEFE
+       
+        [HttpGet]
+        [Route("api/ReportesMantenimiento/activosEnManteJefePdf/{idJefe}")]
+        public async Task<IActionResult> activosEnManteJefePdf(int idJefe)
+        {
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Reporte activos en mantenimiento");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+            doc.Add(new Phrase("\n"));
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("REPORTE DE ACTIVOS EN MANTENIMIENTO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+            //Agregamos una tabla
+            var tbl = new PdfPTable(new float[] { 25f, 40f, 40f, 40f }) { WidthPercentage = 100f };
+            var c1 = new PdfPCell(new Phrase("CÓDIGO", parrafo2));
+            var c2 = new PdfPCell(new Phrase("DESCRIPCIÓN", parrafo2));
+            var c3 = new PdfPCell(new Phrase("RAZONES DE MANTENIMIENTO", parrafo2));
+            var c4 = new PdfPCell(new Phrase("PERÍODO DE MANTENIMIENTO", parrafo2));
+
+            //Agregamos a la tabla las celdas
+            tbl.AddCell(c1);
+            tbl.AddCell(c2);
+            tbl.AddCell(c3);
+            tbl.AddCell(c4);
+
+            //Extraemos de la base y llenamos las celdas
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oempleado = bd.Empleado.Where(p => p.IdEmpleado == idJefe).FirstOrDefault();
+                AreaDeNegocio oarea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oempleado.IdAreaDeNegocio).FirstOrDefault();
+                IEnumerable<BienesSolicitadosMttoAF> lista = (from bienMtto in bd.BienMantenimiento
+                                                              join activo in bd.ActivoFijo
+                                                              on bienMtto.IdBien equals activo.IdBien                                                             
+                                                              join solicitud in bd.SolicitudMantenimiento
+                                                              on bienMtto.IdSolicitud equals solicitud.IdSolicitud
+                                                              join resposable in bd.Empleado
+                                                              on activo.IdResponsable equals resposable.IdEmpleado
+                                                              join area in bd.AreaDeNegocio
+                                                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                              //  join informe in bd.InformeMantenimiento
+                                                              // on bienMtto.IdMantenimiento equals informe.IdMantenimiento
+                                                              where activo.EstadoActual == 3 && bienMtto.Estado == 1 && area.IdAreaNegocio == oarea.IdAreaNegocio//ELEMENTO 2 LISTA
+                                                              select new BienesSolicitadosMttoAF
+                                                              {
+                                                                  idBien = activo.IdBien,
+                                                                  idmantenimiento = bienMtto.IdMantenimiento,
+                                                                  estadoActual = (int)activo.EstadoActual,
+                                                                  Codigo = activo.CorrelativoBien,
+                                                                  Descripcion = activo.Desripcion,
+                                                                  Periodo = bienMtto.PeriodoMantenimiento,
+                                                                  Razon = bienMtto.RazonMantenimiento,
+                                                                  fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
+
+
+                                                              }).ToList();
+                foreach (var activosmante in lista)
+                {
+                    c1.Phrase = new Phrase(activosmante.Codigo, parrafo5);
+                    c2.Phrase = new Phrase(activosmante.Descripcion, parrafo5);
+                    c3.Phrase = new Phrase(activosmante.Razon, parrafo5);
+                    c4.Phrase = new Phrase(activosmante.Periodo, parrafo5);
+
+
+
+                    //Agregamos a la tabla
+                    tbl.AddCell(c1);
+                    tbl.AddCell(c2);
+                    tbl.AddCell(c3);
+                    tbl.AddCell(c4);
+
+
+                }
+
+                //INICIO DE ADICIÓN DE LOGO
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+
+
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+            doc.Add(tbl);
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+
+        //FIN DE REPORTE DE ACTIVOS DE MANTENIMIENTO PARA USUARIO JEFE
 
 
 

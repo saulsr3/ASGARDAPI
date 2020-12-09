@@ -1681,6 +1681,36 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+        [HttpGet]
+        [Route("api/ActivoFijo/validarActivoMes/{mes}/{anio}")]
+        public int validarActivoMes(int mes, int anio)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+               string fechaMin = "1-1-" + anio;
+               string fechaMax = "31-12-" + anio;
+
+               // string fechaMin = "1" + mes + anio;
+              //  string fechaMax = "31" + mes + anio;
+               
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+               
+
+                IEnumerable<ComboAnidadoAF> lista = (from activo in bd.TarjetaDepreciacion
+                                                     where activo.Fecha >= DateTime.Parse(fechaMin) && activo.Fecha <= uDate
+                                                     select new ComboAnidadoAF
+                                                     {
+                                                         id = activo.IdTarjeta
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+
 
 
     }
