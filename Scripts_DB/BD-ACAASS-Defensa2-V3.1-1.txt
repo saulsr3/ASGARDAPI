@@ -375,8 +375,21 @@ GO
 ALTER TABLE InformeMantenimiento
 ADD FOREIGN KEY(IdTecnico) REFERENCES Tecnicos
 GO
-
 USE BDAcaassAF
+GO
+CREATE PROCEDURE [dbo].[Backup]   
+@fecha varchar(50),
+@ruta varchar(100)
+AS 
+BEGIN  
+declare @pNombreBackup nvarchar(max)
+set @pNombreBackup =@ruta+'\Backup'+','+@fecha+','+'.bak'
+BACKUP DATABASE BDAcaassAF
+TO DISK = @pNombreBackup
+   WITH FORMAT,
+      MEDIANAME = 'SQLServerBackups',
+      NAME = 'Full Backup of BDAcaassAF';
+END
 GO
 
 SET IDENTITY_INSERT Cooperativa ON
