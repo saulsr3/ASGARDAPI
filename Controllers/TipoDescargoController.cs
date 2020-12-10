@@ -33,6 +33,29 @@ namespace ASGARDAPI.Controllers
                 return listaDescargo;
             }
         }
+        [HttpGet]
+        [Route("api/TipoDescargo/validarlistarTipoDescargo")]
+        public int validarlistarTipoDescargo()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TipoDescargoAF> lista = (from descargo in bd.TipoDescargo
+                                                             where descargo.Dhabilitado == 1
+                                                             select new TipoDescargoAF
+                                                             {
+                                                                 IdTipo = descargo.IdTipo,
+                                                                 Nombre = descargo.Nombre,
+                                                                 Descripcion = descargo.Descripcion,
+
+                                                             }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
 
         //Método guardar 

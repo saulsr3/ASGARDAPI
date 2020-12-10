@@ -34,6 +34,33 @@ namespace ASGARDAPI.Controllers
             }
         }
         [HttpGet]
+        [Route("api/AreasNegocios/validarlistarAreas")]
+        public int validarlistarAreas()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<AreasDeNegocioAF> lista = (from area in bd.AreaDeNegocio
+                                                       join sucursal in bd.Sucursal
+                                                        on area.IdSucursal equals sucursal.IdSucursal
+                                                       where area.Dhabilitado == 1
+                                                       orderby sucursal.Ubicacion
+                                                       select new AreasDeNegocioAF
+                                                       {
+                                                           IdAreaNegocio = area.IdAreaNegocio,
+                                                           Nombre = area.Nombre,
+                                                           Correlativo = area.Correlativo,
+                                                           nombreSucursal = sucursal.Nombre,
+                                                           ubicacion = sucursal.Ubicacion
+                                                       }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+        [HttpGet]
         [Route("api/AreasNegocios/comboSucursal")]
         public IEnumerable<SucursalAF> comboSucursal() {
             using (BDAcaassAFContext bd = new BDAcaassAFContext()) {

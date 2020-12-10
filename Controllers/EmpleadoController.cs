@@ -49,6 +49,44 @@ namespace ASGARDAPI.Controllers
         }
 
         [HttpGet]
+        [Route("api/Empleado/validarlistarEmpleado")]
+        public int validarlistarEmpleado()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                int respuesta = 0;
+                IEnumerable<EmpleadoAF> lista = (from sucursal in bd.Sucursal
+                                                         join area in bd.AreaDeNegocio
+                                                         on sucursal.IdSucursal equals area.IdSucursal
+                                                         join empleado in bd.Empleado
+                                                         on area.IdAreaNegocio equals empleado.IdAreaDeNegocio
+                                                         join cargos in bd.Cargos
+                                                         on empleado.IdCargo equals cargos.IdCargo
+                                                         where empleado.Dhabilitado == 1
+                                                         select new EmpleadoAF
+                                                         {
+                                                             idempleado = empleado.IdEmpleado,
+                                                             dui = empleado.Dui,
+                                                             nombres = empleado.Nombres,
+                                                             apellidos = empleado.Apellidos,
+                                                             direccion = empleado.Direccion,
+                                                             telefono = empleado.Telefono,
+                                                             telefonopersonal = empleado.TelefonoPersonal,
+                                                             nombrearea = area.Nombre,
+                                                             nombresucursal = sucursal.Nombre,
+                                                             ubicacion = sucursal.Ubicacion,
+                                                             cargo = cargos.Cargo
+
+                                                         }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+        [HttpGet]
         [Route("api/Empleado/RecuperarEmpleado/{idempleado}")]
         public EmpleadoAF RecuperarEmpleado(int idempleado)
         {

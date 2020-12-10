@@ -32,6 +32,31 @@ namespace ASGARDAPI.Controllers
                 return listaSucursales;
             }
         }
+
+        [HttpGet]
+        [Route("api/Sucursal/validarlistarSucursales")]
+        public int validarlistarSucursales()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SucursalAF> lista = (from suscursal in bd.Sucursal
+                                                           where suscursal.Dhabilitado == 1
+                                                           select new SucursalAF
+                                                           {
+                                                               IdSucursal = suscursal.IdSucursal,
+                                                               Nombre = suscursal.Nombre,
+                                                               Ubicacion = suscursal.Ubicacion,
+                                                               Correlativo = suscursal.Correlativo
+                                                           }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+
         [HttpPost]
         [Route("api/Sucursal/guardarSucursal")]
         public int guardarSucursal([FromBody]SucursalAF oSucursalAF)

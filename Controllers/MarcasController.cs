@@ -57,6 +57,28 @@ namespace ASGARDAPI.Controllers
             }
         }
         [HttpGet]
+        [Route("api/Marcas/validarlistarMarcas")]
+        public int validarlistarMarcas()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<MarcasAF> lista = (from marca in bd.Marcas
+                                                     where marca.Dhabilitado == 1
+                                                     select new MarcasAF
+                                                     {
+                                                         IdMarca = marca.IdMarca,
+                                                         Marca = marca.Marca,
+                                                         Descripcion = marca.Descripcion
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+        [HttpGet]
         [Route("api/Marcas/eliminarMarca/{idMarca}")]
         public int eliminarMarca(int idMarca)
         {

@@ -68,6 +68,28 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/Tecnico/validarlistarTenico")]
+        public int validarlistarTenico()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<TecnicoAF> lista = (from tecnico in bd.Tecnicos
+                                                      where tecnico.Dhabilitado == 1
+                                                      select new TecnicoAF
+                                                      {
+                                                          idtecnico = tecnico.IdTecnico,
+                                                          nombre = tecnico.Nombre,
+                                                          empresa = tecnico.Empresa
+                                                      }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
         //Método recuperar técnico
         [HttpGet]
         [Route("api/Tecnico/recuperarTecnico/{id}")]

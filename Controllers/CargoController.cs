@@ -63,6 +63,28 @@ namespace ASGARDAPI.Controllers
                 return listaCargo;
             }
         }
+        [HttpGet]
+        [Route("api/Cargo/validarlistarCargo")]
+        public int validarlistarCargo()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CargoAF> lista = (from cargo in bd.Cargos
+                                                   where cargo.Dhabilitado == 1
+                                                   select new CargoAF
+                                                   {
+                                                       idcargo = cargo.IdCargo,
+                                                       cargo = cargo.Cargo,
+                                                       descripcion = cargo.Descripcion
+                                                   }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
         //Método recuperar cargo
         [HttpGet]

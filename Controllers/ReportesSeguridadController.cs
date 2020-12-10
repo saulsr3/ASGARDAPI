@@ -971,7 +971,69 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("REPORTE DE PROVISIÓN MENSUAL", parrafo) { Alignment = Element.ALIGN_CENTER });
+            if (mes==01)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE ENERO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 02)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE FEBRERO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 03)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE MARZO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 04)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE ABRIL", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 05)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE MAYO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 06)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE JUNIO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 07)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE JULIO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 08)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE AGOSTO", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 09)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE SEPTIEMBRE", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 10)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE OCTUBRE", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 11)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE NOVIEMBRE", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+            if (mes == 12)
+            {
+                doc.Add(new Paragraph("REPORTE DE PROVISIÓN AL MES DE DICIEMBRE", parrafo) { Alignment = Element.ALIGN_CENTER });
+
+            }
+
+
+
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
