@@ -6,9 +6,14 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
-using BarcodeLib;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using BarcodeLib;
+using System.Drawing.Imaging;
+using Color = System.Drawing.Color;
+using System.Drawing;
+
+
 
 namespace ASGARDAPI.Controllers
 {
@@ -858,14 +863,19 @@ namespace ASGARDAPI.Controllers
             //Espacio en blanco
             doc.Add(Chunk.Newline);
 
-            //cadena de prueba
-            string pruebaCadena = "LAPTOP123";
+            //Objeto cadena
+            BarcodeLib.Barcode barcodeAPI = new BarcodeLib.Barcode();
 
-            BarcodeLib.Barcode codeBar = new BarcodeLib.Barcode();
-            codeBar.IncludeLabel = true;
-            //Guardamos la imagen en una variable
-            var imageCode = codeBar.Encode(BarcodeLib.TYPE.CODE128, pruebaCadena, 400, 100);
+            //Parametros
+            string data = "038000356216";
+            Bitmap image1;
 
+            //Generamos el código de barra
+            image1 = (Bitmap)BarcodeLib.Barcode.DoEncode(BarcodeLib.TYPE.EAN13, data, true, Color.Black, Color.White, 500, 250);
+
+            iTextSharp.text.Image pCodeBar = iTextSharp.text.Image.GetInstance(image1.ToString());
+            doc.Add(pCodeBar);
+            
 
             //Extraemos de la base y llenamos las celdas
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -887,7 +897,7 @@ namespace ASGARDAPI.Controllers
                 {
                     iTextSharp.text.Image logo = null;
                     //Acá le cambie el logo de la cooperativa para probar el código de barra para ahorra código
-                    logo = iTextSharp.text.Image.GetInstance(imageCode.ToString());
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
                     logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
                     logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
                     logo.BorderColor = iTextSharp.text.BaseColor.White;
