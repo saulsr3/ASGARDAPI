@@ -95,7 +95,33 @@ namespace ASGARDAPI.Controllers
                 return listaClasificacion;
             }
         }
+        [HttpGet]
+        [Route("api/Clasificacion/validarlistarClasificacion")]
+        public int validarlistarClasificacion()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ClasificacionAF> lista = (from clasificacion in bd.Clasificacion
+                                                                   join categorias in bd.Categorias
+                                                                   on clasificacion.IdCategoria equals categorias.IdCategoria
+                                                                   where clasificacion.Dhabilitado == 1
+                                                                   select new ClasificacionAF
+                                                                   {
+                                                                       idclasificacion = clasificacion.IdClasificacion,
+                                                                       correlativo = clasificacion.Correlativo,
+                                                                       categoria = categorias.Categoria,
+                                                                       clasificacion = clasificacion.Clasificacion1,
+                                                                       descripcion = clasificacion.Descripcion
 
+                                                                   }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
         [HttpGet]
         [Route("api/Clasificacion/eliminarCasificacion/{idclasificacion}")]

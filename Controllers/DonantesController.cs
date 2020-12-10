@@ -67,6 +67,29 @@ namespace ASGARDAPI.Controllers
                 return listaDonantes;
             }
         }
+        [HttpGet]
+        [Route("api/Donantes/validarlistarDonantes")]
+        public int validarlistarDonantes()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<DonantesAF> lista = (from donante in bd.Donantes
+                                                         where donante.Dhabilitado == 1
+                                                         select new DonantesAF
+                                                         {
+                                                             IidDonante = donante.IdDonante,
+                                                             nombre = donante.Nombre,
+                                                             telefono = donante.Telefono,
+                                                             direccion = donante.Direccion
+                                                         }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
         //Método recuperar donante
         [HttpGet]

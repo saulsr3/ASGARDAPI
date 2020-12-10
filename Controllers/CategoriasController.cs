@@ -94,6 +94,31 @@ namespace ASGARDAPI.Controllers
                 return listaCategorias;
             }
         }
+        [HttpGet]
+        [Route("api/Categorias/validarlistarCategorias")]
+        public int validarlistarCategorias()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<CategoriasAF> lista = (from categorias in bd.Categorias
+                                                             where categorias.Dhabilitado == 1
+                                                             select new CategoriasAF
+
+                                                             {
+                                                                 IdCategoria = categorias.IdCategoria,
+                                                                 VidaUtil = categorias.VidaUtil,
+                                                                 Categoria = categorias.Categoria,
+                                                                 Descripcion = categorias.Descripcion
+
+                                                             }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
         [HttpGet]
         [Route("api/Categorias/eliminarCategorias/{idCategorias}")]

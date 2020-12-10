@@ -34,6 +34,32 @@ namespace ASGARDAPI.Controllers
                 return listaProveedores;
             }
         }
+        [HttpGet]
+        [Route("api/Proveedor/validarlistarProveedores")]
+        public int validarlistarProveedores()
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<ProveedoresAF> lista = (from proveedor in bd.Proveedor
+                                                               where proveedor.Dhabilitado == 1
+                                                               select new ProveedoresAF
+                                                               {
+                                                                   idProveedor = proveedor.IdProveedor,
+                                                                   nombre = proveedor.Nombre,
+                                                                   direccion = proveedor.Direccion,
+                                                                   telefono = proveedor.Telefono,
+                                                                   rubro = proveedor.Rubro,
+                                                                   encargado = proveedor.Encargado,
+                                                                   telefonoencargado = proveedor.TelefonoEncargado
+                                                               }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
 
 
         //Método guardar Proveedores

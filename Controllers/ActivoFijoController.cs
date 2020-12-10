@@ -1690,10 +1690,12 @@ namespace ASGARDAPI.Controllers
             {
                string fechaMin = "1-1-" + anio;
                string fechaMax = "31-12-" + anio;
+              //  string fechaMin = "1-" +"0"+ mes + "-" + anio;
+              //  string fechaMax = "31-" + "0" + mes + "-" + anio;
 
-               // string fechaMin = "1" + mes + anio;
-              //  string fechaMax = "31" + mes + anio;
-               
+                // string fechaMin = "1" + mes + anio;
+                //  string fechaMax = "31" + mes + anio;
+
                 DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
                
 
