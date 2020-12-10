@@ -464,19 +464,12 @@ namespace ASGARDAPI.Controllers
             int res = 0;
             try
             {
-                
-                //string ruta = @"";
                 string wwwPath = Environment.CurrentDirectory+ @"\Backups";
-                //string contentPath = Environment.GetFolderPath.ToString();
-                //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 if (!Directory.Exists(wwwPath))
                 {
                     DirectoryInfo di = Directory.CreateDirectory(wwwPath);
-                }
-                
+                }              
                 string Fecha=DateTime.Now.ToString("dd-MM-yyyy");
-                //string fileName = @"C:\Backup\test.bak";
-                //string command = @"BACKUP DATABASE DBAcaassAF TO DISK=" + fileName + "";
                 SqlCommand oCommand = null;
                 SqlConnection oConnection = null;
                 oConnection = new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");

@@ -829,7 +829,14 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     Periodo oPeriodo = bd.Periodo.Where(p => p.IdPeriodo == oCierreAF.idPeriodo).First();
-                    oPeriodo.Anio = oPeriodo.Anio+1;
+                    oPeriodo.Estado = 0;
+                    bd.SaveChanges();
+                    Periodo oPeriodoNuevo = new Periodo();
+                    Cooperativa oCooperativaPeriodo = bd.Cooperativa.Last();
+                    oPeriodoNuevo.IdCooperativa = oCooperativaPeriodo.IdCooperativa;
+                    oPeriodoNuevo.Anio = oPeriodo.Anio+1;
+                    oPeriodoNuevo.Estado = 1;
+                    bd.Periodo.Add(oPeriodoNuevo);
                     bd.SaveChanges();
                     rpta = 1;
                 }
