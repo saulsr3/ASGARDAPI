@@ -144,6 +144,7 @@ namespace ASGARDAPI.Controllers
                     oEmpleado.Apellidos = oEmpleadoAF.apellidos;
                     oEmpleado.Direccion = oEmpleadoAF.direccion;
                     oEmpleado.Telefono = oEmpleadoAF.telefono;
+                    oEmpleado.Email = oEmpleadoAF.email;
                     oEmpleado.TelefonoPersonal = oEmpleadoAF.telefonopersonal;
                     oEmpleado.IdAreaDeNegocio = oEmpleadoAF.idareadenegocio;
                     oEmpleado.IdCargo = oEmpleadoAF.idcargo;
@@ -178,6 +179,7 @@ namespace ASGARDAPI.Controllers
                     oEmpleado.Telefono = oEmpleadoAF.telefono;
                     oEmpleado.TelefonoPersonal = oEmpleadoAF.telefonopersonal;
                     oEmpleado.IdAreaDeNegocio = oEmpleadoAF.idareadenegocio;
+                    oEmpleado.Email = oEmpleadoAF.email;
                     oEmpleado.IdCargo = oEmpleadoAF.idcargo;
                     oEmpleado.Dhabilitado = 1;
                     oEmpleado.BtieneUsuario = 0;

@@ -17,6 +17,7 @@ namespace ASGARDAPI.Models
         public string Apellidos { get; set; }
         public string Direccion { get; set; }
         public string Telefono { get; set; }
+        public string Email { get; set; }
         public string TelefonoPersonal { get; set; }
         public int? IdAreaDeNegocio { get; set; }
         public int? IdCargo { get; set; }

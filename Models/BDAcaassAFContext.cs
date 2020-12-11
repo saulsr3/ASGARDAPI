@@ -282,6 +282,11 @@ namespace ASGARDAPI.Models
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Email)
+                    .HasColumnName("email")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Nombres)
                     .HasMaxLength(50)
                     .IsUnicode(false);

@@ -16,6 +16,7 @@ namespace ASGARDAPI.Clases
         public string telefono { get; set; }
         public string telefonopersonal { get; set; }
         public int idareadenegocio { get; set; }
+        public string email { get; set; }
         public int idcargo { get; set; }
         public int btieneusuario { get; set; }
         public int dhabilitado { get; set; }
