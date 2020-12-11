@@ -8,6 +8,7 @@ namespace ASGARDAPI.Models
         public Usuario()
         {
             Bitacora = new HashSet<Bitacora>();
+            Token = new HashSet<Token>();
         }
 
         public int IdUsuario { get; set; }
@@ -20,5 +21,6 @@ namespace ASGARDAPI.Models
         public Empleado IdEmpleadoNavigation { get; set; }
         public TipoUsuario IdTipoUsuarioNavigation { get; set; }
         public ICollection<Bitacora> Bitacora { get; set; }
+        public ICollection<Token> Token { get; set; }
     }
 }

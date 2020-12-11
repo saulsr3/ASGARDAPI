@@ -100,6 +100,7 @@ Nombres varchar(50),
 Apellidos varchar(50),
 Direccion varchar(100),
 Telefono varchar(25),
+email varchar(50),
 TelefonoPersonal varchar(25),
 IdAreaDeNegocio int,
 IdCargo int,
@@ -151,6 +152,14 @@ Contra varchar(150),
 IdEmpleado int,
 IdTipoUsuario int,
 Dhabilitado int
+)
+GO
+use BDAcaassAF
+CREATE TABLE Token(
+IdToken int NOT NULL PRIMARY KEY IDENTITY(1,1),
+codigo int,
+IdUsuario int,
+Estado int
 )
 GO
 use BDAcaassAF
@@ -266,7 +275,7 @@ Telefono varchar(20),
 Acuerdo varchar(50),
 Fechabaja date
 )
-
+GO
 
 use BDAcaassAF
 CREATE TABLE SolicitudTraspaso(
@@ -347,6 +356,10 @@ ALTER TABLE Bitacora
 ADD FOREIGN KEY(IdUsuario) REFERENCES Usuario
 GO
 USE BDAcaassAF
+ALTER TABLE Token
+ADD FOREIGN KEY(IdUsuario) REFERENCES Usuario
+GO
+USE BDAcaassAF
 ALTER TABLE Bien_Mantenimiento
 ADD FOREIGN KEY(IdSolicitud) REFERENCES SolicitudMantenimiento
 GO
@@ -374,6 +387,22 @@ ADD FOREIGN KEY(IdMantenimiento) REFERENCES Bien_Mantenimiento
 GO
 ALTER TABLE InformeMantenimiento
 ADD FOREIGN KEY(IdTecnico) REFERENCES Tecnicos
+GO
+USE BDAcaassAF
+GO
+CREATE PROCEDURE [dbo].[Backup]   
+@fecha varchar(50),
+@ruta varchar(100)
+AS 
+BEGIN  
+declare @pNombreBackup nvarchar(max)
+set @pNombreBackup =@ruta+'\Backup'+','+@fecha+','+'.bak'
+BACKUP DATABASE BDAcaassAF
+TO DISK = @pNombreBackup
+   WITH FORMAT,
+      MEDIANAME = 'SQLServerBackups',
+      NAME = 'Full Backup of BDAcaassAF';
+END
 GO
 
 SET IDENTITY_INSERT Categorias ON

@@ -24,20 +24,20 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<CooperativaAF> listarCooperativa = (from cooperativa in bd.Cooperativa
-                                                                join operiodo in bd.Periodo
-                                                                on cooperativa.IdCooperativa equals operiodo.IdCooperativa                                        
-                                                   where cooperativa.Dhabilitado == 1
+                IEnumerable<CooperativaAF> listarCooperativa = (from periodo in bd.Periodo
+                                                               join cooperativa in bd.Cooperativa
+                                                               on periodo.IdCooperativa equals cooperativa.IdCooperativa
+                                                   where periodo.Estado==1
                                                    select new CooperativaAF
                                                    {
                                                        idcooperativa=cooperativa.IdCooperativa,
                                                        nombre=cooperativa.Nombre,
-                                                       anio= (int)operiodo.Anio,
+                                                       anio= (int)periodo.Anio,
                                                        descripcion = cooperativa.Descripcion,
                                                        logo=cooperativa.Logo
 
                                                    }).ToList();
-                return listarCooperativa;
+                return listarCooperativa.Distinct();
             }
         }
 
