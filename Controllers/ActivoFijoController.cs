@@ -182,6 +182,7 @@ namespace ASGARDAPI.Controllers
                     Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
                     oDatos.marca = oMarca.Marca;
                 }
+                oDatos.idactivo = oActivo.IdBien;
                 oDatos.nombre = oActivo.Desripcion;          
                 oDatos.modelo = oActivo.Modelo;       
             }
