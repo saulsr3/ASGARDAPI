@@ -499,6 +499,38 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //VALIDACIÓN SI HAY REGISTROS EN EDIFICIOS
+        [HttpGet]
+        [Route("api/ActivoFIjo/validarActivosEdificios")]
+        public int validarActivosEdificios()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                int respuesta = 0;
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join clasif in bd.Clasificacion
+                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 1 && activo.EstadoActual == 1
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              Clasificacion = clasif.Clasificacion1,
+                                          }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+
         //Activos para intangibles
         [HttpGet]
         [Route("api/ActivoFIjo/listarActivosIntangibles")]
@@ -528,6 +560,42 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+
+        //VALIDACIÓN SI HAY REGISTROS EN ACTIVOS INTANGIBLES
+        [HttpGet]
+        [Route("api/ActivoFIjo/validarActivosIntangibles")]
+        public int validarActivosIntangibles()
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                int respuesta = 0;
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join clasif in bd.Clasificacion
+                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                          // Acá iría el área pero como está referenciada a empleado
+
+                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.TipoActivo == 3 && activo.EstadoActual == 1
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              Codigo = activo.CorrelativoBien,
+                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                              Descripcion = activo.Desripcion,
+                                              Clasificacion = clasif.Clasificacion1,
+                                          }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+
+
         //RECUPERAMOS EL ACTIVO CUANDO ESTÁ ASIGNADO.
         //Recuperar bien mueble
         [HttpGet]
