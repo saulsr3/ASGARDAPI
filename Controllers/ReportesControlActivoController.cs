@@ -866,33 +866,38 @@ namespace ASGARDAPI.Controllers
             //Objeto cadena
             BarcodeLib.Barcode barcodeAPI = new BarcodeLib.Barcode();
 
-            //Parametros
-            string data = "038000356216";
-            Bitmap image1;
 
-            //Generamos el código de barra
-            image1 = (Bitmap)BarcodeLib.Barcode.DoEncode(BarcodeLib.TYPE.EAN13, data, true, Color.Black, Color.White, 500, 250);
 
-            iTextSharp.text.Image pCodeBar = iTextSharp.text.Image.GetInstance(image1.ToString());
-            doc.Add(pCodeBar);
-            
+            //string prodCode = "038000356216";
+            PdfContentByte cb = writer.DirectContent;
+            cb.Rectangle(doc.PageSize.Width - 90f, 830f, 50f, 50f);
+            cb.Stroke();
+            iTextSharp.text.pdf.Barcode128 bc = new Barcode128();
+            bc.TextAlignment = Element.ALIGN_CENTER;
+            bc.Code = "AC01-001-105-001";
+            bc.StartStopText = false;
+            bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
+            bc.Extended = true;
+            //bc.Font = null;
 
-            //Extraemos de la base y llenamos las celdas
+            iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
+            PatImage1.ScaleToFit(160, 20);
+
+            PdfPTable p_detail1 = new PdfPTable(1);
+            p_detail1.WidthPercentage = 100;
+
+            PdfPCell barcideimage = new PdfPCell(PatImage1);
+            //barcideimage.Colspan = 2;
+            barcideimage.HorizontalAlignment = 2;
+            barcideimage.Border = 0;
+            p_detail1.AddCell(barcideimage);
+
+            doc.Add(p_detail1);
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-
-                
-              //  b.BackColor = System.Drawing.Color.White;
-
-
-
-                //INICIO DE ADICIÓN DE LOGO
                 CooperativaAF oCooperativaAF = new CooperativaAF();
-
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-
-
                 try
                 {
                     iTextSharp.text.Image logo = null;
