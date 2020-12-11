@@ -32,7 +32,7 @@ namespace ASGARDAPI.Controllers
                 byte[] dataNoCifrada = Encoding.Default.GetBytes(oUsuarioAF.contra);
                 byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
                 string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
-                rpta = bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada).Count();
+                rpta = bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada&&p.Dhabilitado==1).Count();
                 if (rpta == 1)
                 {
                     Usuario oUsuarioRecuperar = bd.Usuario.Where(p => p.NombreUsuario.ToUpper() == oUsuarioAF.nombreusuario.ToUpper() && p.Contra == claveCifrada).First();
@@ -132,6 +132,20 @@ namespace ASGARDAPI.Controllers
             }
         }
         [HttpGet]
+        [Route("api/Seguridad/recuperarUsuario/{email}")]
+        public UsuarioAF recuperarUsuario(string email)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Empleado oEmpledo = bd.Empleado.Where(p => p.Email == email).First();
+                Usuario oUsuario = bd.Usuario.Where(p => p.IdEmpleado == oEmpledo.IdEmpleado).First();
+                UsuarioAF ousuarioAF = new UsuarioAF();
+                ousuarioAF.iidusuario = oUsuario.IdUsuario;
+                return ousuarioAF;
+            }
+        }
+        [HttpGet]
         [Route("api/Seguridad/SendEmail/{idusuario}/{email}")]
         public int SendEmail(int idusuario, string email)
         {
@@ -142,15 +156,10 @@ namespace ASGARDAPI.Controllers
                 {
                     Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == idusuario).FirstOrDefault();
                     Empleado oEmpleado= bd.Empleado.Where(p => p.Email == email).FirstOrDefault();
+                    
 
-                
-
-
-
-                    SHA256Managed sha = new SHA256Managed();
-                    byte[] dataNoCifrada = Encoding.Default.GetBytes(oUsuario.Contra);
-                    byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
-                    string pass = Convert.ToBase64String(dataCifrada);
+                    Random rnd = new Random();
+                    int token = rnd.Next(10000, 99999);
                     var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("TEAM ASGARD", "asgardrecoverypass@gmail.com"));
                 message.To.Add(new MailboxAddress(oUsuario.NombreUsuario,oEmpleado.Email ));
@@ -158,7 +167,7 @@ namespace ASGARDAPI.Controllers
 
                 message.Body = new TextPart("plain")
                 {
-                    Text = $"Hola,{oEmpleado.Nombres}\n\nTu contraseña es:{pass}\n\nGuardala en un lugar seguro.\n\n-- TEAM ASGARD"
+                    Text = $"Hola,{oEmpleado.Nombres}\n\nTu codigo de recuperacion es:{token}\n\nAccede a ASGARD y utiliza el codigo.\n\n-- TEAM ASGARD"
                 };
    
 
@@ -172,7 +181,13 @@ namespace ASGARDAPI.Controllers
                     client.Send(message);
                     client.Disconnect(true);
                 }
-                rpta = 1;
+                    Token oToken = new Token();
+                    oToken.Codigo = token;
+                    oToken.Estado = 1;
+                    oToken.IdUsuario = oUsuario.IdUsuario;
+                    bd.Token.Add(oToken);
+                    bd.SaveChanges();
+                    rpta = 1;
                 }
             }
             catch (Exception)
@@ -182,6 +197,60 @@ namespace ASGARDAPI.Controllers
             }
           
                 return rpta;
+        }
+        [HttpGet]
+        [Route("api/Seguridad/validarToken/{codigo}")]
+        public int validarToken(int codigo)
+        {
+            int iduser = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    UsuarioAF oUsuarioAF = new UsuarioAF();
+                    Token oToken = bd.Token.Where(p => p.Codigo == codigo && p.Estado==1).First();
+                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == oToken.IdUsuario).First();
+                    oToken.Estado = 0;
+                    bd.SaveChanges();
+                    iduser = oUsuario.IdUsuario;
+                }
+                    
+            }
+            catch (Exception)
+            {
+
+                return 0;
+            }
+
+            return iduser;
+        }
+        [HttpGet]
+        [Route("api/Seguridad/recoveryPassword/{id}/{pass}")]
+        public int recoveryPassword(int id,string pass)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    Usuario oUsuario = bd.Usuario.Where(p => p.IdUsuario == id).First();
+                    SHA256Managed sha = new SHA256Managed();
+                            string clave = pass;
+                            byte[] dataNoCifrada = Encoding.Default.GetBytes(clave);
+                            byte[] dataCifrada = sha.ComputeHash(dataNoCifrada);
+                            string claveCifrada = BitConverter.ToString(dataCifrada).Replace("-", "");
+                            oUsuario.Contra = claveCifrada;
+                    bd.SaveChanges();
+                    rpta = 1;       
+                }
+            }
+            catch (Exception)
+            {
+
+                rpta = 0;
+            }
+
+            return rpta;
         }
     }
 }

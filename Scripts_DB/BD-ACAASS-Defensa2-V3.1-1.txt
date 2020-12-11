@@ -155,6 +155,14 @@ Dhabilitado int
 )
 GO
 use BDAcaassAF
+CREATE TABLE Token(
+IdToken int NOT NULL PRIMARY KEY IDENTITY(1,1),
+codigo int,
+IdUsuario int,
+Estado int
+)
+GO
+use BDAcaassAF
 CREATE TABLE Bitacora(
 IdBitacora int NOT NULL PRIMARY KEY IDENTITY(1,1),
 IdUsuario int,
@@ -267,7 +275,7 @@ Telefono varchar(20),
 Acuerdo varchar(50),
 Fechabaja date
 )
-
+GO
 
 use BDAcaassAF
 CREATE TABLE SolicitudTraspaso(
@@ -345,6 +353,10 @@ ADD FOREIGN KEY(IdTipoUsuario) REFERENCES TipoUsuario
 GO
 USE BDAcaassAF
 ALTER TABLE Bitacora
+ADD FOREIGN KEY(IdUsuario) REFERENCES Usuario
+GO
+USE BDAcaassAF
+ALTER TABLE Token
 ADD FOREIGN KEY(IdUsuario) REFERENCES Usuario
 GO
 USE BDAcaassAF
@@ -507,41 +519,11 @@ INSERT INTO [Proveedor] ([IdProveedor],[Nombre],[Direccion],[Telefono],[Rubro],[
 SET IDENTITY_INSERT Proveedor OFF
 
 SET IDENTITY_INSERT TipoUsuario  ON
-INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(1,'Admin','Administrador',1)
-INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(2,'Jefe de area','Administrador',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(1,'Administrador','Administrador',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(2,'Jefe de area','Jefe de área de negocios',1)
+INSERT INTO [TipoUsuario] ([IdTipoUsuario],[TipoUsuario],[Descripcion],[Dhabilitado])VALUES(3,'Asistente','Asistente de jefe',1)
 SET IDENTITY_INSERT TipoUsuario OFF
 
---SET IDENTITY_INSERT Usuario  ON
---INSERT INTO [Usuario] ([IdUsuario],[Contra],[IdEmpleado],[IdTipoUsuario],[Dhabilitado])VALUES(1,'Tiene que ir encriptada',1,1,1)
---INSERT INTO [Usuario] ([IdUsuario],[Contra],[IdEmpleado],[IdTipoUsuario],[Dhabilitado])VALUES(2,'Tiene que ir encriptada',5,2,1)
---SET IDENTITY_INSERT Usuario OFF
 
---SET IDENTITY_INSERT FormularioIngreso  ON
---INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(1,'F-8967','05/01/2020','Julio Moran',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
---INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(2,'F-8968','03/23/2020','Pedro Alvarado',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
---INSERT INTO [FormularioIngreso] ([NoFormulario],[NoFactura],[FechaIngreso],[PersonaEntrega],[PersonaRecibe],[Observaciones])VALUES(3,'F-8969','05/02/2020','Sonia Moran',1,'El equipo se ve en condiciones buenas como se acordó en la compra')
---SET IDENTITY_INSERT FormularioIngreso OFF
-
---SET IDENTITY_INSERT ActivoFijo  ON
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(1,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(2,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(3,null,1,'Computadora','inspiron 3504',1,'Negro',null,1,1,3,null,null,null,'Nuevo',599.99,'12 meses',50,25,0.3,0,null,0,'',1)
-
---Aqui esta el ejemplo de como se van a insertar los activos si se fijan hacen referencia a un formulario en particular
---El siguiente hará referencia a otro y pueden ser los que el ususario ingrese
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(4,'00-11-22',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','123',6,3,1,null,null,1,1,199.99,'',0,0,0.0,0,null,1,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(5,'01-02-03',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','032',6,3,null,2,null,4,2,199.99,'',0,0,0.0,0,null,1,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(6,'11-01-11',2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe','351',6,3,5,null,null,5,3,199.99,'',0,0,0.0,0,null,1,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(7,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(8,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(9,null,2,'Escritorio Administrativo','Empresarial porcelana',1,'cafe',null,6,3,1,null,null,null,'Nuevo',199.99,'',0,0,0.0,0,null,0,'',1)
---EN el caso que solo se meta 1 hace referencia a alformulario 3
---INSERT INTO [ActivoFijo] ([IdBien],[CorrelativoBien],[NoFormulario],[Desripcion],[Modelo],[TipoAdquicicion],[Color],[NoSerie],[IdMarca],[IdClasificacion],[IdProveedor],[IdDonante],[VidaUtil],[IdResponsable],[EstadoIngreso],[ValorAdquicicion],[PlazoPago],[Prima],[CuotaAsignanda],[Intereses],[ValorResidual],[Foto],[EstaAsignado],[DestinoInicial],[EstadoActual])VALUES(10,null,3,'Impresora Lacer','wallet 3432',1,'Gris',null,3,1,2,null,null,null,'Nuevo',1599.99,'12 meses',70,125,0.2,0,null,0,'',1)
---SET IDENTITY_INSERT ActivoFijo OFF
-
-
---SET IDENTITY_INSERT SolicitudBaja  ON
---INSERT INTO [SolicitudBaja] ([IdSolicitud],[Fecha],[Folio],[Observaciones],[motivo],[IdBien],[Estado],[EntidadBeneficiaria],[Domicilio],[Contacto],[Telefono])VALUES(1,'07/02/2020','05','ninguna',4,1,1,'isss','sanvi','Luis','2356-8914')
---SET IDENTITY_INSERT SolicitudBaja OFF
 
 
