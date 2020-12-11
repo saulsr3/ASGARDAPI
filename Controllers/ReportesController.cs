@@ -1836,6 +1836,44 @@ namespace ASGARDAPI.Controllers
             return File(ms, "application/pdf");
         }
 
+        //TABLA VACIAS DE REPORTES POR AREA DE NEGOCIO
+        [Route("api/Reporte/validarempleadosPorAreapdf/{idempleado}")]
+        public int validarempleadosPorAreapdf(int idempleado)
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == idempleado).First();
+                IEnumerable<EmpleadoAF> lista = (from sucursal in bd.Sucursal
+                                                         join area in bd.AreaDeNegocio
+                                                         on sucursal.IdSucursal equals area.IdSucursal
+                                                         join empleado in bd.Empleado
+                                                         on area.IdAreaNegocio equals empleado.IdAreaDeNegocio
+                                                         join cargos in bd.Cargos
+                                                         on empleado.IdCargo equals cargos.IdCargo
+                                                         where empleado.Dhabilitado == 1 && empleado.IdAreaDeNegocio == oArea.IdAreaNegocio
+                                                         select new EmpleadoAF
+                                                         {
+                                                             idempleado = empleado.IdEmpleado,
+                                                             dui = empleado.Dui,
+                                                             nombres = empleado.Nombres + " " + empleado.Apellidos,
+                                                             direccion = empleado.Direccion,
+                                                             telefono = empleado.Telefono,
+                                                             telefonopersonal = empleado.TelefonoPersonal,
+                                                             nombrearea = area.Nombre,
+                                                             nombresucursal = sucursal.Nombre,
+                                                             ubicacion = sucursal.Ubicacion,
+                                                             cargo = cargos.Cargo
+
+                                                         }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
+            }
+        }
+
         //FIN REPORTE EMPLEADO POR ÁREA DE NEGOCIO
 
         [HttpGet]
