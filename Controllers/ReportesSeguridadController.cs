@@ -1470,7 +1470,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("CÓDIGO DE BARRA DEL ACTIVO: ", parrafo) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("CÓDIGO DE BARRAS DEL ACTIVO: ", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -1484,16 +1484,17 @@ namespace ASGARDAPI.Controllers
             {
 
 
-             
-                ActivoFijo oactivo = new ActivoFijo();
-                //string nombre;
-              
-                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idactivo).First();
-                Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
 
-                var tbl11 = new PdfPTable(new float[] { 12f }) { WidthPercentage = 30f };
+                DatosCodigoBarraAF oDatos = new DatosCodigoBarraAF();
+                //string nombre;
+               
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idactivo).First();
+               // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+              
+                var tbl11 = new PdfPTable(new float[] { 20f }) { WidthPercentage = 40f };
               //  tbl11.AddCell(new PdfPCell(new Phrase("Datos : ", parrafo2)) { Border = 0, Rowspan = 2 });
-                tbl11.AddCell(new PdfPCell(new Phrase(oActivo.Desripcion +" - "+ oActivo.Modelo + " - " + oMarca.Marca, parrafo2)) { Border = 0 });
+                tbl11.AddCell(new PdfPCell(new Phrase(oActivo.Desripcion +" - "+ oActivo.Modelo, parrafo2)) { Border = 0 });
                // tbl11.AddCell(new PdfPCell(new Phrase("Datos2 : ", parrafo2)) { Border = 0, Rowspan = 2 });
                 //tbl11.AddCell(new PdfPCell(new Phrase(oActivo.NoSerie, parrafo2)) { Border = 0 });
                 doc.Add(tbl11);
