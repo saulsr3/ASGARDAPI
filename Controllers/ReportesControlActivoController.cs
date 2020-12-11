@@ -863,38 +863,63 @@ namespace ASGARDAPI.Controllers
             //Espacio en blanco
             doc.Add(Chunk.Newline);
 
-            //Objeto cadena
-            BarcodeLib.Barcode barcodeAPI = new BarcodeLib.Barcode();
-
-
-
-            //string prodCode = "038000356216";
-            PdfContentByte cb = writer.DirectContent;
-            cb.Rectangle(doc.PageSize.Width - 90f, 830f, 50f, 50f);
-            cb.Stroke();
-            iTextSharp.text.pdf.Barcode128 bc = new Barcode128();
-            bc.TextAlignment = Element.ALIGN_CENTER;
-            bc.Code = "AC01-001-105-001";
-            bc.StartStopText = false;
-            bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
-            bc.Extended = true;
-            //bc.Font = null;
-
-            iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
-            PatImage1.ScaleToFit(160, 20);
-
-            PdfPTable p_detail1 = new PdfPTable(1);
-            p_detail1.WidthPercentage = 100;
-
-            PdfPCell barcideimage = new PdfPCell(PatImage1);
-            //barcideimage.Colspan = 2;
-            barcideimage.HorizontalAlignment = 2;
-            barcideimage.Border = 0;
-            p_detail1.AddCell(barcideimage);
-
-            doc.Add(p_detail1);
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+                PdfContentByte cb = writer.DirectContent;
+                cb.Rectangle(doc.PageSize.Width - 90f, 830f, 50f, 50f);
+                cb.Stroke();
+                iTextSharp.text.pdf.Barcode128 bc = new Barcode128();
+                bc.TextAlignment = Element.ALIGN_CENTER;
+
+                //Llamo la lista para recorrer todos los activos
+                List<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                          join noFormulario in bd.FormularioIngreso
+                                          on activo.NoFormulario equals noFormulario.NoFormulario
+                                          join clasif in bd.Clasificacion
+                                          on activo.IdClasificacion equals clasif.IdClasificacion
+                                          join resposable in bd.Empleado
+                                          on activo.IdResponsable equals resposable.IdEmpleado
+                                          join area in bd.AreaDeNegocio
+                                          on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                          where (activo.EstadoActual != 0) && activo.EstaAsignado == 1
+
+                                          orderby activo.CorrelativoBien
+                                          select new RegistroAF
+                                          {
+                                              IdBien = activo.IdBien,
+                                              //Sólo necesito el correlativo
+                                              Codigo = activo.CorrelativoBien
+                       
+                                          }).ToList();
+
+                
+               
+                //Recorro la lista
+                foreach (var activoA in lista)
+                {
+                    bc.Code = activoA.Codigo;
+                    bc.StartStopText = false;
+                    bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
+                    bc.Extended = true;
+                    iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
+                    PatImage1.ScaleToFit(200, 200);
+
+                    PdfPTable p_detail1 = new PdfPTable(1);
+                    p_detail1.WidthPercentage = 40;
+
+                    PdfPCell barcideimage = new PdfPCell(PatImage1);
+                    //barcideimage.Colspan = 2;
+                    barcideimage.HorizontalAlignment = 3;
+                    barcideimage.Border = 0;
+                    p_detail1.AddCell(barcideimage);
+                    doc.Add(p_detail1);
+
+                }
+               
+
+                
+
+
                 CooperativaAF oCooperativaAF = new CooperativaAF();
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
                 oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
