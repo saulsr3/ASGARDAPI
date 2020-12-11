@@ -33,9 +33,10 @@ namespace ASGARDAPI.Controllers
 
         // INICIO DE LISTADO DE USUARIO
         [HttpGet]
-        [Route("api/ReportesSeguridad/listarUsuarios")]
-        public List<UsuarioAF> listarUsuarios()
+        [Route("api/ReportesSeguridad/validarlistarUsuarios")]
+        public int listarUsuarios()
         {
+            int respuesta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
                 List<UsuarioAF> lista = (from usuario in bd.Usuario
@@ -54,7 +55,11 @@ namespace ASGARDAPI.Controllers
                                              nombreTipoUsuario= tipousuario.Descripcion,
 
                                             }).ToList();
-                return lista;
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
 
             }
         }
@@ -235,6 +240,39 @@ namespace ASGARDAPI.Controllers
 
                                                  }).ToList();
                 return lista;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ReportesSeguridad/validarcomboClasificaciones/{idclasificacion}")]
+        public int validarcomboClasificaciones(int idclasificacion)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                int respuesta = 0;
+                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                                      join noFormulario in bd.FormularioIngreso
+                                                      on activo.NoFormulario equals noFormulario.NoFormulario
+                                                      join clasif in bd.Clasificacion
+                                                      on activo.IdClasificacion equals clasif.IdClasificacion
+
+                                                      where activo.EstaAsignado == 1 && clasif.IdClasificacion == idclasificacion && (activo.EstadoActual != 0)
+
+                                                      orderby activo.CorrelativoBien
+                                                      select new RegistroAF
+                                                      {
+                                                          IdBien = activo.IdBien,
+                                                          Codigo = activo.CorrelativoBien,
+                                                          fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                          Descripcion = activo.Desripcion,
+                                                          Clasificacion = clasif.Clasificacion1,
+                                                          valoradquicicion = activo.ValorAdquicicion.ToString(),
+                                                      }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
             }
         }
 
@@ -464,6 +502,37 @@ namespace ASGARDAPI.Controllers
 
                                                       }).ToList();
                 return lista;
+            }
+        }
+        //VALIDAR COMOBO MARCAS
+        [HttpGet]
+        [Route("api/ReportesSeguridad/validarcomboMarcas/{idmarca}")]
+        public int validarcomboMarcas(int idmarca)
+        {
+            int respuesta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                                 join noFormulario in bd.FormularioIngreso
+                                                 on activo.NoFormulario equals noFormulario.NoFormulario
+                                                 join marca in bd.Marcas
+                                                 on activo.IdMarca equals marca.IdMarca
+                                                 where activo.EstaAsignado == 1 && marca.IdMarca == idmarca && (activo.EstadoActual != 0)
+                                                 select new RegistroAF
+                                               {
+                                                   IdBien = activo.IdBien,
+                                                   Codigo = activo.CorrelativoBien,
+                                                   fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                   Descripcion = activo.Desripcion,
+                                                   valoradquicicion = activo.ValorAdquicicion.ToString(),
+
+
+                                               }).ToList();
+                if (lista.Count() > 0)
+                {
+                    respuesta = 1;
+                }
+                return respuesta;
             }
         }
 

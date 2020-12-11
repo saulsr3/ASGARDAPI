@@ -678,8 +678,8 @@ namespace ASGARDAPI.Controllers
 
     //tabla vacia solicitudes traspasos
         [HttpGet]
-        [Route("api/SolicitudTraspaso/validarHistorialSolicitudesTraspasos")]
-        public int validarHistorialSolicitudesTraspasos(int idbien)
+        [Route("api/SolicitudTraspaso/validarHistorialSolicitudesTraspaso")]
+        public int validarHistorialSolicitudesTraspasos()
         {
             int respuesta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
