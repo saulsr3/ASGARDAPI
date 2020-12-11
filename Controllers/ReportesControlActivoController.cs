@@ -898,23 +898,26 @@ namespace ASGARDAPI.Controllers
                 foreach (var activoA in lista)
                 {
                     bc.Code = activoA.Codigo;
+                    bc.StartStopText = false;
+                    bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
+                    bc.Extended = true;
+                    iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
+                    PatImage1.ScaleToFit(200, 200);
+
+                    PdfPTable p_detail1 = new PdfPTable(1);
+                    p_detail1.WidthPercentage = 40;
+
+                    PdfPCell barcideimage = new PdfPCell(PatImage1);
+                    //barcideimage.Colspan = 2;
+                    barcideimage.HorizontalAlignment = 3;
+                    barcideimage.Border = 0;
+                    p_detail1.AddCell(barcideimage);
+                    doc.Add(p_detail1);
+
                 }
-                bc.StartStopText = false;
-                bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
-                bc.Extended = true;
-                iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
-                PatImage1.ScaleToFit(160, 20);
+               
 
-                PdfPTable p_detail1 = new PdfPTable(1);
-                p_detail1.WidthPercentage = 100;
-
-                PdfPCell barcideimage = new PdfPCell(PatImage1);
-                //barcideimage.Colspan = 2;
-                barcideimage.HorizontalAlignment = 2;
-                barcideimage.Border = 0;
-                p_detail1.AddCell(barcideimage);
-
-                doc.Add(p_detail1);
+                
 
 
                 CooperativaAF oCooperativaAF = new CooperativaAF();
