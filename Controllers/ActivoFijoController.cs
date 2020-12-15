@@ -1750,6 +1750,32 @@ namespace ASGARDAPI.Controllers
             }
             return rpta;
         }
+
+        [HttpGet]
+        [Route("api/ActivoFijo/validarBitacoraAnio/{anio}")]
+        public int validarBitacoraAnio(int anio)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+
+                IEnumerable<ComboAnidadoAF> lista = (from bitacora in bd.Bitacora
+                                                     where (bitacora.Fecha >= DateTime.Parse(fechaMin) && bitacora.Fecha <= uDate)
+                                                     select new ComboAnidadoAF
+                                                     {
+                                                         id = bitacora.IdBitacora
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+
         [HttpGet]
         [Route("api/ActivoFijo/validarActivoMes/{mes}/{anio}")]
         public int validarActivoMes(int mes, int anio)
