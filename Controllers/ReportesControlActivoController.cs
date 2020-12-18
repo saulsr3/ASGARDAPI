@@ -865,6 +865,7 @@ namespace ASGARDAPI.Controllers
 
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+
                 PdfContentByte cb = writer.DirectContent;
                 cb.Rectangle(doc.PageSize.Width - 90f, 830f, 50f, 50f);
                 cb.Stroke();
@@ -888,7 +889,9 @@ namespace ASGARDAPI.Controllers
                                           {
                                               IdBien = activo.IdBien,
                                               //Sólo necesito el correlativo
-                                              Codigo = activo.CorrelativoBien
+                                              Codigo = activo.CorrelativoBien,
+                                              Descripcion=activo.Desripcion,
+                                              modelo=activo.Modelo
                        
                                           }).ToList();
 
@@ -897,6 +900,7 @@ namespace ASGARDAPI.Controllers
                 //Recorro la lista
                 foreach (var activoA in lista)
                 {
+                  //  doc.Add(new Phrase(activoA.Descripcion + " - " + activoA.modelo, parrafo) { Element.ALIGN_CENTER });
                     bc.Code = activoA.Codigo;
                     bc.StartStopText = false;
                     bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
@@ -908,17 +912,16 @@ namespace ASGARDAPI.Controllers
                     p_detail1.WidthPercentage = 40;
 
                     PdfPCell barcideimage = new PdfPCell(PatImage1);
-                    //barcideimage.Colspan = 2;
                     barcideimage.HorizontalAlignment = 3;
                     barcideimage.Border = 0;
+                    PdfPCell desc = new PdfPCell(new Phrase(activoA.Descripcion + " - " + activoA.modelo, parrafo));
+                    desc.HorizontalAlignment = 1;
+                    desc.Border = 0;
+                    p_detail1.AddCell(desc);
                     p_detail1.AddCell(barcideimage);
                     doc.Add(p_detail1);
 
                 }
-               
-
-                
-
 
                 CooperativaAF oCooperativaAF = new CooperativaAF();
                 Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
@@ -1179,15 +1182,14 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f, 10f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
             var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
             var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
             var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
             var c5 = new PdfPCell(new Phrase("VALOR DE MEJORA", parrafo6));
             var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo6));
-            var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
-            var c8 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
+            var c7 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
             //Agregamos a la tabla las celdas 
             tbl.AddCell(c1);
             tbl.AddCell(c2);
@@ -1196,7 +1198,6 @@ namespace ASGARDAPI.Controllers
             tbl.AddCell(c5);
             tbl.AddCell(c6);
             tbl.AddCell(c7);
-            tbl.AddCell(c8);
 
             //Extraemos de la base y llenamos las celdas
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -1248,8 +1249,7 @@ namespace ASGARDAPI.Controllers
                     c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
                     c5.Phrase = new Phrase("$" + activos.montoTransaccion, parrafo5);
                     c6.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
-                    c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);
-                    c8.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
+                    c7.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
                     //Agregamos a la tabla
                     tbl.AddCell(c1);
                     tbl.AddCell(c2);
@@ -1258,7 +1258,6 @@ namespace ASGARDAPI.Controllers
                     tbl.AddCell(c5);
                     tbl.AddCell(c6);
                     tbl.AddCell(c7);
-                    tbl.AddCell(c8);
                 }
 
                 //INICIO DE ADICIÓN DE LOGO

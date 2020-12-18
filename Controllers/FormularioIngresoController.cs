@@ -553,6 +553,7 @@ namespace ASGARDAPI.Controllers
 
                         oActivoFijo.PlazoPago = oActivoEdi.plazopago;
                         oActivoFijo.Prima = oActivoEdi.prima;
+                        oActivoFijo.EstadoIngreso = oActivoEdi.estadoingreso;
                         oActivoFijo.CuotaAsignanda = oActivoEdi.cuotaasignada;
                         oActivoFijo.Intereses = oActivoEdi.interes;
                         oActivoFijo.ValorAdquicicion = oActivoEdi.valoradquicicion;
