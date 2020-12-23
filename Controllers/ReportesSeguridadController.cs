@@ -247,9 +247,11 @@ namespace ASGARDAPI.Controllers
         [Route("api/ReportesSeguridad/validarcomboClasificaciones/{idclasificacion}")]
         public int validarcomboClasificaciones(int idclasificacion)
         {
+            int respuesta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                int respuesta = 0;
+                
+                Clasificacion oClasificacion = bd.Clasificacion.Where(p => p.IdClasificacion == idclasificacion).First();
                 IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
                                                       join noFormulario in bd.FormularioIngreso
                                                       on activo.NoFormulario equals noFormulario.NoFormulario
@@ -512,6 +514,7 @@ namespace ASGARDAPI.Controllers
             int respuesta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
+                Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == idmarca).First();
                 IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
                                                  join noFormulario in bd.FormularioIngreso
                                                  on activo.NoFormulario equals noFormulario.NoFormulario
@@ -1717,19 +1720,16 @@ namespace ASGARDAPI.Controllers
                // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
                 // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
               
-                var tbl11 = new PdfPTable(new float[] { 20f }) { WidthPercentage = 40f };
-              //  tbl11.AddCell(new PdfPCell(new Phrase("Datos : ", parrafo2)) { Border = 0, Rowspan = 2 });
-                tbl11.AddCell(new PdfPCell(new Phrase(oActivo.Desripcion +" - "+ oActivo.Modelo, parrafo2)) { Border = 0 });
-               // tbl11.AddCell(new PdfPCell(new Phrase("Datos2 : ", parrafo2)) { Border = 0, Rowspan = 2 });
-                //tbl11.AddCell(new PdfPCell(new Phrase(oActivo.NoSerie, parrafo2)) { Border = 0 });
-                doc.Add(tbl11);
-
                 doc.Add(Chunk.Newline);
-               
+
 
 
 
                 //string prodCode = "038000356216";
+                PdfPCell descripcion = new PdfPCell(new Phrase(oActivo.Desripcion, parrafo2));
+                descripcion.HorizontalAlignment = 1;
+                descripcion.Border = 0;
+               
                 PdfContentByte cb = writer.DirectContent;
                 cb.Rectangle(doc.PageSize.Width - 900f, 830f, 900f, 900f);
                 cb.Stroke();
@@ -1754,6 +1754,7 @@ namespace ASGARDAPI.Controllers
                 //barcideimage.Colspan = 2;
                 barcideimage.HorizontalAlignment = 3;
                 barcideimage.Border = 0;
+                 p_detail1.AddCell(descripcion);
                 p_detail1.AddCell(barcideimage);
 
                 doc.Add(p_detail1);
