@@ -678,34 +678,33 @@ namespace ASGARDAPI.Controllers
 
     //tabla vacia solicitudes traspasos
         [HttpGet]
-        [Route("api/SolicitudTraspaso/validarHistorialSolicitudesTraspaso")]
+        [Route("api/SolicitudTraspaso/validarHistorialSolicitudesTraspasos")]
         public int validarHistorialSolicitudesTraspasos()
         {
             int respuesta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<SolicitudTraspasoAF> lista = (from solicitud in bd.SolicitudTraspaso
-                                                                      join activo in bd.ActivoFijo
-                                                                      on solicitud.IdBien equals activo.IdBien
-                                                                      where solicitud.Estado==2
-                                                                                                                                   
-                                                                        select new SolicitudTraspasoAF
-                                                                        {
-                                                                            idbien = activo.IdBien,
-                                                                            idsolicitud = solicitud.IdSolicitud,
-                                                                            folio = solicitud.Folio,
-                                                                            codigo = activo.CorrelativoBien,
-                                                                            fechacadena = solicitud.Fecha == null ? " " : ((DateTime)solicitud.Fecha).ToString("dd-MM-yyyy"),
-                                                                            descripcion = solicitud.Descripcion,
-                                                                            responsableanterior = solicitud.ResponsableAnterior,
-                                                                            areaanterior = solicitud.AreadenegocioAnterior,
-                                                                            nuevoresponsable = solicitud.NuevoResponsable,
-                                                                            nuevaarea = solicitud.NuevaAreadenegocio,
-                                                                            fechacadenatraspaso= solicitud.Fechatraspaso == null ? " " : ((DateTime)solicitud.Fechatraspaso).ToString("dd-MM-yyyy"),
-                                                                            idresponsable = (int) solicitud.IdResponsable
+                IEnumerable<DepreciacionAF> lista = (from activo in bd.ActivoFijo
+                                                     join empleado in bd.Empleado
+                                                     on activo.IdResponsable equals empleado.IdEmpleado
+                                                     join area in bd.AreaDeNegocio
+                                                     on empleado.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                     join sucursal in bd.Sucursal
+                                                     on area.IdSucursal equals sucursal.IdSucursal
+
+                                                     where activo.EstaAsignado == 1 && activo.EstadoActual != 0
+
+                                                     select new DepreciacionAF
+                                                     {
+                                                         idBien = activo.IdBien,
+                                                         codigo = activo.CorrelativoBien,
+                                                         descripcion = activo.Desripcion,
+                                                         areanegocio = area.Nombre,
+                                                         sucursal = sucursal.Nombre,
+                                                         responsable = empleado.Nombres + " " + empleado.Apellidos
 
 
-                                                                        }).ToList();
+                                                     }).ToList();
                 if (lista.Count() > 0)
                 {
                     respuesta = 1;

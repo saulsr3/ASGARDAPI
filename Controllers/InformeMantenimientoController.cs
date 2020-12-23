@@ -102,6 +102,59 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
+        //LISTAR REVALORIZACIÓN
+        [HttpGet]
+        [Route("api/InformeMantenimiento/listarRevalorizacion")]
+        public IEnumerable<DatosDepreciacionAF> listarRevalorizacion()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+                IEnumerable<DatosDepreciacionAF> listar = (from activo in bd.ActivoFijo
+                                                                      join datos in bd.TarjetaDepreciacion
+                                                                      on activo.IdBien equals datos.IdBien
+                                                                      where datos.Concepto== "Revalorización" && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion  < (anioActual.Anio))) 
+
+
+                                                           select new DatosDepreciacionAF
+                                                                        {
+                                                                           idBien=(int) datos.IdBien,
+                                                                           fechacadena = datos.Fecha == null ? " " : ((DateTime)datos.Fecha).ToString("dd-MM-yyyy"),
+                                                                           concepto= datos.Concepto,   
+                                                                           valorRevalorizacion= (double) datos.ValorTransaccion,                                                                          
+                                                                        }).ToList();
+                return listar;
+            }
+        }
+
+        //eliminar revalorzación
+        [HttpGet]
+        [Route("api/InformeMantenimiento/eliminarRevalorizacion/{idbien}")]
+        public int eliminarRevalorizacion(int idbien)
+        {
+            int respuesta = 0;
+
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == idbien).First();
+                   // oTarjeta.Dhabilitado = 0;
+                    bd.SaveChanges();
+                    respuesta = 1;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                respuesta = 0;
+            }
+            return respuesta;
+        }
+
+
         //metodo para buscar informes.
         [HttpGet]
         [Route("api/InformeMantenimiento/buscarInformes/{buscador?}")]
@@ -503,7 +556,7 @@ namespace ASGARDAPI.Controllers
         }
         [HttpGet]
         [Route("api/InformeMantenimiento/validarHistorialMantenimiento")]
-        public int validarSolicitudesParaMantenimiento()
+        public int validarHistorialMantenimiento()
         {
             int rpta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())

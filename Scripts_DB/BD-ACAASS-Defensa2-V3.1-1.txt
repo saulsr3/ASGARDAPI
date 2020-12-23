@@ -223,7 +223,8 @@ Valor float,
 DepreciacionAnual float,
 DepreciacionAcumulada float,
 ValorActual float,
-ValorTransaccion float
+ValorTransaccion float,
+Dhabilitado int
 )
 GO
 use BDAcaassAF

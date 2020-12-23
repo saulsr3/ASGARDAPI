@@ -12,5 +12,7 @@ namespace ASGARDAPI.Clases
         public double valorDepreciacion { get; set; }
         public double valorRevalorizacion { get; set; }
         public int vidaUtil { get; set; }
+        public string fechacadena { get; set; }
+        public string concepto { get; set; }
     }
 }
