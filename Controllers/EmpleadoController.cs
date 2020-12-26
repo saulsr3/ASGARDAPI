@@ -100,6 +100,7 @@ namespace ASGARDAPI.Controllers
                 oEmpleadoAF.apellidos = oEmpleado.Apellidos;
                 oEmpleadoAF.direccion = oEmpleado.Direccion;
                 oEmpleadoAF.telefono = oEmpleado.Telefono;
+                oEmpleadoAF.email = oEmpleado.Email;
                 oEmpleadoAF.telefonopersonal = oEmpleado.TelefonoPersonal;
                 oEmpleadoAF.idcargo = (int)oEmpleado.IdCargo;
                 oEmpleadoAF.idareadenegocio = (int)oEmpleado.IdAreaDeNegocio;
@@ -108,6 +109,57 @@ namespace ASGARDAPI.Controllers
                 return oEmpleadoAF;
             }
         }
+
+        //Detalles
+        [HttpGet]
+        [Route("api/Empleado/DatosGeneralesEmpleado/{idempleado}")]
+        public DatosGeneralesEmpleadoAF DatosGeneralesEmpleado(int idempleado)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DatosGeneralesEmpleadoAF oDatosAF = new DatosGeneralesEmpleadoAF();
+                Empleado oEmpleado = bd.Empleado.Where(p => p.IdEmpleado == idempleado).First();
+                Cargos oCargo = bd.Cargos.Where(p => p.IdCargo == oEmpleado.IdCargo).First();
+                AreaDeNegocio oArea = bd.AreaDeNegocio.Where(p => p.IdAreaNegocio == oEmpleado.IdAreaDeNegocio).First();
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IdSucursal == oArea.IdSucursal).First();
+                
+
+                oDatosAF.dui = oEmpleado.Dui;
+                oDatosAF.nombres = oEmpleado.Nombres;
+                oDatosAF.apellidos = oEmpleado.Apellidos;
+                oDatosAF.direccion = oEmpleado.Direccion;
+                oDatosAF.telefono = oEmpleado.Telefono;
+                oDatosAF.telefonopersonal = oEmpleado.TelefonoPersonal;
+                oDatosAF.email = oEmpleado.Email;
+
+                if(oCargo == null)
+                {
+                    oDatosAF.cargo = "";
+                }
+                else
+                {
+                    oDatosAF.cargo = oCargo.Cargo;
+                }
+                
+                if(oArea == null)
+                {
+                    oDatosAF.nombrearea = "";
+                    oDatosAF.nombresucursal = "";
+                }
+                else
+                {
+                    oDatosAF.nombrearea = oArea.Nombre;
+                    oDatosAF.nombresucursal = oSucursal.Nombre;
+                }
+
+                oDatosAF.ubicacion = oSucursal.Ubicacion;
+
+                return oDatosAF;
+            }
+
+        }
+
         [HttpGet]
         [Route("api/Empleado/EsEmpleadojefe/{idempleado}")]
         public int EsEmpleadojefe(int idempleado)
