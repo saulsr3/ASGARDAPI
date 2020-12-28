@@ -71,6 +71,40 @@ namespace ASGARDAPI.Controllers
                 return listaProveedores;
             }
         }
+
+        //Validar bitacora
+        [HttpGet]
+        [Route("api/Seguridad/validarBitacora")]
+        public int validarBitacora()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<TablaBitacoraAF> lista = (from bitacora in bd.Bitacora
+                                                      join usuario in bd.Usuario
+                                                       on bitacora.IdUsuario equals usuario.IdUsuario
+                                                      join empleado in bd.Empleado
+                                                      on usuario.IdEmpleado equals empleado.IdEmpleado
+                                                      orderby bitacora.Fecha descending
+                                                      select new TablaBitacoraAF
+                                             {
+                                                          idBitacora = bitacora.IdBitacora,
+                                                          nombreEmpleado = empleado.Nombres + " " + empleado.Apellidos,
+                                                          nombreUsuario = usuario.NombreUsuario,
+                                                          fecha = bitacora.Fecha == null ? " " : ((DateTime)bitacora.Fecha).ToString("dd-MM-yyyy : HH:mm:ss"),
+                                                          descripcion = bitacora.Descripcion,
+
+                                                      }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
         [HttpGet]
         [Route("api/Seguridad/ValidaNumeroUsuarios/{email}")]
         public int ValidaNumeroUsuarios(string email)

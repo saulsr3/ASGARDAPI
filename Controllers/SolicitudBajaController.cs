@@ -910,6 +910,41 @@ namespace ASGARDAPI.Controllers
                 return rpta;
             }
         }
+
+        //Validar historial de descargo para activos no asignados
+        [HttpGet]
+        [Route("api/SolicitudBaja/validarHistorialBajaNoAsig")]
+        public int validarHistorialBajaNoAsig()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<BajaAF> lista = (from activo in bd.ActivoFijo
+                                             join noFormulario in bd.FormularioIngreso
+                                             on activo.NoFormulario equals noFormulario.NoFormulario
+                                             join clasif in bd.Clasificacion
+                                             on activo.IdClasificacion equals clasif.IdClasificacion
+                                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
+                                             select new BajaAF
+                                             {
+                                                 IdBien = activo.IdBien,
+                                                 NoFormulario = noFormulario.NoFormulario,
+                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                 Desripcion = activo.Desripcion,
+                                                 Clasificacion = clasif.Clasificacion1
+
+                                             }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
+
         ///////////////////////METODOS PARAA DESACRGO
         //LISTA LOS BIENES NO ASIGNADOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
