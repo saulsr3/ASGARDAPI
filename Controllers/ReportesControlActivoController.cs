@@ -840,19 +840,8 @@ namespace ASGARDAPI.Controllers
             //Encabezado
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-                oCooperativaAF.nombre = oCooperativa.Nombre;
-                oCooperativaAF.descripcion = oCooperativa.Descripcion;
-
-                //Se agrega el encabezado
-                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
-                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
-                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
-                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
-                doc.Add(tbl1);
-                doc.Add(new Phrase("\n"));
+               
+               // doc.Add(new Phrase("\n"));
             }
             doc.Add(new Phrase("\n"));
             //Línea separadora
@@ -922,38 +911,6 @@ namespace ASGARDAPI.Controllers
                     doc.Add(p_detail1);
 
                 }
-
-                CooperativaAF oCooperativaAF = new CooperativaAF();
-                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
-                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
-                try
-                {
-                    iTextSharp.text.Image logo = null;
-                    //Acá le cambie el logo de la cooperativa para probar el código de barra para ahorra código
-                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
-                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
-                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
-                    logo.BorderColor = iTextSharp.text.BaseColor.White;
-                    logo.ScaleToFit(170f, 100f);
-
-                    float ancho = logo.Width;
-                    float alto = logo.Height;
-                    float proporcion = alto / ancho;
-
-                    logo.ScaleAbsoluteWidth(80);
-                    logo.ScaleAbsoluteHeight(80 * proporcion);
-
-                    logo.SetAbsolutePosition(40f, 695f);
-
-                    doc.Add(logo);
-
-                }
-                catch (DocumentException dex)
-                {
-                    //log exception here
-                }
-
-                //FIN DE ADICIÓN DE LOGO
 
             }
           //  doc.Add(tbl);
