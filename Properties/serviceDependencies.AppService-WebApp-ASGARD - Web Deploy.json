@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/server-db-asgard/databases/DBAcaassAF",
+      "type": "mssql.azure",
+      "connectionId": "\"DataSource=(localdb)\\\\MSSQLLocalDB;InitialCatalog=DBAcaassAF;database=BDAcaassAF;IntegratedSecurity=true\"",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}
