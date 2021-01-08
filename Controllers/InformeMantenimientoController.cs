@@ -104,21 +104,22 @@ namespace ASGARDAPI.Controllers
 
         //LISTAR REVALORIZACIÓN
         [HttpGet]
-        [Route("api/InformeMantenimiento/listarRevalorizacion")]
-        public IEnumerable<DatosDepreciacionAF> listarRevalorizacion()
+        [Route("api/InformeMantenimiento/listarRevalorizacion/{idbien}")]
+        public IEnumerable<DatosDepreciacionAF> listarRevalorizacion(int idbien)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).FirstOrDefault();
+               // Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).LastOrDefault();
                 IEnumerable<DatosDepreciacionAF> listar = (from activo in bd.ActivoFijo
-                                                                      join datos in bd.TarjetaDepreciacion
-                                                                      on activo.IdBien equals datos.IdBien
-                                                                      where datos.Concepto== "Revalorización" && (activo.EstadoActual != 0) && (activo.UltimoAnioDepreciacion == null || (activo.UltimoAnioDepreciacion  < (anioActual.Anio))) 
+                                                           join datos in bd.TarjetaDepreciacion
+                                                           on activo.IdBien equals datos.IdBien
+                                                           where datos.IdBien == idbien && datos.Concepto == "Revalorización" && (activo.EstadoActual != 0) && datos.Dhabilitado!=0
 
 
                                                            select new DatosDepreciacionAF
                                                                         {
                                                                            idBien=(int) datos.IdBien,
+                                                                           idTarjeta= datos.IdTarjeta,
                                                                            fechacadena = datos.Fecha == null ? " " : ((DateTime)datos.Fecha).ToString("dd-MM-yyyy"),
                                                                            concepto= datos.Concepto,   
                                                                            valorRevalorizacion= (double) datos.ValorTransaccion,                                                                          
@@ -138,8 +139,8 @@ namespace ASGARDAPI.Controllers
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                    TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdBien == idbien).First();
-                   // oTarjeta.Dhabilitado = 0;
+                    TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdTarjeta == idbien && p.Concepto== "Revalorización").First();
+                    oTarjeta.Dhabilitado = 0;
                     bd.SaveChanges();
                     respuesta = 1;
                 }
@@ -153,6 +154,8 @@ namespace ASGARDAPI.Controllers
             }
             return respuesta;
         }
+
+       
 
 
         //metodo para buscar informes.
