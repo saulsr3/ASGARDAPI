@@ -818,6 +818,36 @@ namespace ASGARDAPI.Controllers
                 return odatos;
             }
         }
+        [HttpGet]
+        [Route("api/Depreciacion/ValidarCierre/{anio}")]
+        public RevertirAF DatosCierre(int anio)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                RevertirAF revertirAF = new RevertirAF();
+                IEnumerable<CierreAF> lista = (from periodo in bd.Periodo
+                                               where (int)periodo.Anio==anio-1
+                                                     select new CierreAF
+                                                     {
+                                                         idPeriodo = periodo.IdPeriodo
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    revertirAF.anioAnterior = 1;
+                }
+                IEnumerable<CierreAF> lista1 = (from periodo in bd.Periodo
+                                               where (int)periodo.Anio == anio+1
+                                               select new CierreAF
+                                               {
+                                                   idPeriodo = periodo.IdPeriodo
+                                               }).ToList();
+                if (lista1.Count() > 0)
+                {
+                    revertirAF.anioSiguiente = 1;
+                }
+                return revertirAF;
+            }
+        }
         //Metodo que ejecuta el cierre del año actual.
         [HttpPost]
         [Route("api/Depreciacion/EjecutarCierre")]
