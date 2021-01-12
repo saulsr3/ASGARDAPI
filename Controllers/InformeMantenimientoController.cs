@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using ASGARDAPI.Models;
 using ASGARDAPI.Clases;
 using System.Threading;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASGARDAPI.Controllers
 {
@@ -109,11 +111,14 @@ namespace ASGARDAPI.Controllers
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-               // Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).LastOrDefault();
+                 Periodo anioActual = bd.Periodo.Where(p => p.Estado == 1).LastOrDefault();
+                string fechaMin = "1-1-" + anioActual.Anio;
+                string fechaMax = "31-12-" + anioActual.Anio;
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
                 IEnumerable<DatosDepreciacionAF> listar = (from activo in bd.ActivoFijo
                                                            join datos in bd.TarjetaDepreciacion
                                                            on activo.IdBien equals datos.IdBien
-                                                           where datos.IdBien == idbien && datos.Concepto == "Revalorización" && (activo.EstadoActual != 0) && datos.Dhabilitado!=0
+                                                           where (datos.Fecha >= DateTime.Parse(fechaMin) && datos.Fecha <= uDate) && datos.IdBien == idbien && datos.Concepto == "Revalorización" && (activo.EstadoActual != 0) && datos.Dhabilitado!=0
 
 
                                                            select new DatosDepreciacionAF
@@ -140,7 +145,7 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdTarjeta == idbien && p.Concepto== "Revalorización").First();
-                    oTarjeta.Dhabilitado = 0;
+                    bd.Entry(oTarjeta).State = EntityState.Deleted;
                     bd.SaveChanges();
                     respuesta = 1;
                 }
