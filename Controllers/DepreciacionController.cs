@@ -820,7 +820,7 @@ namespace ASGARDAPI.Controllers
         }
         [HttpGet]
         [Route("api/Depreciacion/ValidarCierre/{anio}")]
-        public RevertirAF DatosCierre(int anio)
+        public RevertirAF ValidarCierre(int anio)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
@@ -859,16 +859,29 @@ namespace ASGARDAPI.Controllers
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
                     Periodo oPeriodo = bd.Periodo.Where(p => p.IdPeriodo == oCierreAF.idPeriodo).First();
-                    oPeriodo.Estado = 0;
-                    bd.SaveChanges();
-                    Periodo oPeriodoNuevo = new Periodo();
-                    Cooperativa oCooperativaPeriodo = bd.Cooperativa.Last();
-                    oPeriodoNuevo.IdCooperativa = oCooperativaPeriodo.IdCooperativa;
-                    oPeriodoNuevo.Anio = oPeriodo.Anio+1;
-                    oPeriodoNuevo.Estado = 1;
-                    bd.Periodo.Add(oPeriodoNuevo);
-                    bd.SaveChanges();
-                    rpta = 1;
+                    bool existe = bd.Periodo.Any(p => p.Anio == oPeriodo.Anio + 1);
+                    if (existe)
+                    {
+                        Periodo oPeriodorev = bd.Periodo.Where(p => p.Anio == oPeriodo.Anio + 1).First();
+                        oPeriodo.Estado = 0;
+                        oPeriodorev.Estado = 1;
+                        bd.SaveChanges();
+                        rpta = 1;
+                    }
+                    else {
+                        oPeriodo.Estado = 0;
+                        bd.SaveChanges();
+                        Periodo oPeriodoNuevo = new Periodo();
+                        Cooperativa oCooperativaPeriodo = bd.Cooperativa.Last();
+                        oPeriodoNuevo.IdCooperativa = oCooperativaPeriodo.IdCooperativa;
+                        oPeriodoNuevo.Anio = oPeriodo.Anio + 1;
+                        oPeriodoNuevo.Estado = 1;
+                        bd.Periodo.Add(oPeriodoNuevo);
+                        bd.SaveChanges();
+                        rpta = 1;
+                    }
+                  
+                  
                 }
             }
             catch (Exception ex)
