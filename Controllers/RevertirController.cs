@@ -141,9 +141,10 @@ namespace ASGARDAPI.Controllers
             {
                 try
                 {
+                    Periodo oPeriodo = bd.Periodo.Where(p => p.Estado==1).FirstOrDefault();
                     TarjetaDepreciacion oTarjeta = bd.TarjetaDepreciacion.Where(p => p.IdTarjeta == id).FirstOrDefault();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oTarjeta.IdBien).FirstOrDefault();
-                    oActivo.UltimoAnioDepreciacion = oActivo.UltimoAnioDepreciacion - 1;
+                    oActivo.UltimoAnioDepreciacion = oPeriodo.Anio-1;
                     bd.TarjetaDepreciacion.Remove(oTarjeta);
                     bd.SaveChanges();
                     rpta = 1;
