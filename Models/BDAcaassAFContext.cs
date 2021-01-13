@@ -47,8 +47,7 @@ namespace ASGARDAPI.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-               optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
-              // optionsBuilder.UseSqlServer("Data Source=tcp:server-db-asgard.database.windows.net,1433;Initial Catalog=DBAcaassAF;User Id=adminAsgard@server-db-asgard;Password=Root14003$");
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
             }
         }
 
@@ -414,9 +413,7 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdSolicitud);
 
-                entity.Property(e => e.Acuerdo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.Acuerdo).IsUnicode(false);
 
                 entity.Property(e => e.Contacto)
                     .HasMaxLength(100)
@@ -476,9 +473,7 @@ namespace ASGARDAPI.Models
             {
                 entity.HasKey(e => e.IdSolicitud);
 
-                entity.Property(e => e.Acuerdo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.Acuerdo).IsUnicode(false);
 
                 entity.Property(e => e.AreadenegocioAnterior)
                     .HasMaxLength(100)
