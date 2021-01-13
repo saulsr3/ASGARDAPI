@@ -14,6 +14,7 @@ namespace ASGARDAPI.Clases
         public int Dhabilitado { get; set; }
         public string nombreSucursal { get; set; }
         public string ubicacion { get; set; }
+        public int idresponsable { get; set; }
 
     }
 }

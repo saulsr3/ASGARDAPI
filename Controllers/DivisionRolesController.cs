@@ -686,6 +686,8 @@ namespace ASGARDAPI.Controllers
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
+                                 idresponsable = (int)activo.IdResponsable,
+                                 idarea = area.IdAreaNegocio,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,
                                  Desripcion = activo.Desripcion,
@@ -724,6 +726,8 @@ namespace ASGARDAPI.Controllers
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
+                                 idresponsable = (int)activo.IdResponsable,
+                                 idarea = area.IdAreaNegocio,
                                  Desripcion = activo.Desripcion,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,

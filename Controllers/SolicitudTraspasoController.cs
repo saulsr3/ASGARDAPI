@@ -54,6 +54,27 @@ namespace ASGARDAPI.Controllers
 
             }
         }
+        //PARA EL COMBO DE FILTRO
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/comboAreaDeSucursal/{id}")]
+        public IEnumerable<AreasDeNegocioAF> comboAreaDeSucursal(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<AreasDeNegocioAF> lista = (from area in bd.AreaDeNegocio
+                                                       join reponsable in bd.Empleado
+                                                       on area.IdAreaNegocio equals reponsable.IdAreaDeNegocio
+                                                       where area.Dhabilitado == 1 && area.IdSucursal == id
+                                                       orderby area.Nombre
+                                                       select new AreasDeNegocioAF
+                                                       {
+                                                           IdAreaNegocio = area.IdAreaNegocio,
+                                                           idresponsable= reponsable.IdEmpleado,
+                                                           Nombre = area.Nombre
+                                                       }).ToList();
+                return lista;
+            }
+        }
 
         //BUSCAR ACTIVOS ASIGANDOS EN TRASPASO
         [HttpGet]
@@ -79,6 +100,8 @@ namespace ASGARDAPI.Controllers
                              select new ActivoFijoAF
                              {
                                  IdBien = activo.IdBien,
+                                 idresponsable= (int) activo.IdResponsable,
+                                 idarea = area.IdAreaNegocio,
                                  Codigo = activo.CorrelativoBien,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  Desripcion = activo.Desripcion,
@@ -118,6 +141,8 @@ namespace ASGARDAPI.Controllers
                              {
                                  IdBien = activo.IdBien,
                                  Codigo = activo.CorrelativoBien,
+                                 idresponsable = (int)activo.IdResponsable,
+                                 idarea= area.IdAreaNegocio,
                                  Desripcion = activo.Desripcion,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  AreaDeNegocio = area.Nombre + " - " + sucursal.Nombre + " - " + sucursal.Ubicacion,                             
@@ -776,7 +801,7 @@ namespace ASGARDAPI.Controllers
         //LISTAR ACTIVOS EN EL FILTRO DE TRASPASO
         [HttpGet]
         [Route("api/SolicitudTraspaso/listarActivosFiltroT/{id}")]
-        public IEnumerable<ActivoFijoAF> listarActivosFiltro(int id)
+        public IEnumerable<ActivoFijoAF> listarActivosFiltroT(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
@@ -797,6 +822,7 @@ namespace ASGARDAPI.Controllers
                                                  {
                                                      IdBien = activo.IdBien,
                                                      Codigo = activo.CorrelativoBien,
+                                                     idresponsable= resposable.IdEmpleado,
                                                      fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                      Desripcion = activo.Desripcion,
                                                      Clasificacion = clasif.Clasificacion1,
