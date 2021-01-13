@@ -273,7 +273,7 @@ EntidadBeneficiaria varchar(100),
 Domicilio varchar(100),
 Contacto varchar(100),
 Telefono varchar(20),
-Acuerdo varchar(50),
+Acuerdo varchar(max),
 Fechabaja date
 )
 GO
@@ -289,7 +289,7 @@ IdBien int,
 Estado int,
 ResponsableAnterior varchar(100),
 AreadenegocioAnterior varchar(100),
-Acuerdo varchar(50),
+Acuerdo varchar(max),
 NuevoResponsable varchar(100),
 NuevaAreadenegocio varchar(100),
 IdResponsable int
