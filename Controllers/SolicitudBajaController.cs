@@ -879,6 +879,33 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [Route("api/SolicitudBaja/validarInformesBaja")]
+        public int validarInformesBaja()
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+
+            {
+
+                IEnumerable<SolicitudBajaAF> lista = (from solicitud in bd.SolicitudBaja
+                                                      where solicitud.Estado == 2
+
+                                                      select new SolicitudBajaAF
+                                                      {
+                                                          idsolicitud = solicitud.IdSolicitud,
+                                                          folio = solicitud.Folio,
+                                                          observaciones = solicitud.Observaciones,
+                                                          fechacadena = solicitud.Fechabaja == null ? " " : ((DateTime)solicitud.Fechabaja).ToString("dd-MM-yyyy")
+
+                                                      }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+                return rpta;
+            }
+        }
+
         [HttpGet]
         [Route("api/SolicitudBaja/validarHistorialParaBaja")]
         public int validarHistorialParaBaja()
