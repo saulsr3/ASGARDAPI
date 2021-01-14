@@ -1825,8 +1825,8 @@ namespace ASGARDAPI.Controllers
 
             //Estilo y fuente personalizada
 
-            BaseFont fuent = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
-            iTextSharp.text.Font parraf = new iTextSharp.text.Font(fuent, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo = new iTextSharp.text.Font(fuente, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
             iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
             BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
@@ -1860,7 +1860,7 @@ namespace ASGARDAPI.Controllers
             //Línea separadora
             Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
             doc.Add(linea);
-            doc.Add(new Paragraph("CÓDIGO DE BARRAS DEL ACTIVO: ", parraf) { Alignment = Element.ALIGN_CENTER });
+            doc.Add(new Paragraph("CÓDIGO DE BARRAS DEL ACTIVO: ", parrafo) { Alignment = Element.ALIGN_CENTER });
 
             //Espacio en blanco
             doc.Add(Chunk.Newline);
@@ -1888,7 +1888,7 @@ namespace ASGARDAPI.Controllers
 
 
                 //string prodCode = "038000356216";
-                PdfPCell descripcion = new PdfPCell(new Phrase(nombre + " - " + marca + " " + modelo,parraf));
+                PdfPCell descripcion = new PdfPCell(new Phrase(nombre + " - " + marca + " " + modelo,parrafo));
                 descripcion.HorizontalAlignment = 1;
                 descripcion.Border = 0;
 
@@ -1910,7 +1910,7 @@ namespace ASGARDAPI.Controllers
                 PatImage1.ScaleToFit(250, 250);
 
                 PdfPTable p_detail1 = new PdfPTable(1);
-                p_detail1.WidthPercentage = 45;
+                p_detail1.WidthPercentage = 50;
 
                 PdfPCell barcideimage = new PdfPCell(PatImage1);
                 //barcideimage.Colspan = 2;

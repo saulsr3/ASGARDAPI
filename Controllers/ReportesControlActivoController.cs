@@ -901,7 +901,7 @@ namespace ASGARDAPI.Controllers
                     PatImage1.ScaleToFit(250, 250);
 
                     PdfPTable p_detail1 = new PdfPTable(1);
-                    p_detail1.WidthPercentage = 45;
+                    p_detail1.WidthPercentage = 50;
 
                     PdfPCell barcideimage = new PdfPCell(PatImage1);
                     barcideimage.HorizontalAlignment = 3;
