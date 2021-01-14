@@ -17,7 +17,10 @@ namespace ASGARDAPI.Clases
        
         public string AreaDeNegocio { get; set; }
         public string Resposnsable { get; set; }
-       
+
+        public string acuerdo { get; set; }
+        public int idsolicitud { get; set; }
+        public string fecha2 { get; set; }
 
     }
 }

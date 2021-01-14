@@ -233,32 +233,58 @@ namespace ASGARDAPI.Controllers
 
 
         //si la solicitud es aceptada cambiamos el estado del bien a 0
-        [HttpGet]
-        [Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}/{acuerdo}/{fecha2}")] // 
-        public int cambiarEstado(int idbien, string acuerdo, string fecha2)// 
+        //[HttpGet]
+        //[Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}/{acuerdo}/{fecha2}")] // 
+        //public int cambiarEstado(int idbien, string acuerdo, string fecha2)// 
+        //{
+        //    int rpta = 0;
+
+        //    try
+        //    {
+        //        using (BDAcaassAFContext bd = new BDAcaassAFContext())
+        //        {
+        //           // Console.WriteLine("IDESTADO" + idbien);
+        //            SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
+        //            ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
+        //            oActivo.EstadoActual = 0;
+        //            //oActivo.EstaAsignado = 2;
+                   
+        //           oSolic.Acuerdo = acuerdo;
+        //           oSolic.Fechabaja = Convert.ToDateTime(fecha2);
+        //            bd.SaveChanges();
+        //            rpta = 1;
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        rpta = 0;
+        //    }
+        //    return rpta;
+        //}
+
+        [HttpPost]
+        [Route("api/SolicitudBaja/cambiarEstadoAceptoBaja")]
+        public int cambiarEstadoAceptoBaja([FromBody] BajaAF oBajaAF)
         {
             int rpta = 0;
-
             try
             {
                 using (BDAcaassAFContext bd = new BDAcaassAFContext())
                 {
-                   // Console.WriteLine("IDESTADO" + idbien);
-                    SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
+                    SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == oBajaAF.idsolicitud).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
-                    oActivo.EstadoActual = 0;
-                    //oActivo.EstaAsignado = 2;
-                   
-                   oSolic.Acuerdo = acuerdo;
-                   oSolic.Fechabaja = Convert.ToDateTime(fecha2);
-                    bd.SaveChanges();
-                    rpta = 1;
 
-                }
+                        oActivo.EstadoActual = 0;
+                        oSolic.Acuerdo = oBajaAF.acuerdo;
+                        oSolic.Fechabaja = Convert.ToDateTime(oBajaAF.fecha2);
+                        bd.SaveChanges();
+                        rpta = 1;
+                } 
             }
             catch (Exception ex)
             {
-
                 rpta = 0;
             }
             return rpta;
@@ -324,6 +350,26 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/SolicitudBaja/verAcuerdo/{id}")]
+        public SolicitadosABajaAF verAcuerdo(int id)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                SolicitadosABajaAF odatos = new SolicitadosABajaAF();
+
+                ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdBien == obien.IdBien).Last();
+                TipoDescargo odescargo = bd.TipoDescargo.Where(p => p.IdTipo == osolicitud.IdTipoDescargo).First();
+            
+                odatos.NoSolicitud = osolicitud.IdSolicitud;
+                odatos.acuerdo = osolicitud.Acuerdo;
+               
+                return odatos;
+
+            }
+        }
+
         //MUESTRA LOS DATOS DE LOS ACTIVOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/verDescargos/{id}")]
@@ -361,7 +407,7 @@ namespace ASGARDAPI.Controllers
                 odatos.observaciones = osolicitud.Observaciones;
                 odatos.entidadbeneficiaria = osolicitud.EntidadBeneficiaria;
                 /////////////////////////////////////////////////
-                odatos.acuerdo = osolicitud.Acuerdo;
+                //odatos.acuerdo = osolicitud.Acuerdo;
                 odatos.Codigo = obien.CorrelativoBien;
                 odatos.responsable = (oemple == null) ? "" : oemple.Nombres + " " + oemple.Apellidos;
                 odatos.idproveedor = (oprov != null) ? oprov.IdProveedor : odona.IdDonante;
