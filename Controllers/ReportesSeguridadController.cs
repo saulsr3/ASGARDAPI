@@ -1717,8 +1717,8 @@ namespace ASGARDAPI.Controllers
                 //string nombre;
                
                 ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idactivo).First();
-               // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
-                // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+               //  Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
               
                 doc.Add(Chunk.Newline);
 
@@ -1726,7 +1726,7 @@ namespace ASGARDAPI.Controllers
 
 
                 //string prodCode = "038000356216";
-                PdfPCell descripcion = new PdfPCell(new Phrase(oActivo.Desripcion, parrafo2));
+                PdfPCell descripcion = new PdfPCell(new Phrase(oActivo.Desripcion +" - "+oMarca.Marca+" "+ oActivo.Modelo,parrafo));
                 descripcion.HorizontalAlignment = 1;
                 descripcion.Border = 0;
                
@@ -1745,10 +1745,10 @@ namespace ASGARDAPI.Controllers
                 PdfContentByte cba = writer.DirectContent;
 
                 iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
-                PatImage1.ScaleToFit(200, 200);
+                PatImage1.ScaleToFit(250, 250);
 
                 PdfPTable p_detail1 = new PdfPTable(1);
-                p_detail1.WidthPercentage = 40;
+                p_detail1.WidthPercentage = 45;
 
                 PdfPCell barcideimage = new PdfPCell(PatImage1);
                 //barcideimage.Colspan = 2;
@@ -1798,6 +1798,169 @@ namespace ASGARDAPI.Controllers
 
             }
            
+            writer.Close();
+            doc.Close();
+            ms.Seek(0, SeekOrigin.Begin);
+            return File(ms, "application/pdf");
+        }
+        [HttpGet]
+        [Route("api/ReportesSeguridad/codigoBarraGeneradoPdf/{codigo}/{nombre}/{marca}/{modelo}")]
+        public async Task<IActionResult> codigoBarraGeneradoPdf(string codigo, string nombre, string marca, string modelo)
+        {
+
+            Document doc = new Document(PageSize.Letter);
+            doc.SetMargins(40f, 40f, 40f, 40f);
+            MemoryStream ms = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+
+            //Instanciamos la clase para el paginado y la fecha de impresión
+            var pe = new PageEventHelper();
+            writer.PageEvent = pe;
+
+            doc.AddAuthor("Asgard");
+            doc.AddTitle("Código de Barra de activos");
+            doc.Open();
+
+            //Inicia cuerpo del reporte
+
+            //Estilo y fuente personalizada
+
+            BaseFont fuent = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parraf = new iTextSharp.text.Font(fuent, 12f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente2 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo2 = new iTextSharp.text.Font(fuente2, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente3 = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo3 = new iTextSharp.text.Font(fuente3, 15f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+            BaseFont fuente4 = BaseFont.CreateFont(BaseFont.COURIER, BaseFont.CP1250, true);
+            iTextSharp.text.Font parrafo4 = new iTextSharp.text.Font(fuente4, 11f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+            //Para las celdas
+            BaseFont fuente5 = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, true);
+            iTextSharp.text.Font parrafo5 = new iTextSharp.text.Font(fuente5, 10f, iTextSharp.text.Font.NORMAL, new BaseColor(0, 0, 0));
+
+
+            //Encabezado
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                oCooperativaAF.nombre = oCooperativa.Nombre;
+                oCooperativaAF.descripcion = oCooperativa.Descripcion;
+
+                //Se agrega el encabezado
+                var tbl1 = new PdfPTable(new float[] { 11f, 89f }) { WidthPercentage = 100f };
+                tbl1.AddCell(new PdfPCell(new Phrase(" ", parrafo2)) { Border = 0, Rowspan = 2 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Descripcion.ToUpper(), parrafo2)) { Border = 0, HorizontalAlignment = 1 });
+                tbl1.AddCell(new PdfPCell(new Phrase(oCooperativa.Nombre.ToUpper(), parrafo3)) { Border = 0, HorizontalAlignment = 1 });
+                doc.Add(tbl1);
+                doc.Add(new Phrase("\n"));
+            }
+            doc.Add(new Phrase("\n"));
+            //Línea separadora
+            Chunk linea = new Chunk(new iTextSharp.text.pdf.draw.LineSeparator(1f, 100f, BaseColor.Black, Element.ALIGN_CENTER, 1f));
+            doc.Add(linea);
+            doc.Add(new Paragraph("CÓDIGO DE BARRAS DEL ACTIVO: ", parraf) { Alignment = Element.ALIGN_CENTER });
+
+            //Espacio en blanco
+            doc.Add(Chunk.Newline);
+
+
+
+            //Objeto cadena
+            BarcodeLib.Barcode barcodeAPI = new BarcodeLib.Barcode();
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+
+
+
+                DatosCodigoBarraAF oDatos = new DatosCodigoBarraAF();
+                //string nombre;
+
+                // ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == idactivo).First();
+                // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+                // Marcas oMarca = bd.Marcas.Where(p => p.IdMarca == oActivo.IdMarca).First();
+
+                doc.Add(Chunk.Newline);
+
+
+
+
+                //string prodCode = "038000356216";
+                PdfPCell descripcion = new PdfPCell(new Phrase(nombre + " - " + marca + " " + modelo,parraf));
+                descripcion.HorizontalAlignment = 1;
+                descripcion.Border = 0;
+
+                PdfContentByte cb = writer.DirectContent;
+                cb.Rectangle(doc.PageSize.Width - 900f, 830f, 900f, 900f);
+                cb.Stroke();
+                iTextSharp.text.pdf.Barcode128 bc = new Barcode128();
+                bc.TextAlignment = Element.ALIGN_CENTER;
+                //bc.Code = "AC01-001-105-001";
+                bc.Code = codigo;
+                //bc.AltText = modelo;
+                bc.StartStopText = false;
+                bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
+                bc.Extended = true;
+                //bc.Font = null;
+                PdfContentByte cba = writer.DirectContent;
+
+                iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
+                PatImage1.ScaleToFit(250, 250);
+
+                PdfPTable p_detail1 = new PdfPTable(1);
+                p_detail1.WidthPercentage = 45;
+
+                PdfPCell barcideimage = new PdfPCell(PatImage1);
+                //barcideimage.Colspan = 2;
+                barcideimage.HorizontalAlignment = 3;
+                barcideimage.Border = 0;
+                p_detail1.AddCell(descripcion);
+                p_detail1.AddCell(barcideimage);
+
+
+                doc.Add(p_detail1);
+
+
+            }
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                CooperativaAF oCooperativaAF = new CooperativaAF();
+                Cooperativa oCooperativa = bd.Cooperativa.Where(p => p.Dhabilitado == 1).First();
+                oCooperativaAF.idcooperativa = oCooperativa.IdCooperativa;
+                try
+                {
+                    iTextSharp.text.Image logo = null;
+                    //Acá le cambie el logo de la cooperativa para probar el código de barra para ahorra código
+                    logo = iTextSharp.text.Image.GetInstance(oCooperativa.Logo.ToString());
+                    logo.Alignment = iTextSharp.text.Image.ALIGN_LEFT;
+                    logo.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    logo.BorderColor = iTextSharp.text.BaseColor.White;
+                    logo.ScaleToFit(170f, 100f);
+
+                    float ancho = logo.Width;
+                    float alto = logo.Height;
+                    float proporcion = alto / ancho;
+
+                    logo.ScaleAbsoluteWidth(80);
+                    logo.ScaleAbsoluteHeight(80 * proporcion);
+
+                    logo.SetAbsolutePosition(40f, 695f);
+
+                    doc.Add(logo);
+
+                }
+                catch (DocumentException dex)
+                {
+                    //log exception here
+                }
+
+                //FIN DE ADICIÓN DE LOGO
+
+            }
+
             writer.Close();
             doc.Close();
             ms.Seek(0, SeekOrigin.Begin);

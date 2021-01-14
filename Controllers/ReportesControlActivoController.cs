@@ -867,20 +867,23 @@ namespace ASGARDAPI.Controllers
                                           on activo.NoFormulario equals noFormulario.NoFormulario
                                           join clasif in bd.Clasificacion
                                           on activo.IdClasificacion equals clasif.IdClasificacion
+                                          join marca in bd.Marcas
+                                          on activo.IdMarca equals marca.IdMarca
                                           join resposable in bd.Empleado
                                           on activo.IdResponsable equals resposable.IdEmpleado
                                           join area in bd.AreaDeNegocio
                                           on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                           where (activo.EstadoActual != 0) && activo.EstaAsignado == 1
 
-                                          orderby activo.CorrelativoBien
+                                          orderby activo.IdBien ascending
                                           select new RegistroAF
                                           {
                                               IdBien = activo.IdBien,
                                               //Sólo necesito el correlativo
                                               Codigo = activo.CorrelativoBien,
                                               Descripcion=activo.Desripcion,
-                                              modelo=activo.Modelo
+                                              modelo=activo.Modelo,
+                                              marca=marca.Marca
                        
                                           }).ToList();
 
@@ -895,15 +898,15 @@ namespace ASGARDAPI.Controllers
                     bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
                     bc.Extended = true;
                     iTextSharp.text.Image PatImage1 = bc.CreateImageWithBarcode(cb, iTextSharp.text.BaseColor.Black, iTextSharp.text.BaseColor.Black);
-                    PatImage1.ScaleToFit(200, 200);
+                    PatImage1.ScaleToFit(250, 250);
 
                     PdfPTable p_detail1 = new PdfPTable(1);
-                    p_detail1.WidthPercentage = 40;
+                    p_detail1.WidthPercentage = 45;
 
                     PdfPCell barcideimage = new PdfPCell(PatImage1);
                     barcideimage.HorizontalAlignment = 3;
                     barcideimage.Border = 0;
-                    PdfPCell desc = new PdfPCell(new Phrase(activoA.Descripcion + " - " + activoA.modelo, parrafo));
+                    PdfPCell desc = new PdfPCell(new Phrase(activoA.Descripcion + " - "+" "+ activoA.marca +" "+ activoA.modelo+" ", parrafo));
                     desc.HorizontalAlignment = 1;
                     desc.Border = 0;
                     p_detail1.AddCell(desc);
