@@ -22,5 +22,6 @@ namespace ASGARDAPI.Clases
         //para actualizar la vida util despues de buscar
 
         public int? vidautil { get; set; }
+        public string marca { get; set; }
     }
 }
