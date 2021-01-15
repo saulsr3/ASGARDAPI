@@ -80,6 +80,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //METODO PARA GUARDAR LA SOLICITUD
         [HttpPost]
         [Route("api/SolicitudBaja/guardarSolicitudBaja")]
         public int guardarSolicitud([FromBody]SolicitudBajaAF oSolicitudAF)
@@ -150,6 +151,7 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //METODO PARA GUARDAR EL BIEN A SOLICITUD
         [HttpPost]
         [Route("api/SolicitudBaja/guardarBienesBaja")]
         public int guardarBienes([FromBody]ActivoFijoAF oBaja)
@@ -178,10 +180,10 @@ namespace ASGARDAPI.Controllers
             return respuesta;
         }
 
-        //metodo para aceptar la solicitud de baja
+        //METDO PARA ACEPTAR LA SOLICITUD DE BAJA
         [HttpGet]
         [Route("api/SolicitudBaja/aceptarSolicitudBaja/{idsolicitud}")] ///{idbien}
-        public int aceptarSolicitud(int idsolicitud)//, int idbien)
+        public int aceptarSolicitudBaja(int idsolicitud)//, int idbien)
         {
             int rpta = 0;
 
@@ -203,7 +205,35 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
-        //metodo para rechazar la solicitud
+        //SI LA SOLICITUD ES ACEPTADA CAMBIAMOS EL ESTADO DEL BIEN A 0
+        [HttpPost]
+        [Route("api/SolicitudBaja/cambiarEstadoAceptoBaja")]
+        public int cambiarEstadoAceptoBaja([FromBody] BajaAF oBajaAF)
+        {
+            int rpta = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    //Console.WriteLine("IDSOLIC" + oBajaAF.idsolicitud);
+                    SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == oBajaAF.idsolicitud).First();
+                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
+
+                    oActivo.EstadoActual = 0;
+                    oSolic.Acuerdo = oBajaAF.acuerdo;
+                    oSolic.Fechabaja = Convert.ToDateTime(oBajaAF.fecha2);
+                    bd.SaveChanges();
+                    rpta = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                rpta = 0;
+            }
+            return rpta;
+        }
+
+        //METODO PARA RECHAZAR LA SOLICITUD
         [HttpGet]
         [Route("api/SolicitudBaja/denegarSolicitudBaja/{idsolicitud}")]
         public int denegarSolicitud(int idsolicitud)
@@ -229,68 +259,7 @@ namespace ASGARDAPI.Controllers
         }
 
 
-    
-
-
-        //si la solicitud es aceptada cambiamos el estado del bien a 0
-        //[HttpGet]
-        //[Route("api/SolicitudBaja/cambiarEstadoAceptado/{idbien}/{acuerdo}/{fecha2}")] // 
-        //public int cambiarEstado(int idbien, string acuerdo, string fecha2)// 
-        //{
-        //    int rpta = 0;
-
-        //    try
-        //    {
-        //        using (BDAcaassAFContext bd = new BDAcaassAFContext())
-        //        {
-        //           // Console.WriteLine("IDESTADO" + idbien);
-        //            SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
-        //            ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
-        //            oActivo.EstadoActual = 0;
-        //            //oActivo.EstaAsignado = 2;
-                   
-        //           oSolic.Acuerdo = acuerdo;
-        //           oSolic.Fechabaja = Convert.ToDateTime(fecha2);
-        //            bd.SaveChanges();
-        //            rpta = 1;
-
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        rpta = 0;
-        //    }
-        //    return rpta;
-        //}
-
-        [HttpPost]
-        [Route("api/SolicitudBaja/cambiarEstadoAceptoBaja")]
-        public int cambiarEstadoAceptoBaja([FromBody] BajaAF oBajaAF)
-        {
-            int rpta = 0;
-            try
-            {
-                using (BDAcaassAFContext bd = new BDAcaassAFContext())
-                {
-                    SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == oBajaAF.idsolicitud).First();
-                    ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
-
-                        oActivo.EstadoActual = 0;
-                        oSolic.Acuerdo = oBajaAF.acuerdo;
-                        oSolic.Fechabaja = Convert.ToDateTime(oBajaAF.fecha2);
-                        bd.SaveChanges();
-                        rpta = 1;
-                } 
-            }
-            catch (Exception ex)
-            {
-                rpta = 0;
-            }
-            return rpta;
-        }
-
-        //si la solicitud es rechazada vuelve al estado normal que es 1
+        //SI LA SOLICITUD ES RECHAZADA EL BIEN VUELVE A ESTADO 1
         [HttpGet]
         [Route("api/SolicitudBaja/cambiarEstadoDenegado/{idbien}")] //  
         public int cambiarEstadoDenegado(int idbien)//
@@ -304,9 +273,6 @@ namespace ASGARDAPI.Controllers
                     SolicitudBaja oSolic = bd.SolicitudBaja.Where(p => p.IdSolicitud == idbien).First();
                     ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolic.IdBien).First();
                     oActivo.EstadoActual = 1;
-                    
-                   //oSolic.Acuerdo = acuerdo;
-                   //oSolic.Fechabaja = Convert.ToDateTime(fecha2);
                     bd.SaveChanges();
                     rpta = 1;
 
@@ -323,7 +289,7 @@ namespace ASGARDAPI.Controllers
       
         //MUESTRA LOS DETALLES DE LA SOLICITUD PARA DAR DE BAJA
         [HttpGet]
-        [Route("api/SolicitudBaja/verSolicitudBaja/{idSolicitud}")]
+        [Route("api/SolicitudBaja/verDetallesSolicitudBaja/{idSolicitud}")]
         public SolicitadosABajaAF verSolicitud(int idSolicitud)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
@@ -350,30 +316,31 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //METODO QUE PERMITE VER EL ACUERDO DE APROBACION DE LA SOLICITUD
         [HttpGet]
         [Route("api/SolicitudBaja/verAcuerdo/{id}")]
         public SolicitadosABajaAF verAcuerdo(int id)
         {
+
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                SolicitadosABajaAF odatos = new SolicitadosABajaAF();
+                SolicitadosABajaAF oDatosAF = new SolicitadosABajaAF();
+                SolicitudBaja oSolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).First();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
 
-                ActivoFijo obien = bd.ActivoFijo.Where(p => p.IdBien == id).First();
-                SolicitudBaja osolicitud = bd.SolicitudBaja.Where(p => p.IdBien == obien.IdBien).Last();
-                TipoDescargo odescargo = bd.TipoDescargo.Where(p => p.IdTipo == osolicitud.IdTipoDescargo).First();
-            
-                odatos.NoSolicitud = osolicitud.IdSolicitud;
-                odatos.acuerdo = osolicitud.Acuerdo;
-               
-                return odatos;
 
+                oDatosAF.idbien = oActivo.IdBien;
+                oDatosAF.NoSolicitud = oSolicitud.IdSolicitud;
+                oDatosAF.acuerdo = oSolicitud.Acuerdo;
+                return oDatosAF;
             }
+
         }
 
         //MUESTRA LOS DATOS DE LOS ACTIVOS QUE HAN SIDO DADOS DE BAJA
         [HttpGet]
-        [Route("api/SolicitudBaja/verDescargos/{id}")]
-        public SolicitadosABajaAF verDescargos(int id)
+        [Route("api/SolicitudBaja/verDetallesDescargos/{id}")]
+        public SolicitadosABajaAF verDetallesDescargos(int id)
         {
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
