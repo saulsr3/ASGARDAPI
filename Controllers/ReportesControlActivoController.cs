@@ -1624,14 +1624,17 @@ namespace ASGARDAPI.Controllers
                     tbl5.AddCell(new PdfPCell(new Phrase(odatos.tasaAnual + "%", parrafo7)) { Border = 0 });
                     tbl5.AddCell(new PdfPCell(new Phrase("Valor residual: ", parrafo6)) { Border = 0 , Rowspan = 2 });
                     tbl5.AddCell(new PdfPCell(new Phrase(odatos.valorResidual, parrafo7)) { Border = 0 });
-                    tbl5.AddCell(new PdfPCell(new Phrase("Observaciones: ", parrafo6)) { Border = 0 , Rowspan = 2 });
-                    tbl5.AddCell(new PdfPCell(new Phrase(odatos.Observaciones, parrafo7)) { Border = 0 });
+
+                var tbl6 = new PdfPTable(new float[] { 14f, 86f }) { WidthPercentage = 100f };
+                    tbl6.AddCell(new PdfPCell(new Phrase("Observaciones:", parrafo6)) { Border = 0, Rowspan = 2 });
+                    tbl6.AddCell(new PdfPCell(new Phrase(odatos.Observaciones, parrafo7)) { Border = 0 });
 
                 doc.Add(tbl1);
                 doc.Add(tbl2);
                 doc.Add(tbl3);
                 doc.Add(tbl4);
                 doc.Add(tbl5);
+                doc.Add(tbl6);
 
                 //Tabla de transacciones
                 doc.Add(new Paragraph("MOVIMIENTO DEL VALOR - DEPRECIACIONES - GASTOS DE CONSEVACIÓN", parrafo2) { Alignment = Element.ALIGN_CENTER });

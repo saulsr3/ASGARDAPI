@@ -566,6 +566,7 @@ namespace ASGARDAPI.Controllers
                 odatos.Codigo = oActivo.CorrelativoBien;
                 odatos.Descripcion = oActivo.Desripcion;
                 odatos.idresponsable = (int) oSolicitud.IdResponsable;
+                odatos.acuerdo = oSolicitud.Acuerdo;
 
                 return odatos;
             }
@@ -763,8 +764,36 @@ namespace ASGARDAPI.Controllers
                                                               areaanterior = solicitud.AreadenegocioAnterior,
                                                               nuevoresponsable = solicitud.NuevoResponsable,
                                                               nuevaarea = solicitud.NuevaAreadenegocio,
+                                                              acuerdo= solicitud.Acuerdo,
                                                               fechacadenatraspaso = solicitud.Fechatraspaso == null ? " " : ((DateTime)solicitud.Fechatraspaso).ToString("dd-MM-yyyy"),
                                                               idresponsable = (int)solicitud.IdResponsable
+
+
+                                                          }).ToList();
+                return lista;
+            }
+        }
+
+        //LISTAR HISOTRIAL DE TRASPASOS
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/acuerdoTraspaso/{idsolicitud}")]
+        public IEnumerable<SolicitudTraspasoAF> acuerdoTraspaso(int idsolicitud)
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                IEnumerable<SolicitudTraspasoAF> lista = (from solicitud in bd.SolicitudTraspaso
+                                                          join bien in bd.ActivoFijo
+                                                          on solicitud.IdBien equals bien.IdBien
+                                                         
+                                                          where solicitud.IdSolicitud == idsolicitud && solicitud.Estado == 2
+
+                                                          select new SolicitudTraspasoAF
+                                                          {
+                                                             
+                                                              idsolicitud = solicitud.IdSolicitud, 
+                                                              idbien= bien.IdBien,
+                                                              acuerdo = solicitud.Acuerdo,
+                                                             
 
 
                                                           }).ToList();
