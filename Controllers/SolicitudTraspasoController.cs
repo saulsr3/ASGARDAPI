@@ -801,6 +801,27 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Metodo para ver el acuerdo en solicitud de traspaso
+        [HttpGet]
+        [Route("api/SolicitudTraspaso/verAcuerdo/{id}")]
+        public DatosAcuerdoAF verAcuerdo(int id)
+        {
+
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                DatosAcuerdoAF oDatosAF = new DatosAcuerdoAF();
+                SolicitudTraspaso oSolicitud = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == id).First();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+
+
+                oDatosAF.idbien = oActivo.IdBien;
+                oDatosAF.idsolicitud = oSolicitud.IdSolicitud;
+                oDatosAF.acuerdo = oSolicitud.Acuerdo;
+                return oDatosAF;
+            }
+
+        }
+
 
 
 
