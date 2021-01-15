@@ -788,7 +788,7 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 10f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
             var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
             var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
