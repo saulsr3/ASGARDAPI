@@ -1110,8 +1110,7 @@ namespace ASGARDAPI.Controllers
             var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
             var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
             var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
-            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
-            
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));            
             var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN MENSUAL", parrafo6));
             //  var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
         

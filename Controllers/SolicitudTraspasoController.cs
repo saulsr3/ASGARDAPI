@@ -811,7 +811,7 @@ namespace ASGARDAPI.Controllers
             {
                 DatosAcuerdoAF oDatosAF = new DatosAcuerdoAF();
                 SolicitudTraspaso oSolicitud = bd.SolicitudTraspaso.Where(p => p.IdSolicitud == id).First();
-                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitud.IdBien).First();
 
 
                 oDatosAF.idbien = oActivo.IdBien;
