@@ -39,12 +39,12 @@ namespace ASGARDAPI.Controllers
             {
                 List<ActivosXAnioAF> activos = new List<ActivosXAnioAF>();
                 IEnumerable<PeriodoAF> listaPeriodos = (from periodo in bd.Periodo
-                                                orderby periodo.IdPeriodo
-                                                select new PeriodoAF
-                                                {
-                                                    idperiodo = periodo.IdPeriodo,
-                                                    anio = (int)periodo.Anio
-                                                }).ToList();
+                                                        orderby periodo.Anio ascending
+                                                        select new PeriodoAF
+                                                        {
+                                                            idperiodo = periodo.IdPeriodo,
+                                                            anio = (int)periodo.Anio
+                                                        }).ToList();
                 foreach (var res in listaPeriodos)
                 {
                     string fechaMin = "1-1-" + res.anio;
@@ -58,10 +58,10 @@ namespace ASGARDAPI.Controllers
                                                          select new ComboAnidadoAF
                                                          {
                                                              id = activo.IdBien
-                                                             
+
                                                          }).ToList();
                     int contador = 0;
-            
+
                     ActivosXAnioAF activoAgregar = new ActivosXAnioAF();
                     foreach (var res1 in lista)
                     {
@@ -82,7 +82,7 @@ namespace ASGARDAPI.Controllers
             {
                 List<ActivosXAnioAF> activos = new List<ActivosXAnioAF>();
                 IEnumerable<PeriodoAF> listaPeriodos = (from periodo in bd.Periodo
-                                                        orderby periodo.IdPeriodo
+                                                        orderby periodo.Anio ascending
                                                         select new PeriodoAF
                                                         {
                                                             idperiodo = periodo.IdPeriodo,
@@ -116,7 +116,52 @@ namespace ASGARDAPI.Controllers
                     activoAgregar.monto = monto;
                     activos.Add(activoAgregar);
                 }
-                
+
+                return activos;
+            }
+        }
+        [HttpGet]
+        [Route("api/Graficas/GastosMttoPorAnio")]
+        public List<ActivosXAnioAF> GastosMttoPorAnio()
+        {
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                List<ActivosXAnioAF> activos = new List<ActivosXAnioAF>();
+                IEnumerable<PeriodoAF> listaPeriodos = (from periodo in bd.Periodo
+                                                        orderby periodo.Anio ascending
+                                                        select new PeriodoAF
+                                                        {
+                                                            idperiodo = periodo.IdPeriodo,
+                                                            anio = (int)periodo.Anio
+                                                        }).ToList();
+                foreach (var res in listaPeriodos)
+                {
+                    string fechaMin = "1-1-" + res.anio;
+                    string fechaMax = "31-12-" + res.anio;
+                    DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+                    IEnumerable<MontoXAnioAF> lista = (from matto in bd.InformeMantenimiento
+                                                           //join activo in bd.ActivoFijo
+                                                           //on formulario.NoFormulario equals activo.NoFormulario
+
+                                                       where (matto.Fecha >= DateTime.Parse(fechaMin) && matto.Fecha <= uDate)
+                                                       select new MontoXAnioAF
+                                                       {
+                                                           idBien = matto.IdInformeMantenimiento,
+                                                           monto = (double)matto.CostoTotal
+
+
+                                                       }).ToList();
+                    double monto = 0;
+
+                    ActivosXAnioAF activoAgregar = new ActivosXAnioAF();
+                    foreach (var res1 in lista)
+                    {
+                        monto += res1.monto;
+                    }
+                    activoAgregar.anio = res.anio.ToString();
+                    activoAgregar.monto = monto;
+                    activos.Add(activoAgregar);
+                }
                 return activos;
             }
         }
