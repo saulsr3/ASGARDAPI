@@ -788,24 +788,22 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 10f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
             var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
             var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
-            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
-            var c5 = new PdfPCell(new Phrase("VALOR DE MEJORA", parrafo6));
-            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo6));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));        
+            var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN ANUAL", parrafo6));
           //  var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
-            var c8 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
+            
             //Agregamos a la tabla las celdas 
             tbl.AddCell(c1);
             tbl.AddCell(c2);
             tbl.AddCell(c3);
-            tbl.AddCell(c4);
+            tbl.AddCell(c4);          
             tbl.AddCell(c5);
-            tbl.AddCell(c6);
          //   tbl.AddCell(c7);
-            tbl.AddCell(c8);
+          
 
          //  doc.Add(new Phrase("\n"));
 
@@ -862,20 +860,17 @@ namespace ASGARDAPI.Controllers
                     c1.Phrase = new Phrase(activos.fecha, parrafo5);
                     c2.Phrase = new Phrase(activos.concepto, parrafo5);
                     c3.Phrase = new Phrase(activos.codigo, parrafo5);
-                    c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
-                    c5.Phrase = new Phrase("$" + activos.montoTransaccion, parrafo5);
-                    c6.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+                    c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);                   
+                    c5.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
                    // c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);
-                    c8.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
                     //Agregamos a la tabla
                     tbl.AddCell(c1);
                     tbl.AddCell(c2);
                     tbl.AddCell(c3);
-                    tbl.AddCell(c4);
+                    tbl.AddCell(c4); 
                     tbl.AddCell(c5);
-                    tbl.AddCell(c6);
                    // tbl.AddCell(c7);
-                    tbl.AddCell(c8);
+                   
                  
 
                 }
@@ -1111,24 +1106,21 @@ namespace ASGARDAPI.Controllers
             doc.Add(Chunk.Newline);
 
             //Agregamos una tabla
-            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 9f, 10f, 10f }) { WidthPercentage = 100f };
+            var tbl = new PdfPTable(new float[] { 8f, 9f, 13f, 10f, 10f }) { WidthPercentage = 100f };
             var c1 = new PdfPCell(new Phrase("FECHA", parrafo6));
             var c2 = new PdfPCell(new Phrase("CONCEPTO", parrafo6));
             var c3 = new PdfPCell(new Phrase("CÓDIGO", parrafo6));
-            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));
-            var c5 = new PdfPCell(new Phrase("VALOR DE MEJORA", parrafo6));
-            var c6 = new PdfPCell(new Phrase("DEPRECIACIÓN MENSUAL", parrafo6));
+            var c4 = new PdfPCell(new Phrase("VALOR DE ADQUISICIÓN", parrafo6));            
+            var c5 = new PdfPCell(new Phrase("DEPRECIACIÓN MENSUAL", parrafo6));
             //  var c7 = new PdfPCell(new Phrase("DEPRECIACIÓN ACUMULADA", parrafo6));
-            var c8 = new PdfPCell(new Phrase("VALOR ACTUAL", parrafo6));
+        
             //Agregamos a la tabla las celdas 
             tbl.AddCell(c1);
             tbl.AddCell(c2);
             tbl.AddCell(c3);
             tbl.AddCell(c4);
             tbl.AddCell(c5);
-            tbl.AddCell(c6);
-            //   tbl.AddCell(c7);
-            tbl.AddCell(c8);
+       
 
             //  doc.Add(new Phrase("\n"));
 
@@ -1191,24 +1183,21 @@ namespace ASGARDAPI.Controllers
                     c2.Phrase = new Phrase(activos.concepto, parrafo5);
                     c3.Phrase = new Phrase(activos.codigo, parrafo5);
                     c4.Phrase = new Phrase("$" + activos.valorAdquirido, parrafo5);
-                    c5.Phrase = new Phrase("$" + activos.montoTransaccion, parrafo5);
-                    // c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);                     
+                                      // c7.Phrase = new Phrase("$" + activos.depreAcum, parrafo5);                     
                     // activos.depreAnual = activos.depreAnual / mes; 
                     activos.depreAnual = activos.depreAnual / 12;
                     activos.depreAnual = Math.Round((double)activos.depreAnual * mes, 2); //se divide entre mes para listar solo la cantidad que se depreciaría por mes.
 
 
-                    c6.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
-                    c8.Phrase = new Phrase("$" + activos.valorActual, parrafo5);
+                    c5.Phrase = new Phrase("$" + activos.depreAnual, parrafo5);
+                   
                     //Agregamos a la tabla
                     tbl.AddCell(c1);
                     tbl.AddCell(c2);
                     tbl.AddCell(c3);
-                    tbl.AddCell(c4);
+                    tbl.AddCell(c4);                  
                     tbl.AddCell(c5);
-                    tbl.AddCell(c6);
-                    // tbl.AddCell(c7);
-                    tbl.AddCell(c8);
+                
 
                    // activos.depreAnual = valortotal + activos.depreAnual;
 

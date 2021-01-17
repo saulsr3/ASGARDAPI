@@ -1911,6 +1911,101 @@ namespace ASGARDAPI.Controllers
             return rpta;
         }
 
+        //Metodo para validar activos depreciados por año
+        [HttpGet]
+        [Route("api/ActivoFijo/validarActivoDepreciadoAnio/{anio}")]
+        public int validarActivoDepreciadoAnio(int anio)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+
+
+                IEnumerable<ActivoRevalorizadoAF> lista = (from activo in bd.ActivoFijo
+                                                     join noFormulario in bd.FormularioIngreso
+                                                     on activo.NoFormulario equals noFormulario.NoFormulario
+                                                     join tarjeta in bd.TarjetaDepreciacion
+                                                     on activo.IdBien equals tarjeta.IdBien
+                                                     where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
+                                                     && tarjeta.Concepto == "Depreciación"
+                                                     orderby activo.IdBien
+                                                     select new ActivoRevalorizadoAF
+                                                     {
+                                                         idBien = activo.IdBien,
+                                                         //Código
+                                                         codigo = activo.CorrelativoBien,
+                                                         //Fecha
+                                                         fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                         //Concepto
+                                                         concepto = tarjeta.Concepto,
+                                                         //Valor adquirido
+                                                         valorAdquirido = activo.ValorAdquicicion.ToString(),
+                                                         //Valor de mejora
+                                                         montoTransaccion = Math.Round((double)tarjeta.Valor, 2),
+                                                         //Depreciación anual
+                                                         depreAnual = Math.Round((double)tarjeta.DepreciacionAnual, 2),
+                                                         //Depreciación Acumulada
+                                                         depreAcum = Math.Round((double)tarjeta.DepreciacionAcumulada, 2),
+
+                                                         //     valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                         //Valor actual
+                                                         valorActual = Math.Round((double)tarjeta.ValorActual, 2)
+
+                                                     }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+
+        //Metodo para validar activos revalorizados por año
+        [HttpGet]
+        [Route("api/ActivoFijo/validarActivoRevalorizadoAnio/{anio}")]
+        public int validarActivoRevalorizadoAnio(int anio)
+        {
+            int rpta = 0;
+            using (BDAcaassAFContext bd = new BDAcaassAFContext())
+            {
+                string fechaMin = "1-1-" + anio;
+                string fechaMax = "31-12-" + anio;
+
+                DateTime uDate = DateTime.ParseExact(fechaMax, "dd-MM-yyyy", null);
+
+
+                IEnumerable<ActivoRevalorizadoAF> lista = (from activo in bd.ActivoFijo
+                                                           join noFormulario in bd.FormularioIngreso
+                                                           on activo.NoFormulario equals noFormulario.NoFormulario
+                                                           join tarjeta in bd.TarjetaDepreciacion
+                                                           on activo.IdBien equals tarjeta.IdBien
+                                                           where (tarjeta.Fecha >= DateTime.Parse(fechaMin) && tarjeta.Fecha <= uDate)
+                                                           && tarjeta.Concepto == "Revalorización"
+                                                           orderby activo.IdBien
+                                                           select new ActivoRevalorizadoAF
+                                                           {
+                                                               idBien = activo.IdBien,
+                                                               codigo = activo.CorrelativoBien,
+                                                               fecha = tarjeta.Fecha == null ? " " : ((DateTime)tarjeta.Fecha).ToString("dd-MM-yyyy"),
+                                                               concepto = tarjeta.Concepto,
+                                                               valorTransaccion = Math.Round((double)tarjeta.ValorTransaccion, 2),
+                                                               valorActual = Math.Round((double)tarjeta.ValorActual, 2),
+                                                               valorAdquirido = activo.ValorAdquicicion.ToString(),
+                                                               descripcion = activo.Desripcion
+
+                                                           }).ToList();
+                if (lista.Count() > 0)
+                {
+                    rpta = 1;
+                }
+            }
+            return rpta;
+        }
+
 
 
     }

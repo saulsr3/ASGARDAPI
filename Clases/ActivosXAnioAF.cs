@@ -10,5 +10,6 @@ namespace ASGARDAPI.Clases
         public string anio { get; set; }
         public int numero { get; set; }
         public double monto { get; set; }
+        public int descargos { get; set; }
     }
 }
