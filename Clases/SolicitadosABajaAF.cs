@@ -9,12 +9,13 @@ namespace ASGARDAPI.Clases
     {
         public string fechacadena { get; set; }
         public int idbien { get; set; }
+        public string acuerdo { get; set; }
+        public int NoSolicitud { get; set; }
         public string Codigo { get; set; }
         public string Descripcion { get; set; }
         //public string areanegocio { get; set; }
         public string responsable { get; set; }
-        public int NoSolicitud { get; set; }
-
+       
         public string folio { get; set; }
         //public DateTime? fechasolicitud { get; set; }
         public string observaciones { get; set; }
@@ -22,7 +23,7 @@ namespace ASGARDAPI.Clases
         public string nombredescargo { get; set; }
         public int estado { get; set; }
         public string entidadbeneficiaria { get; set; }
-        public string acuerdo { get; set; }
+       
         //public int idresponsable { get; set; }
         public int idproveedor { get; set; }
         public int iddonante { get; set; }
