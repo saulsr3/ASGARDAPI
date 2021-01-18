@@ -23,5 +23,10 @@ namespace ASGARDAPI.Clases
 
         public int? vidautil { get; set; }
         public string marca { get; set; }
+
+        //para descargo
+        public string acuerdo { get; set; }
+        public int idsolicitud { get; set; }
+        public string fecha2 { get; set; }
     }
 }

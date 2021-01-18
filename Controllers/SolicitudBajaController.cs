@@ -998,6 +998,8 @@ namespace ASGARDAPI.Controllers
                                             on activo.NoFormulario equals noFormulario.NoFormulario
                                             join clasif in bd.Clasificacion
                                             on activo.IdClasificacion equals clasif.IdClasificacion
+                                            join Solic in bd.SolicitudBaja
+                                            on activo.IdBien equals Solic.IdBien
                                             where activo.EstadoActual == 0 && activo.EstaAsignado == 0
 
                                             select new BajaAF
@@ -1006,7 +1008,10 @@ namespace ASGARDAPI.Controllers
                                                 NoFormulario = noFormulario.NoFormulario,
                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Desripcion = activo.Desripcion,
-                                                Clasificacion = clasif.Clasificacion1
+                                                Clasificacion = clasif.Clasificacion1,
+                                                idsolicitud = Solic.IdSolicitud,
+                                                acuerdo = Solic.Acuerdo
+                                                
 
                                             }).ToList();
 
@@ -1030,7 +1035,9 @@ namespace ASGARDAPI.Controllers
                                             on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                                             join cargo in bd.Cargos
                                             on resposable.IdCargo equals cargo.IdCargo
-                                            where activo.EstadoActual == 0 && activo.EstaAsignado ==1
+                                           join Solic in bd.SolicitudBaja
+                                           on activo.IdBien equals Solic.IdBien
+                                      where activo.EstadoActual == 0 && activo.EstaAsignado ==1
                                             orderby activo.CorrelativoBien
                                             select new BajaAF
                                             {
@@ -1060,6 +1067,8 @@ namespace ASGARDAPI.Controllers
                                           on activo.NoFormulario equals noFormulario.NoFormulario
                                           join clasif in bd.Clasificacion
                                           on activo.IdClasificacion equals clasif.IdClasificacion
+                                          join Solic in bd.SolicitudBaja
+                                          on activo.IdBien equals Solic.IdBien
                                           where activo.EstadoActual == 0 && activo.TipoActivo == 1
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
@@ -1089,7 +1098,8 @@ namespace ASGARDAPI.Controllers
                                           join clasif in bd.Clasificacion
                                           on activo.IdClasificacion equals clasif.IdClasificacion
                                           // Acá iría el área pero como está referenciada a empleado
-
+                                          join Solic in bd.SolicitudBaja
+                                          on activo.IdBien equals Solic.IdBien
                                           where activo.EstadoActual == 0 && activo.TipoActivo == 3
                                           orderby activo.CorrelativoBien
                                           select new RegistroAF
