@@ -1042,6 +1042,8 @@ namespace ASGARDAPI.Controllers
                                             select new BajaAF
                                             {
                                                 IdBien = activo.IdBien,
+                                                idsolicitud = Solic.IdSolicitud,
+                                                acuerdo = Solic.Acuerdo,
                                                 Codigo = activo.CorrelativoBien,
                                                 fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                 Desripcion = activo.Desripcion,
