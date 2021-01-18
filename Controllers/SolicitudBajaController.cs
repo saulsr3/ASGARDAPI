@@ -1076,6 +1076,8 @@ namespace ASGARDAPI.Controllers
                                           select new RegistroAF
                                           {
                                               IdBien = activo.IdBien,
+                                              idsolicitud = Solic.IdSolicitud,
+                                              acuerdo = Solic.Acuerdo,
                                               Codigo = activo.CorrelativoBien,
                                               fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                               Descripcion = activo.Desripcion,
@@ -1107,6 +1109,8 @@ namespace ASGARDAPI.Controllers
                                           select new RegistroAF
                                           {
                                               IdBien = activo.IdBien,
+                                              idsolicitud = Solic.IdSolicitud,
+                                              acuerdo = Solic.Acuerdo,
                                               Codigo = activo.CorrelativoBien,
                                               fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                               Descripcion = activo.Desripcion,
@@ -1132,11 +1136,15 @@ namespace ASGARDAPI.Controllers
                                                    on activo.IdResponsable equals resposable.IdEmpleado
                                                    join area in bd.AreaDeNegocio
                                                    on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                   join Solic in bd.SolicitudBaja
+                                                   on activo.IdBien equals Solic.IdBien
                                                    where activo.EstadoActual == 0 && area.IdAreaNegocio == id
                                                    orderby activo.CorrelativoBien
                                                    select new BajaAF
                                                    {
                                                        IdBien = activo.IdBien,
+                                                       idsolicitud = Solic.IdSolicitud,
+                                                       acuerdo = Solic.Acuerdo,
                                                        Codigo = activo.CorrelativoBien,
                                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                                        Desripcion = activo.Desripcion,
@@ -1165,11 +1173,15 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join Solic in bd.SolicitudBaja
+                                   on activo.IdBien equals Solic.IdBien
                                    where activo.EstadoActual == 0 && activo.TipoActivo == 1 
                                    orderby activo.CorrelativoBien
                                    select new RegistroAF
                                    {
                                        IdBien = activo.IdBien,
+                                       idsolicitud = Solic.IdSolicitud,
+                                       acuerdo = Solic.Acuerdo,
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
@@ -1186,6 +1198,8 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join Solic in bd.SolicitudBaja
+                                   on activo.IdBien equals Solic.IdBien
                                    where activo.EstadoActual == 0 && activo.TipoActivo == 1 
 
 
@@ -1199,6 +1213,8 @@ namespace ASGARDAPI.Controllers
                                    select new RegistroAF
                                    {
                                        IdBien = activo.IdBien,
+                                       idsolicitud = Solic.IdSolicitud,
+                                       acuerdo = Solic.Acuerdo,
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
@@ -1225,11 +1241,15 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join Solic in bd.SolicitudBaja
+                                   on activo.IdBien equals Solic.IdBien
                                    where activo.EstadoActual == 0 && activo.TipoActivo == 3 
                                    orderby activo.CorrelativoBien
                                    select new RegistroAF
                                    {
                                        IdBien = activo.IdBien,
+                                       idsolicitud = Solic.IdSolicitud,
+                                       acuerdo = Solic.Acuerdo,
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
@@ -1246,6 +1266,8 @@ namespace ASGARDAPI.Controllers
                                    on activo.NoFormulario equals noFormulario.NoFormulario
                                    join clasif in bd.Clasificacion
                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                   join Solic in bd.SolicitudBaja
+                                   on activo.IdBien equals Solic.IdBien
                                    where activo.EstadoActual == 0 && activo.TipoActivo == 3 
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
@@ -1258,6 +1280,8 @@ namespace ASGARDAPI.Controllers
                                    select new RegistroAF
                                    {
                                        IdBien = activo.IdBien,
+                                       idsolicitud = Solic.IdSolicitud,
+                                       acuerdo = Solic.Acuerdo,
                                        Codigo = activo.CorrelativoBien,
                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                        Descripcion = activo.Desripcion,
@@ -1286,11 +1310,15 @@ namespace ASGARDAPI.Controllers
                              on activo.NoFormulario equals noFormulario.NoFormulario
                              join clasif in bd.Clasificacion
                              on activo.IdClasificacion equals clasif.IdClasificacion
+                             join Solic in bd.SolicitudBaja
+                             on activo.IdBien equals Solic.IdBien
                              where activo.EstadoActual == 0 && activo.EstaAsignado == 0
 
                              select new NoAsignadosAF
                              {
                                  IdBien = activo.IdBien,
+                                 idsolicitud = Solic.IdSolicitud,
+                                 acuerdo = Solic.Acuerdo,
                                  NoFormulario = noFormulario.NoFormulario,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  Desripcion = activo.Desripcion,
@@ -1307,6 +1335,8 @@ namespace ASGARDAPI.Controllers
                              on activo.NoFormulario equals noFormulario.NoFormulario
                              join clasif in bd.Clasificacion
                              on activo.IdClasificacion equals clasif.IdClasificacion
+                             join Solic in bd.SolicitudBaja
+                             on activo.IdBien equals Solic.IdBien
                              where activo.EstadoActual == 0 && activo.EstaAsignado == 0
 
                                      && ((activo.IdBien).ToString().Contains(buscador)
@@ -1319,6 +1349,8 @@ namespace ASGARDAPI.Controllers
                              select new NoAsignadosAF
                              {
                                  IdBien = activo.IdBien,
+                                 idsolicitud = Solic.IdSolicitud,
+                                 acuerdo = Solic.Acuerdo,
                                  NoFormulario = noFormulario.NoFormulario,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  Desripcion = activo.Desripcion,
@@ -1346,11 +1378,15 @@ namespace ASGARDAPI.Controllers
                              on activo.IdResponsable equals resposable.IdEmpleado
                              join area in bd.AreaDeNegocio
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                             join Solic in bd.SolicitudBaja
+                             on activo.IdBien equals Solic.IdBien
                              where activo.EstadoActual == 0 && activo.EstaAsignado == 1
                              orderby activo.CorrelativoBien
                              select new BajaAF
                              {
                                  IdBien = activo.IdBien,
+                                 idsolicitud = Solic.IdSolicitud,
+                                 acuerdo = Solic.Acuerdo,
                                  Codigo = activo.CorrelativoBien,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
                                  Desripcion = activo.Desripcion,
@@ -1372,6 +1408,8 @@ namespace ASGARDAPI.Controllers
                              on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
                              join cargo in bd.Cargos
                              on resposable.IdCargo equals cargo.IdCargo
+                             join Solic in bd.SolicitudBaja
+                             on activo.IdBien equals Solic.IdBien
                              where activo.EstadoActual == 0 && activo.EstaAsignado == 1
 
                                  && ((activo.CorrelativoBien).ToLower().Contains(buscador.ToLower()) ||
@@ -1386,6 +1424,8 @@ namespace ASGARDAPI.Controllers
                              select new BajaAF
                              {
                                  IdBien = activo.IdBien,
+                                 idsolicitud = Solic.IdSolicitud,
+                                 acuerdo = Solic.Acuerdo,
                                  Codigo = activo.CorrelativoBien,
                                  Desripcion = activo.Desripcion,
                                  fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),

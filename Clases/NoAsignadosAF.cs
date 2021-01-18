@@ -14,6 +14,8 @@ namespace ASGARDAPI.Clases
         public string Clasificacion { get; set; }
         public int solicitud { get; set; }
         public string Marca { get; set; }
-      
+        public string acuerdo { get; set; }
+        public int idsolicitud { get; set; }
+
     }
 }
