@@ -48,7 +48,7 @@ namespace ASGARDAPI.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                // optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAcaassAF;database=BDAcaassAF;Integrated Security=true");
-               optionsBuilder.UseSqlServer("Data Source=tcp:server-db-asgard.database.windows.net,1433;Initial Catalog=DBAcaassAF;User Id=adminAsgard@server-db-asgard;Password=Root14003$");
+               optionsBuilder.UseSqlServer("Data Source=tcp:server-db-asgard.database.windows.net,1433;Initial Catalog=asgardDB;User Id=adminAsgard@server-db-asgard;Password=Root14003$");
             }
         }
 
