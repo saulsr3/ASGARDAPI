@@ -204,6 +204,27 @@ namespace ASGARDAPI.Controllers
             }
         }
 
+        //Metodo para ver si el tipo descargo se esta utilizando en un activo
+        [HttpGet]
+        [Route("api/TipoDescargo/validarActivo/{idTipo}")]
+        public int validarActivo(int idTipo)
+        {
+            int res = 0;
+            try
+            {
+                using (BDAcaassAFContext bd = new BDAcaassAFContext())
+                {
+                    TipoDescargo oTipo = bd.TipoDescargo.Where(p => p.IdTipo == idTipo).First();
+                    SolicitudBaja oArea = bd.SolicitudBaja.Where(p => p.IdTipoDescargo == oTipo.IdTipo).First();
+                    res = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                res = 0;
+            }
+            return res;
+        }
 
         [HttpGet]
         [Route("api/TipoDescargo/validarTipoDescargo/{idtipo}/{nombre}")]
