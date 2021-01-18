@@ -326,7 +326,7 @@ namespace ASGARDAPI.Controllers
             {
                 SolicitadosABajaAF oDatosAF = new SolicitadosABajaAF();
                 SolicitudBaja oSolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).First();
-                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitud.IdBien).First();
 
 
                 oDatosAF.idbien = oActivo.IdBien;
