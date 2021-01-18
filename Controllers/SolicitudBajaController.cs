@@ -318,7 +318,7 @@ namespace ASGARDAPI.Controllers
 
         //METODO QUE PERMITE VER EL ACUERDO DE APROBACION DE LA SOLICITUD
         [HttpGet]
-        [Route("api/SolicitudBaja/verAcuerdo/{id}")]
+        [Route("api/SolicitudBaja/verAcuerdo/{id}")]//aqui resibira el id de la solicitud
         public SolicitadosABajaAF verAcuerdo(int id)
         {
 
@@ -326,7 +326,7 @@ namespace ASGARDAPI.Controllers
             {
                 SolicitadosABajaAF oDatosAF = new SolicitadosABajaAF();
                 SolicitudBaja oSolicitud = bd.SolicitudBaja.Where(p => p.IdSolicitud == id).First();
-                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == id).First();
+                ActivoFijo oActivo = bd.ActivoFijo.Where(p => p.IdBien == oSolicitud.IdBien).First();
 
 
                 oDatosAF.idbien = oActivo.IdBien;
