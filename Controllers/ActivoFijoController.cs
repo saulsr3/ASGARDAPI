@@ -56,19 +56,20 @@ namespace ASGARDAPI.Controllers
             {
                 int respuesta = 0;
                 IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo
-                                          join noFormulario in bd.FormularioIngreso
-                                          on activo.NoFormulario equals noFormulario.NoFormulario
-                                          join clasif in bd.Clasificacion
-                                          on activo.IdClasificacion equals clasif.IdClasificacion
-                                          where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 0
-                                          select new NoAsignadosAF
-                                          {
-                                              IdBien = activo.IdBien,
-                                              NoFormulario = noFormulario.NoFormulario,
-                                              fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
-                                              Desripcion = activo.Desripcion,
-                                              Clasificacion = clasif.Clasificacion1
-                                          }).ToList();
+                                                    join noFormulario in bd.FormularioIngreso
+                                                    on activo.NoFormulario equals noFormulario.NoFormulario
+                                                    join clasif in bd.Clasificacion
+                                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 0
+                                                    select new NoAsignadosAF
+                                                    {
+                                                        IdBien = activo.IdBien,
+                                                        NoFormulario = noFormulario.NoFormulario,
+                                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                        Desripcion = activo.Desripcion,
+                                                        Clasificacion = clasif.Clasificacion1
+
+                                                    }).ToList();
                 if (lista.Count() > 0)
                 {
                     respuesta = 1;
@@ -85,12 +86,27 @@ namespace ASGARDAPI.Controllers
             int rpta = 0;
             using (BDAcaassAFContext bd = new BDAcaassAFContext())
             {
-                IEnumerable<NoAsignadosAF> lista = (from activo in bd.ActivoFijo    
-                                                    where (activo.EstadoActual == 1 || activo.EstadoActual == 2 || activo.EstadoActual == 3) && activo.EstaAsignado == 0
-                                                    select new NoAsignadosAF
+                IEnumerable<RegistroAF> lista = (from activo in bd.ActivoFijo
+                                                    join noFormulario in bd.FormularioIngreso
+                                                    on activo.NoFormulario equals noFormulario.NoFormulario
+                                                    join clasif in bd.Clasificacion
+                                                    on activo.IdClasificacion equals clasif.IdClasificacion
+                                                    join resposable in bd.Empleado
+                                                    on activo.IdResponsable equals resposable.IdEmpleado
+                                                    join area in bd.AreaDeNegocio
+                                                    on resposable.IdAreaDeNegocio equals area.IdAreaNegocio
+                                                    where (activo.EstadoActual != 0) && activo.EstaAsignado == 1
+
+                                                    orderby activo.CorrelativoBien
+                                                    select new RegistroAF
                                                     {
                                                         IdBien = activo.IdBien,
-                                                        Desripcion = activo.Desripcion,
+                                                        Codigo = activo.CorrelativoBien,
+                                                        fechacadena = noFormulario.FechaIngreso == null ? " " : ((DateTime)noFormulario.FechaIngreso).ToString("dd-MM-yyyy"),
+                                                        Descripcion = activo.Desripcion,
+                                                        Clasificacion = clasif.Clasificacion1,
+                                                        AreaDeNegocio = area.Nombre,
+                                                        Responsable = resposable.Nombres + " " + resposable.Apellidos
                                                     }).ToList();
                 if (lista.Count() > 0) {
                     rpta = 1;
