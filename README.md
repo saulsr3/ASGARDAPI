@@ -14,6 +14,14 @@
 * Rodrigo Ernesto Vasquez Escalante
 
 Este proyecto es propiedad de: **Universidad de El Salvador - UES**. 
+## Get started
+
+### Clone the repo
+
+```shell
+git clone https://github.com/KevinJovel/ASGARD-Frontend.git
+cd (carpeta de clonacion)
+```
 
 # ASP.NET Core & EntityFramework Core Based Startup Template
 
