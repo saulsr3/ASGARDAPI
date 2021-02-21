@@ -1,5 +1,4 @@
-# ASGARDAPI
-# ASGARD-Frontend 💚
+# ASGARDAPI 💚
 
 > Trabajo de graduación para optar al título de Ingeniero de Sistemas informáticos, denominado "Sistema informático para la gestión de activo", una app aplicada al manual de control de activo fijo de la Asociación cooperativa de aprovisionamiento agropecuario de San Sebastián ACASS de R.L.
 
