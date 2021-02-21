@@ -18,7 +18,7 @@ Este proyecto es propiedad de: **Universidad de El Salvador - UES**.
 ### Clone the repo
 
 ```shell
-git clone https://github.com/KevinJovel/ASGARD-Frontend.git
+git clone https://github.com/saulsr3/ASGARDAPI.git
 cd (carpeta de clonacion)
 ```
 
