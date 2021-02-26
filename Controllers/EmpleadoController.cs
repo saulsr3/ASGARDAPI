@@ -29,7 +29,7 @@ namespace ASGARDAPI.Controllers
                                                          join cargos in bd.Cargos
                                                          on empleado.IdCargo equals cargos.IdCargo
                                                          where empleado.Dhabilitado == 1
-                                                         orderby empleado.Nombres ascending
+                                                         orderby area.Nombre ascending
                                                          select new EmpleadoAF
                                                                    {
                                                                        idempleado=empleado.IdEmpleado,
